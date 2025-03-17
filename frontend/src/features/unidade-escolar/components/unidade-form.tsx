@@ -61,32 +61,32 @@ const formSchema = z.object({
 });
 
 export default function ProductForm({
-  unidadeId,
+  initialData,
   pageTitle
 }: {
-  unidadeId: string | null;
+  initialData: UnidadeEscolarType | null;
   pageTitle: string;
 }) {
   const { client } = useAuthContext();
   const { data: session } = useSession();
-  const [unidade, setUnidade] = useState<UnidadeEscolarType | null>(null);
+  // const [unidade, setUnidade] = useState<UnidadeEscolarType | null>(null);
   const [diretores, setDiretores] = useState<DiretorType[]>([]);
 
   const loadData = useCallback(async () => {
     if (typeof session !== typeof undefined) {
       console.log(session)
 
-      if (unidadeId && unidadeId !== 'new') {
-        const data = await client.get(`/unidade/${unidadeId}`)
-        console.log(data)
-      }
+      // if (unidadeId && unidadeId !== 'new') {
+      //   const data = await client.get(`/unidade/${unidadeId}`)
+      //   console.log(data)
+      // }
 
-      // const response = await client.get('/diretor')
+      const response = await client.get('/diretor')
 
-      // const { diretores } = response.data
-      // setDiretores(diretores);
+      const { diretores } = response.data
+      setDiretores(diretores);
     }
-  }, [session])
+  }, [session, client])
 
   useEffect(() => {
     loadData()
@@ -106,9 +106,9 @@ export default function ProductForm({
   }
 
   const defaultValues = {
-    nome: unidade?.nome || '',
-    id_pessoa: unidade?.id_pessoa || '',
-    id_diretor: unidade?.id_diretor || ''
+    nome: initialData?.nome || '',
+    id_pessoa: initialData?.id_pessoa || '',
+    id_diretor: initialData?.id_diretor || ''
   };
 
   const form = useForm<z.infer<typeof formSchema>>({

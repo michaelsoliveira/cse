@@ -15,24 +15,24 @@ export default async function UnidadeViewPage({
   let pageTitle = 'Cadastro';
   const session = await auth();
 
-  if (unidadeId !== 'new') {
-    // const url = `${process.env.NEXT_PUBLIC_API_URL}/unidade/${unidadeId}`
+  if (session && unidadeId !== 'new') {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/unidade/${unidadeId}`
     // const data = await client.get(url)
-    // await fetch(url, {
-    //     method: "GET",
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'Accept': 'application/json',
-    //         "Authorization": `Bearer ${session?.accessToken}`
-    //     }
-    // }).then((data) => data.json())
-    // unidade = data as UnidadeEscolarType;
+    const data = await fetch(url, {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            "Authorization": `Bearer ${session?.accessToken}`
+        }
+    }).then((data) => data.json())
+    unidade = data as UnidadeEscolarType;
     
-    // if (!unidade) {
-    //   notFound();
-    // }
+    if (!unidade) {
+      notFound();
+    }
     pageTitle = `Editar Unidade Escolar`;
   }
 
-  return <UnidadeForm unidadeId={unidadeId} pageTitle={pageTitle} />;
+  return <UnidadeForm initialData={unidade} pageTitle={pageTitle} />;
 }
