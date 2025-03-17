@@ -74,7 +74,6 @@ export default function ProductForm({
 
   const loadData = useCallback(async () => {
     if (typeof session !== typeof undefined) {
-      console.log(session)
 
       // if (unidadeId && unidadeId !== 'new') {
       //   const data = await client.get(`/unidade/${unidadeId}`)
@@ -86,7 +85,7 @@ export default function ProductForm({
       const { diretores } = response.data
       setDiretores(diretores);
     }
-  }, [session, client])
+  }, [session, initialData, client])
 
   useEffect(() => {
     loadData()

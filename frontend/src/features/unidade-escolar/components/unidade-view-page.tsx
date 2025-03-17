@@ -1,8 +1,8 @@
 import { auth } from '@/lib/auth';
 import { notFound } from 'next/navigation';
 import UnidadeForm from './unidade-form';
-import { useAuthContext } from '@/context/AuthContext';
 import { UnidadeEscolarType } from 'types';
+import { fetchWithAuth } from '@/services/fetchWithAuth';
 
 type TUnidadeViewPageProps = {
   unidadeId: string;
@@ -18,14 +18,7 @@ export default async function UnidadeViewPage({
   if (session && unidadeId !== 'new') {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/unidade/${unidadeId}`
     // const data = await client.get(url)
-    const data = await fetch(url, {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            "Authorization": `Bearer ${session?.accessToken}`
-        }
-    }).then((data) => data.json())
+    const data = await fetchWithAuth({url, token: session?.accessToken!})
     unidade = data as UnidadeEscolarType;
     
     if (!unidade) {
