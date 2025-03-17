@@ -5,11 +5,11 @@ import { UserController } from "../controllers/UserController"
 import { AuthController } from "../controllers/AuthController"
 import { Authentication } from "../middleware/auth.middleware"
 import { EstadoController } from "../controllers/EstadoController"
-import { SysRefController } from "../controllers/SysRefController"
 import { can, is } from "../middleware/permission"
 import { RoleController } from "../controllers/RoleController"
 import { PermissionController } from "../controllers/PermissionController"
 import { UnidadeController } from '../controllers/UnidadeController';
+import { DiretorController } from '../controllers/DiretorController';
 
 const express = require('express')
 const multer = require('multer')
@@ -76,16 +76,16 @@ routes.put('/permission/:id', Authentication(), new PermissionController().updat
 routes.delete('/permission/single/:id', Authentication(), new PermissionController().delete)
 routes.delete('/permission/multiples', Authentication(), new PermissionController().deleteAll)
 
-//Sistema de Coordenadas
-routes.get('/sys-ref/', Authentication(), new SysRefController().findAll)
-routes.get('/sys-ref/:id', Authentication(), new SysRefController().findOne)
-routes.get('/sys-ref/search/q', Authentication(), new SysRefController().search)
+//Unidades Escolares
+routes.get('/unidade/', Authentication(), new UnidadeController().findAll)
+routes.get('/unidade/:id', Authentication(), new UnidadeController().findOne)
+routes.get('/unidade/search/q', Authentication(), new UnidadeController().search)
+routes.post('/unidade', Authentication(), new UnidadeController().store)
 
 //Unidades Escolares
-//Sistema de Coordenadas
-routes.get('/unidade/', new UnidadeController().findAll)
-routes.get('/unidade/:id', new UnidadeController().findOne)
-routes.get('/unidade/search/q', new UnidadeController().search)
+routes.get('/diretor/', Authentication(), new DiretorController().findAll)
+routes.get('/diretor/:id', Authentication(), new DiretorController().findOne)
+routes.get('/diretor/search/q', Authentication(), new DiretorController().search)
 
 const multerConfig = multer()
 

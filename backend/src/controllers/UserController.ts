@@ -84,7 +84,7 @@ export class UserController {
     }
 
     async updatePassword(request: Request, response: Response): Promise<Response> {
-        const id = request.user?.id
+        const id = request?.user?.id
 
         const { oldPassword, newPassword } = request.body;
         

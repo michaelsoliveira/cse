@@ -33,10 +33,11 @@
         },
         // "types": ["express", "node"],
         "typeRoots": [
-            "./src/@types",
+            "./src/types",
             "./node_module/@types"
         ],
 	},
 	"exclude": ["node_modules"],
-	"include": ["./src/**/*.tsx", "./src/**/*.ts", "./**/*.tsx", "./**/*.ts"]
+	"include": ["./src/**/*.tsx", "./src/**/*.ts", "./**/*.tsx", "./**/*.ts"],
+	"files": ["./src/types/express.d.ts"]
 }

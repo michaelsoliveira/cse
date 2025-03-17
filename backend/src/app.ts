@@ -1,5 +1,5 @@
 require('dotenv').config({ path: `${__dirname}/../.env.io` })
-import { Request, Response, NextFunction } from "express"
+// import { Request, Response, NextFunction } from "express"
 const express = require('express');
 import routes from "./routes"
 import cors from 'cors'
@@ -53,8 +53,8 @@ const io = new Server(server, {
 })
 
 
-io.on('connection', (socket: any) => {
-  global.Socket = socket
+io.on('connection', (socket) => {
+  // global.Socket = socket
 
   const createdMessage = (msg: any) => {
     io.emit('access_token', msg);

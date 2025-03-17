@@ -13,9 +13,7 @@ class UnidadeService {
         
         const unidadeExists = await prismaClient.unidadeEscolar.findFirst({
             where: {
-                pessoa: {
-                    nome_fantasia: data.pessoa_juridica.nome_fantasia
-                } 
+                nome: data?.nome
             }
         })
 
@@ -25,23 +23,41 @@ class UnidadeService {
 
         const unidadeEscolar = await prismaClient.unidadeEscolar.create({
             include: {
-                pessoa: true
+                pessoa: true,
+                diretor: true,
             },
             data: {
-                pessoa: {
+                nome: data.nome,
+                unidade_telefone: {
                     create: {
-                        nome_fantasia: data.nome,
-                        razao_social: data.razao_social
-                    }
-                },
-                diretor: {
-                    create: {
-                        pessoa: {
+                        telefone: {
                             create: {
-                                nome: data.diretor
+                                ddd: data?.ddd,
+                                numero: data?.telefone
                             }
                         }
                     }
+                },
+                pessoa: {
+                    create: {
+                        nome_fantasia: data.nome,
+                        pessoa: {
+                            create: {
+                                tipo: 'J',
+                                endereco: {
+                                    create: {
+                                        logradouro: data?.logradouro,
+                                        municipio: data?.municipio,
+                                        bairro: data?.bairro,
+                                        id_estado: data?.estado
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                diretor: {
+                    connect: data?.id_diretor
                 }
 
             }
@@ -153,9 +169,9 @@ class UnidadeService {
     }
 
     async findById(id: string) : Promise<any> {
-        const estado = await prismaClient.estado.findUnique({ where: { id } })
+        const unidade = await prismaClient.unidadeEscolar.findUnique({ where: { id } })
 
-        return estado
+        return unidade
     }
 }
 
