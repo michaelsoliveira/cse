@@ -175,18 +175,18 @@ const defaultValues = {
 
   const steps = [
     {
-      id: 'Step 1',
+      id: 'Etapa 1',
       name: 'Informações Básicas',
       fields: ['nome', 'endereco.logradouro', 'endereco.complemento', 'endereco.bairro', 'endereco.municipio', 'endereco.estado', 'endereco.cep']
     },
     {
-      id: 'Step 2',
+      id: 'Etapa 2',
       name: 'Informações da Direção',
       // fields are mapping and flattening for the error to be trigger  for the dynamic fields
       fields: ['diretor.nome', 'diretor.email']
     },
     {
-      id: 'Step 3',
+      id: 'Etapa 3',
       name: 'Contatos',
       // fields are mapping and flattening for the error to be trigger  for the dynamic fields
       fields: fields
@@ -197,7 +197,7 @@ const defaultValues = {
         ])
         .flat()
     },
-    { id: 'Step 4', name: 'Complete' }
+    { id: 'Etapa 4', name: 'Completo' }
   ];
 
   const processForm: SubmitHandler<UnidadeFormValues> = (data: any) => {
@@ -250,64 +250,73 @@ const defaultValues = {
         </div>
         <Separator />
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
             <div
               className={cn(
                 currentStep === 1
                   ? 'w-full md:inline-block'
-                  : 'gap-8 md:grid md:grid-cols-3',
+                  : 'gap-8 md:grid md:grid-cols-4',
                   'pt-4'
               )}
             >
             {currentStep === 0 && (
               <>
-            {/* <div className='grid grid-cols-1 gap-6 md:grid-cols-2'> */}
-              <FormField
-                control={form.control}
-                name='nome'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome</FormLabel>
-                    <FormControl>
-                      <Input placeholder='Entre com o nome da unidade escolar' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='endereco.logradouro'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Logradouro</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        placeholder=''
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='endereco.numero'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Número</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name='nome'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome</FormLabel>
+                      <FormControl>
+                        <Input placeholder='Entre com o nome da unidade escolar' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div>
+              </div>
+              <div className='col-span-4'>
+                <span className='text-md'>Endereço</span>
+                <Separator />
+              </div>
+              <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name='endereco.logradouro'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Logradouro</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder=''
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                </div>
+                <FormField
+                  control={form.control}
+                  name='endereco.numero'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Número</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               <FormField
                 control={form.control}
                 name='endereco.complemento'
@@ -324,6 +333,7 @@ const defaultValues = {
                   </FormItem>
                 )}
               />
+              <div className='col-span-2'>
               <FormField
                 control={form.control}
                 name='endereco.bairro'
@@ -340,6 +350,8 @@ const defaultValues = {
                   </FormItem>
                 )}
               />
+              </div>
+              <div className='col-span-2'>
               <FormField
                 control={form.control}
                 name='endereco.municipio'
@@ -356,6 +368,8 @@ const defaultValues = {
                   </FormItem>
                 )}
               />
+              </div>
+              <div className='md:col-span-2'>
               <FormField
                 control={form.control}
                 name='endereco.cep'
@@ -365,7 +379,6 @@ const defaultValues = {
                     <FormControl>
                       <Input
                         disabled={loading}
-                        className='w-48'
                         {...field}
                       />
                     </FormControl>
@@ -373,6 +386,7 @@ const defaultValues = {
                   </FormItem>
                 )}
               />
+              </div>
               <FormField
                 control={form.control}
                 name='endereco.estado'
@@ -384,7 +398,7 @@ const defaultValues = {
                       options={getEstadosOptions()} 
                       field={getSelectedEstado(field.value)} 
                       placeholder="Estado"
-                      selectStyle="w-[150px]"
+                      selectStyle="w-[200px]"
                     />
                     <FormMessage />
                   </FormItem>
