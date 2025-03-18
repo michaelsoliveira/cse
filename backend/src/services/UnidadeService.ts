@@ -27,6 +27,11 @@ class UnidadeService {
                 diretor: true,
             },
             data: {
+                diretor: {
+                    connect: {
+                        id: data?.id_diretor
+                    }
+                },
                 nome: data.nome,
                 unidade_telefone: {
                     create: {
@@ -56,10 +61,6 @@ class UnidadeService {
                         }
                     }
                 },
-                diretor: {
-                    connect: data?.id_diretor
-                }
-
             }
         })
 

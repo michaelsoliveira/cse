@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-console */
 import { NextAuthConfig } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';

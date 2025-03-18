@@ -42,7 +42,6 @@ const useClient = (options?: any) => {
           }
           return Promise.reject(error)
         } catch (e) {
-          console.log(e)
           return Promise.reject(error)
         }
     })

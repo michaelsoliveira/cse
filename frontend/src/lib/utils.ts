@@ -5,6 +5,19 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const fetchWithAuth = async (url: string, token: string) => {
+  const data = await fetch(url, {
+      method: "GET",
+      headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          "Authorization": `Bearer ${token}`
+      }
+  }).then((data) => data.json())
+
+  return data
+}
+
 export function formatBytes(
   bytes: number,
   opts: {
