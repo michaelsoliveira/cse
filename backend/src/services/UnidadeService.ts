@@ -13,7 +13,13 @@ class UnidadeService {
         
         const unidadeExists = await prismaClient.unidadeEscolar.findFirst({
             where: {
-                nome: data?.nome
+                pessoa: {
+                    pessoaJuridica: {
+                        some: {
+                            nome_fantasia: data?.nome
+                        }
+                    }
+                }
             }
         })
 
@@ -21,48 +27,99 @@ class UnidadeService {
             throw new Error('Já existe uma unidade escolar cadastrada com este nome ou UF')
         }
 
-        const unidadeEscolar = await prismaClient.unidadeEscolar.create({
+        const unidadeEscolar = !data?.hasDiretorData ? await prismaClient.unidadeEscolar.create({
             include: {
                 pessoa: true,
-                diretor: true,
+                diretor: true
             },
-            data: {
+            data: { 
                 diretor: {
                     connect: {
                         id: data?.id_diretor
                     }
                 },
-                nome: data.nome,
-                unidade_telefone: {
+                pessoa: {
                     create: {
-                        telefone: {
+                        tipo: 'J',
+                        email: data?.email,
+                        pessoaJuridica: {
                             create: {
-                                ddd: data?.ddd,
-                                numero: data?.telefone
+                                nome_fantasia: data?.nome
+                            }
+                        },
+                        endereco: {
+                            create: {
+                                cep: data?.endereco?.cep,
+                                logradouro: data?.endereco?.logradouro,
+                                municipio: data?.endereco?.municipio,
+                                numero: data?.endereco?.numero,
+                                bairro: data?.endereco.bairro,
+                                estado_id: data?.endereco?.estado
                             }
                         }
                     }
-                },
-                pessoa: {
+                }
+            }
+        }) : await prismaClient.unidadeEscolar.create({
+            include: {
+                pessoa: true,
+                diretor: true
+            },
+            data: { 
+                diretor: {
                     create: {
-                        nome_fantasia: data.nome,
                         pessoa: {
                             create: {
-                                tipo: 'J',
-                                endereco: {
+                                tipo: 'F',
+                                email: data?.diretor?.email,
+                                telefone: data?.diretor?.telefone,
+                                pessoaFisica: {
                                     create: {
-                                        logradouro: data?.logradouro,
-                                        municipio: data?.municipio,
-                                        bairro: data?.bairro,
-                                        id_estado: data?.estado
+                                        nome: data?.diretor.nome,
+                                        rg: data?.diretor.rg,
+                                        cpf: data?.diretor.cpf
                                     }
                                 }
                             }
                         }
                     }
                 },
+                pessoa: {
+                    create: {
+                        tipo: 'J',
+                        email: data?.email,
+                        telefone: data?.telefone,
+                        pessoaJuridica: {
+                            create: {
+                                nome_fantasia: data?.nome
+                            }
+                        },
+                        endereco: {
+                            create: {
+                                cep: data?.endereco?.cep,
+                                logradouro: data?.endereco?.logradouro,
+                                municipio: data?.endereco?.municipio,
+                                numero: data?.endereco?.numero,
+                                bairro: data?.endereco?.bairro,
+                                estado_id: data?.endereco?.estado
+                            }
+                        }
+                    }
+                }
             }
-        })
+        });
+
+        // if (data?.telefones?.lenght > 0) {
+        //     await prismaClient.pessoaTelefone.createMany({
+        //         data: data?.telefones?.map((tel: any) => {
+        //             return {
+        //                 ddd: tel.ddd,
+        //                 numero: tel.numero,
+        //                 pessoa_id: unidadeEscolar.pessoa_id
+        //             }
+        //         }),
+        //     })
+        // }
 
         return unidadeEscolar
     }
@@ -93,13 +150,23 @@ class UnidadeService {
         const { perPage, page, search, orderBy, order } = query
         const skip = (page - 1) * perPage
         let orderByTerm = {}
-        const where = search
-            // ? {OR: [{nome: {contains: search}}, {email: {contains: search}}]}
-            ? {OR: [{pessoa: {
-                nome_fantasia: { mode: Prisma.QueryMode.insensitive, contains: search }
-            }}, {pessoa: {
-                razao_social: { mode: Prisma.QueryMode.insensitive, contains: search }
-            }}]}
+        const where = search ? 
+            {
+                OR: [{pessoa: {
+                    pessoaJuridica: {
+                        some: {
+                            nome_fantasia: { mode: Prisma.QueryMode.insensitive, contains: search }
+                        }
+                    }
+                }},
+                {pessoa: {
+                    pessoaJuridica: {
+                        some: {
+                            razao_social: { mode: Prisma.QueryMode.insensitive, contains: search }
+                        }
+                    }
+                }}]
+            }
             : {};
         
         const orderByElement = orderBy ? orderBy.split('.') : {}
@@ -157,13 +224,13 @@ class UnidadeService {
         const unidades = await prismaClient.unidadeEscolar.findMany({
             where: {
                 pessoa: {
-                    nome_fantasia: { mode: Prisma.QueryMode.insensitive, contains: text }
+                    pessoaJuridica: { 
+                        some: {
+                            nome_fantasia: { mode: Prisma.QueryMode.insensitive, contains: text }
+                        }
+                     }
                 }
-                // OR: [{id: {mode: 'insensitive', contains: text}}, {uf: {mode: 'insensitive', contains: text}}]
             },
-            // orderBy: {
-            //     nome:   'asc'
-            // },
         })
 
         return unidades

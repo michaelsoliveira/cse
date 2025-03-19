@@ -192,38 +192,29 @@ async function main() {
       data: {
             username: 'michaelsoliveira',
             email: 'michaelsoliveira@gmail.com',
-            password: await bcrypt.hash('Fms237691', 10),
+            password: await bcrypt.hash('secret', 10),
         },
     })
-    console.log(`Created user admin with id: ${user.id}`)
 
-    const detentor = await prisma.pessoa.create({
-      include: {
-        pessoaJuridica: true
-      },
-        data: {
-          tipo: 'J',
-            endereco: {
-              create: {
-                logradouro: 'BR 210',
-                municipio: 'Macapá',
-                estado: {
-                  connect: {
-                    id: ufAP?.id
-                  }
-                }
-              }
-            },
-            pessoaJuridica: {
-              create: {
-                cnpj: '322390487',
-                nome_fantasia: 'Secretarária de Estado da Educação',
-                razao_social: 'SEED'
-              }
-            }
-        },
-    })
-  
+    const tiposOcorrencia: Prisma.TipoOcorrenciaCreateInput[] = [
+      { nome: "Roubo" },
+      { nome: "Furto" },
+      { nome: "Vulnerabilidade" },
+      { nome: "Intrusao" },
+      { nome: "Ameaça" },
+      { nome: "Uso de Arma de Fogo" },
+      { nome: "Porte de Arma" },
+      { nome: "Danos ao Patrimônio" },
+      { nome: "Ameaça a Escola" }
+    ];
+
+    for (const t of tiposOcorrencia) {
+      const tipo = await prisma.tipoOcorrencia.create({
+        data: t
+      })
+      console.log(`Created role with id: ${tipo.id}`)
+    }
+    
   console.log(`Seeding finished.`)
 }
 

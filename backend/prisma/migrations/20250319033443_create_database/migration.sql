@@ -4,60 +4,45 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- CreateEnum
 CREATE TYPE "TipoPessoa" AS ENUM ('F', 'J');
 
--- CreateEnum
-CREATE TYPE "TipoOcorrencia" AS ENUM ('Roubo', 'Furto', 'Vulnerabilidade', 'Intrusao', 'Ameaca', 'UsoArma', 'PorteArma', 'DanosPatrimonio', 'AmeacaEscola');
-
 -- CreateTable
 CREATE TABLE "pessoa" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "tipo" "TipoPessoa" NOT NULL DEFAULT 'F',
-    "id_endereco" UUID,
-    "id_telefone" UUID,
+    "email" VARCHAR,
+    "telefone" TEXT,
+    "endereco_id" UUID,
 
     CONSTRAINT "pessoa_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "pessoa_fisica" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "pessoa_id" UUID NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "nome" TEXT,
     "rg" VARCHAR(30),
     "cpf" VARCHAR(14),
     "data_nascimento" TIMESTAMP(3),
-    "id_pessoa" UUID,
 
-    CONSTRAINT "pessoa_fisica_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "telefone" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
-    "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "ddd" TEXT,
-    "numero" VARCHAR(10),
-
-    CONSTRAINT "telefone_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "pessoa_fisica_pkey" PRIMARY KEY ("pessoa_id")
 );
 
 -- CreateTable
 CREATE TABLE "pessoa_juridica" (
-    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "pessoa_id" UUID NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "nome_fantasia" VARCHAR(100) NOT NULL,
-    "razao_social" VARCHAR(100) NOT NULL,
+    "razao_social" VARCHAR(100),
     "inscricao_estadual" VARCHAR(30),
     "inscricao_federal" VARCHAR(30),
     "cnpj" VARCHAR(14),
     "data_constituicao" TIMESTAMP(3),
-    "id_pessoa" UUID,
 
-    CONSTRAINT "PK_bee78e8f1760ccf9cff402118a6" PRIMARY KEY ("id")
+    CONSTRAINT "pessoa_juridica_pkey" PRIMARY KEY ("pessoa_id")
 );
 
 -- CreateTable
@@ -67,11 +52,12 @@ CREATE TABLE "endereco" (
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "cep" VARCHAR(8),
     "logradouro" VARCHAR(60),
+    "numero" TEXT,
     "municipio" VARCHAR(30),
     "bairro" VARCHAR(50),
-    "id_estado" UUID,
+    "estado_id" UUID,
 
-    CONSTRAINT "PK_2a6880f71a7f8d1c677bb2a32a8" PRIMARY KEY ("id")
+    CONSTRAINT "endereco_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -90,17 +76,29 @@ CREATE TABLE "unidade_escolar" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "id_pessoa" UUID,
-    "id_endereco" UUID,
-    "id_diretor" UUID,
+    "inep" INTEGER,
+    "pessoa_id" UUID,
 
     CONSTRAINT "unidade_escolar_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
+CREATE TABLE "responsavel_registro" (
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "nome" TEXT NOT NULL,
+    "cargo" TEXT,
+    "telefone" TEXT,
+    "email" TEXT,
+    "unidade_id" UUID NOT NULL,
+
+    CONSTRAINT "responsavel_registro_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "diretor" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
-    "id_pessoa" UUID,
+    "pessoa_id" UUID,
+    "unidade_id" UUID NOT NULL,
 
     CONSTRAINT "diretor_pkey" PRIMARY KEY ("id")
 );
@@ -110,20 +108,47 @@ CREATE TABLE "ocorrencia" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "tipo_ocorrencia" "TipoOcorrencia" NOT NULL,
-    "Data" DATE,
-    "Hora" TIME(0),
-    "Descricao" TEXT,
+    "data" DATE,
+    "hora" TIME(0),
+    "local" TEXT,
+    "descricao" TEXT,
+    "tipo_id" UUID NOT NULL,
+    "responsavel_id" UUID,
+    "user_id" UUID NOT NULL,
+    "unidade_id" UUID NOT NULL,
 
     CONSTRAINT "ocorrencia_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "unidade_telefone" (
-    "id_unidade" UUID NOT NULL,
-    "id_telefone" UUID NOT NULL,
+CREATE TABLE "envolvido" (
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "nome" TEXT NOT NULL,
+    "tipo" TEXT NOT NULL,
+    "observacoes" TEXT,
 
-    CONSTRAINT "unidade_telefone_pkey" PRIMARY KEY ("id_unidade","id_telefone")
+    CONSTRAINT "envolvido_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "envolvido_ocorrencia" (
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "ocorrencia_id" UUID,
+    "envolvido_id" UUID,
+    "papel" TEXT NOT NULL,
+
+    CONSTRAINT "envolvido_ocorrencia_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "anexo_ocorrencia" (
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "ocorrencia_id" UUID NOT NULL,
+    "caminho_arquivo" TEXT NOT NULL,
+    "tipo_arquivo" TEXT NOT NULL,
+    "descricao" TEXT NOT NULL,
+
+    CONSTRAINT "anexo_ocorrencia_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -185,7 +210,6 @@ CREATE TABLE "users_permissions" (
 CREATE TABLE "users_roles" (
     "user_id" UUID NOT NULL,
     "role_id" UUID NOT NULL,
-    "id_projeto" UUID NOT NULL,
 
     CONSTRAINT "PK_c525e9373d63035b9919e578a9c" PRIMARY KEY ("user_id","role_id")
 );
@@ -235,23 +259,13 @@ CREATE TABLE "estado" (
     CONSTRAINT "estado_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "pessoa_fisica_id_pessoa_key" ON "pessoa_fisica"("id_pessoa");
+-- CreateTable
+CREATE TABLE "tipo_ocorrencia" (
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
+    "nome" TEXT NOT NULL,
 
--- CreateIndex
-CREATE UNIQUE INDEX "pessoa_juridica_id_pessoa_key" ON "pessoa_juridica"("id_pessoa");
-
--- CreateIndex
-CREATE UNIQUE INDEX "unidade_escolar_id_diretor_key" ON "unidade_escolar"("id_diretor");
-
--- CreateIndex
-CREATE UNIQUE INDEX "diretor_id_pessoa_key" ON "diretor"("id_pessoa");
-
--- CreateIndex
-CREATE INDEX "unidade_telefone_id_unidade_idx" ON "unidade_telefone"("id_unidade");
-
--- CreateIndex
-CREATE INDEX "unidade_telefone_id_telefone_idx" ON "unidade_telefone"("id_telefone");
+    CONSTRAINT "tipo_ocorrencia_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateIndex
 CREATE INDEX "IDX_3309f5fa8d95935f0701027f2b" ON "permissions_roles"("permission_id");
@@ -287,37 +301,49 @@ CREATE UNIQUE INDEX "accounts_provider_providerAccountId_key" ON "accounts"("pro
 CREATE UNIQUE INDEX "sessions_sessionToken_key" ON "sessions"("sessionToken");
 
 -- AddForeignKey
-ALTER TABLE "pessoa" ADD CONSTRAINT "pessoa_id_endereco_fkey" FOREIGN KEY ("id_endereco") REFERENCES "endereco"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "pessoa" ADD CONSTRAINT "pessoa_endereco_id_fkey" FOREIGN KEY ("endereco_id") REFERENCES "endereco"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "pessoa" ADD CONSTRAINT "pessoa_id_telefone_fkey" FOREIGN KEY ("id_telefone") REFERENCES "telefone"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "pessoa_fisica" ADD CONSTRAINT "pessoa_fisica_pessoa_id_fkey" FOREIGN KEY ("pessoa_id") REFERENCES "pessoa"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "pessoa_fisica" ADD CONSTRAINT "pessoa_fisica_id_pessoa_fkey" FOREIGN KEY ("id_pessoa") REFERENCES "pessoa"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "pessoa_juridica" ADD CONSTRAINT "pessoa_juridica_pessoa_id_fkey" FOREIGN KEY ("pessoa_id") REFERENCES "pessoa"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "pessoa_juridica" ADD CONSTRAINT "pessoa_juridica_id_pessoa_fkey" FOREIGN KEY ("id_pessoa") REFERENCES "pessoa"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "endereco" ADD CONSTRAINT "endereco_estado_id_fkey" FOREIGN KEY ("estado_id") REFERENCES "estado"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "endereco" ADD CONSTRAINT "endereco_id_estado_fkey" FOREIGN KEY ("id_estado") REFERENCES "estado"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "unidade_escolar" ADD CONSTRAINT "unidade_escolar_pessoa_id_fkey" FOREIGN KEY ("pessoa_id") REFERENCES "pessoa"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "unidade_escolar" ADD CONSTRAINT "unidade_escolar_id_pessoa_fkey" FOREIGN KEY ("id_pessoa") REFERENCES "pessoa_juridica"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "responsavel_registro" ADD CONSTRAINT "responsavel_registro_unidade_id_fkey" FOREIGN KEY ("unidade_id") REFERENCES "unidade_escolar"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "unidade_escolar" ADD CONSTRAINT "unidade_escolar_id_endereco_fkey" FOREIGN KEY ("id_endereco") REFERENCES "endereco"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "diretor" ADD CONSTRAINT "diretor_pessoa_id_fkey" FOREIGN KEY ("pessoa_id") REFERENCES "pessoa"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "unidade_escolar" ADD CONSTRAINT "unidade_escolar_id_diretor_fkey" FOREIGN KEY ("id_diretor") REFERENCES "diretor"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "diretor" ADD CONSTRAINT "diretor_unidade_id_fkey" FOREIGN KEY ("unidade_id") REFERENCES "unidade_escolar"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "diretor" ADD CONSTRAINT "diretor_id_pessoa_fkey" FOREIGN KEY ("id_pessoa") REFERENCES "pessoa_fisica"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "ocorrencia" ADD CONSTRAINT "ocorrencia_responsavel_id_fkey" FOREIGN KEY ("responsavel_id") REFERENCES "responsavel_registro"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "unidade_telefone" ADD CONSTRAINT "unidade_telefone_id_unidade_fkey" FOREIGN KEY ("id_unidade") REFERENCES "unidade_escolar"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ocorrencia" ADD CONSTRAINT "ocorrencia_tipo_id_fkey" FOREIGN KEY ("tipo_id") REFERENCES "tipo_ocorrencia"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "unidade_telefone" ADD CONSTRAINT "unidade_telefone_id_telefone_fkey" FOREIGN KEY ("id_telefone") REFERENCES "telefone"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ocorrencia" ADD CONSTRAINT "ocorrencia_unidade_id_fkey" FOREIGN KEY ("unidade_id") REFERENCES "unidade_escolar"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ocorrencia" ADD CONSTRAINT "ocorrencia_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "envolvido_ocorrencia" ADD CONSTRAINT "envolvido_ocorrencia_envolvido_id_fkey" FOREIGN KEY ("envolvido_id") REFERENCES "envolvido"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "envolvido_ocorrencia" ADD CONSTRAINT "envolvido_ocorrencia_ocorrencia_id_fkey" FOREIGN KEY ("ocorrencia_id") REFERENCES "ocorrencia"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "anexo_ocorrencia" ADD CONSTRAINT "anexo_ocorrencia_ocorrencia_id_fkey" FOREIGN KEY ("ocorrencia_id") REFERENCES "ocorrencia"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "permissions_roles" ADD CONSTRAINT "FK_3309f5fa8d95935f0701027f2bd" FOREIGN KEY ("permission_id") REFERENCES "permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -329,10 +355,10 @@ ALTER TABLE "permissions_roles" ADD CONSTRAINT "FK_e08f6859eaac8cbf7f087f64e2b" 
 ALTER TABLE "refresh_token" ADD CONSTRAINT "FK_fd79923e4359a26a971f841fb5e" FOREIGN KEY ("id_user") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "users_permissions" ADD CONSTRAINT "FK_b09b9a210c60f41ec7b453758e9" FOREIGN KEY ("permission_id") REFERENCES "permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "users_permissions" ADD CONSTRAINT "FK_4de7d0b175f702be3be55270023" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "users_permissions" ADD CONSTRAINT "FK_4de7d0b175f702be3be55270023" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "users_permissions" ADD CONSTRAINT "FK_b09b9a210c60f41ec7b453758e9" FOREIGN KEY ("permission_id") REFERENCES "permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "users_roles" ADD CONSTRAINT "FK_1cf664021f00b9cc1ff95e17de4" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,82 +1,106 @@
 generator client {
-    provider = "prisma-client-js"
-    previewFeatures = ["postgresqlExtensions"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "views"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
-    extensions = [uuidOssp(map: "uuid-ossp")]
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [uuid_ossp(map: "uuid-ossp")]
+}
+
+view OcorrenciasUnidade {
+  id     String @id
+  escola String
+  total_ocorrencias Int
+}
+
+view OcorrenciasTipo {
+  id    String @id
+  tipo_ocorrencia   String
+  total_ocorrencias Int
+}
+
+view OcorrenciasMes {
+  mes   String  @id
+  total_ocorrencias Int
+}
+
+view OcorrenciasEnvolvidos {
+  id      String @id
+  nome_envolvido    String
+  tipo_envolvido    String
+  papel             String
+}
+
+view OcorrenciasResponsavel {
+  id      String @id
+  escola  String
+  tipo    String
+  data_ocorrencia   DateTime @db.Date
+  local         String
+  status        String
+  registrado_por  String
 }
 
 model Pessoa {
-  id                    String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  created_at            DateTime        @default(now()) @db.Timestamp(6)
-  updated_at            DateTime        @default(now()) @db.Timestamp(6)
-  tipo                  TipoPessoa      @default(F)
-  numero_endereco       String?
-  email                 String?          @db.VarChar
-  id_endereco           String?         @db.Uuid
-  endereco              Endereco?       @relation(fields: [id_endereco], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  telefone              PessoaTelefone[]
-  pessoaFisica          PessoaFisica?
-  pessoaJuridica        PessoaJuridica?
+  id              String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at      DateTime         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime         @default(now()) @db.Timestamp(6)
+  tipo            TipoPessoa       @default(F)
+  email           String?          @db.VarChar
+  telefone        String?
+  endereco_id     String?          @db.Uuid
+  diretor         Diretor[]
+  endereco        Endereco?        @relation(fields: [endereco_id], references: [id], onDelete: Cascade)
+  pessoaFisica    PessoaFisica?
+  pessoaJuridica  PessoaJuridica?
+  unidade_escolar UnidadeEscolar[]
+
   @@map("pessoa")
 }
 
 model PessoaFisica {
-  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pessoa_id       String    @id @db.Uuid
   created_at      DateTime  @default(now()) @db.Timestamp(6)
   updated_at      DateTime  @default(now()) @db.Timestamp(6)
   nome            String?
   rg              String?   @db.VarChar(30)
   cpf             String?   @db.VarChar(14)
   data_nascimento DateTime?
-  id_pessoa       String?   @unique @db.Uuid
-  pessoa          Pessoa?  @relation(fields: [id_pessoa], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  diretor         Diretor?
+  pessoa          Pessoa    @relation(fields: [pessoa_id], references: [id])
+
   @@map("pessoa_fisica")
 }
 
-model Telefone {
-  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  ddd        String?
-  numero     String?  @db.VarChar(10)
-  pessoa     PessoaTelefone[]
-  unidade_telefone    UnidadeTelefone[]
-  @@map("telefone")
-}
-
 model PessoaJuridica {
-  id                 String    @id(map: "PK_bee78e8f1760ccf9cff402118a6") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pessoa_id          String    @id @db.Uuid
   created_at         DateTime  @default(now()) @db.Timestamp(6)
   updated_at         DateTime  @default(now()) @db.Timestamp(6)
   nome_fantasia      String    @db.VarChar(100)
-  razao_social       String?    @db.VarChar(100)
+  razao_social       String?   @db.VarChar(100)
   inscricao_estadual String?   @db.VarChar(30)
   inscricao_federal  String?   @db.VarChar(30)
   cnpj               String?   @db.VarChar(14)
   data_constituicao  DateTime?
+  pessoa             Pessoa    @relation(fields: [pessoa_id], references: [id])
 
-  id_pessoa          String?   @unique @db.Uuid
-  pessoa             Pessoa?  @relation(fields: [id_pessoa], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  unidade_escolar    UnidadeEscolar[]
   @@map("pessoa_juridica")
 }
 
 model Endereco {
-  id         String   @id(map: "PK_2a6880f71a7f8d1c677bb2a32a8") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   created_at DateTime @default(now()) @db.Timestamp(6)
   updated_at DateTime @default(now()) @db.Timestamp(6)
   cep        String?  @db.VarChar(8)
   logradouro String?  @db.VarChar(60)
+  numero     String?
   municipio  String?  @db.VarChar(30)
   bairro     String?  @db.VarChar(50)
-  id_estado  String?  @db.Uuid
-  estado     Estado?  @relation(fields: [id_estado], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  estado_id  String?  @db.Uuid
+  estado     Estado?  @relation(fields: [estado_id], references: [id])
   pessoa     Pessoa[]
+
   @@map("endereco")
 }
 
@@ -93,60 +117,95 @@ model Permission {
 }
 
 model UnidadeEscolar {
-  id                  String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  created_at          DateTime    @default(now()) @db.Timestamp(6)
-  updated_at          DateTime    @default(now()) @db.Timestamp(6)
-  nome                String?
-  id_pessoa           String?     @db.Uuid
-  pessoa              PessoaJuridica?    @relation(fields: [id_pessoa], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  unidade_telefone    UnidadeTelefone[]
-  id_diretor          String?     @unique @db.Uuid
-  diretor             Diretor?    @relation(fields: [id_diretor], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                   String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at           DateTime              @default(now()) @db.Timestamp(6)
+  updated_at           DateTime              @default(now()) @db.Timestamp(6)
+  inep                 Int?
+  pessoa_id            String?               @db.Uuid
+  diretor              Diretor[]
+  ocorrencia           Ocorrencia[]
+  responsavel_registro ResponsavelRegistro[]
+  pessoa               Pessoa?               @relation(fields: [pessoa_id], references: [id])
+
   @@map("unidade_escolar")
 }
 
+model ResponsavelRegistro {
+  id          String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nome        String
+  cargo       String?
+  telefone    String?
+  email       String?
+  unidade_id  String         @db.Uuid
+  ocorrencias Ocorrencia[]
+  unidade     UnidadeEscolar @relation(fields: [unidade_id], references: [id])
+
+  @@map("responsavel_registro")
+}
+
 model Diretor {
-  id                 String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  id_pessoa          String?     @unique @db.Uuid
-  pessoa             PessoaFisica?    @relation(fields: [id_pessoa], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  unidade_escolar    UnidadeEscolar?
+  id         String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pessoa_id  String?        @db.Uuid
+  unidade_id String         @db.Uuid
+  pessoa     Pessoa?        @relation(fields: [pessoa_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  unidade    UnidadeEscolar @relation(fields: [unidade_id], references: [id])
+
   @@map("diretor")
 }
 
 model Ocorrencia {
-  id        String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  created_at          DateTime    @default(now()) @db.Timestamp(6)
-  updated_at          DateTime    @default(now()) @db.Timestamp(6)
-  tipo_ocorrencia   TipoOcorrencia
-  Data    DateTime?    @db.Date
-  Hora    DateTime?     @db.Time(0)
-  Descricao     String?   @db.Text
+  id              String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at      DateTime              @default(now()) @db.Timestamp(6)
+  updated_at      DateTime              @default(now()) @db.Timestamp(6)
+  data            DateTime?             @db.Date
+  hora            DateTime?             @db.Time(0)
+  local           String?
+  descricao       String?
+  tipo_id         String                @db.Uuid
+  responsavel_id  String?               @db.Uuid
+  user_id         String                @db.Uuid
+  unidade_id      String                @db.Uuid
+  anexos          AnexoOcorrencia[]
+  envolvidos      EnvolvidoOcorrencia[]
+  registro_por    ResponsavelRegistro?  @relation(fields: [responsavel_id], references: [id])
+  tipo_ocorrencia TipoOcorrencia        @relation(fields: [tipo_id], references: [id])
+  unidade_escolar UnidadeEscolar        @relation(fields: [unidade_id], references: [id])
+  user            User                  @relation(fields: [user_id], references: [id])
+
   @@map("ocorrencia")
 }
 
-model PessoaTelefone {
-  id_pessoa       String     @db.Uuid
-  id_telefone      String     @db.Uuid
-  pessoa    Pessoa  @relation(fields: [id_pessoa], references: [id], onDelete: Cascade)
-  telefone  Telefone       @relation(fields: [id_telefone], references: [id], onDelete: Cascade)
+model Envolvido {
+  id          String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nome        String
+  tipo        String
+  observacoes String?
+  ocorrencias EnvolvidoOcorrencia[]
 
-  @@id([id_pessoa, id_telefone])
-  @@index([id_pessoa])
-  @@index([id_telefone])
-  @@map("pessoa_telefone")
-} 
+  @@map("envolvido")
+}
 
-model UnidadeTelefone {
-  id_unidade       String     @db.Uuid
-  id_telefone      String     @db.Uuid
-  unidade   UnidadeEscolar @relation(fields: [id_unidade], references: [id], onDelete: Cascade)
-  telefone  Telefone       @relation(fields: [id_telefone], references: [id], onDelete: Cascade)
+model EnvolvidoOcorrencia {
+  id            String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  ocorrencia_id String?     @db.Uuid
+  envolvido_id  String?     @db.Uuid
+  papel         String
+  envolvido     Envolvido?  @relation(fields: [envolvido_id], references: [id])
+  ocorrencia    Ocorrencia? @relation(fields: [ocorrencia_id], references: [id])
 
-  @@id([id_unidade, id_telefone])
-  @@index([id_unidade])
-  @@index([id_telefone])
-  @@map("unidade_telefone")
-} 
+  @@map("envolvido_ocorrencia")
+}
+
+model AnexoOcorrencia {
+  id              String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  ocorrencia_id   String     @db.Uuid
+  caminho_arquivo String
+  tipo_arquivo    String
+  descricao       String
+  ocorrencia      Ocorrencia @relation(fields: [ocorrencia_id], references: [id])
+
+  @@map("anexo_ocorrencia")
+}
 
 model PermissionRole {
   role_id       String     @db.Uuid
@@ -196,18 +255,20 @@ model User {
   image             String?          @db.VarChar
   email_verified    DateTime?
   accounts          Account[]
+  ocorrencia        Ocorrencia[]
   refresh_token     RefreshToken[]
   sessions          Session[]
   users_permissions UserPermission[]
   users_roles       UserRole[]
+
   @@map("users")
 }
 
 model UserPermission {
   user_id       String     @db.Uuid
   permission_id String     @db.Uuid
-  permissions   Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade, map: "FK_b09b9a210c60f41ec7b453758e9")
   users         User       @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "FK_4de7d0b175f702be3be55270023")
+  permissions   Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade, map: "FK_b09b9a210c60f41ec7b453758e9")
 
   @@id([user_id, permission_id], map: "PK_7f3736984cd8546a1e418005561")
   @@index([user_id], map: "IDX_4de7d0b175f702be3be5527002")
@@ -216,10 +277,10 @@ model UserPermission {
 }
 
 model UserRole {
-  user_id         String    @db.Uuid
-  role_id         String    @db.Uuid
-  roles           Role      @relation(fields: [role_id], references: [id], onDelete: Cascade, map: "FK_1cf664021f00b9cc1ff95e17de4")
-  users           User      @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "FK_e4435209df12bc1f001e5360174")
+  user_id String @db.Uuid
+  role_id String @db.Uuid
+  roles   Role   @relation(fields: [role_id], references: [id], onDelete: Cascade, map: "FK_1cf664021f00b9cc1ff95e17de4")
+  users   User   @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "FK_e4435209df12bc1f001e5360174")
 
   @@id([user_id, role_id], map: "PK_c525e9373d63035b9919e578a9c")
   @@index([role_id], map: "IDX_1cf664021f00b9cc1ff95e17de")
@@ -275,19 +336,15 @@ model Estado {
   @@map("estado")
 }
 
+model TipoOcorrencia {
+  id         String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nome       String
+  Ocorrencia Ocorrencia[]
+
+  @@map("tipo_ocorrencia")
+}
+
 enum TipoPessoa {
   F
   J
-}
-
-enum TipoOcorrencia {
-  Roubo
-  Furto
-  Vulnerabilidade
-  Intrusao
-  Ameaca
-  UsoArma
-  PorteArma
-  DanosPatrimonio
-  AmeacaEscola
 }

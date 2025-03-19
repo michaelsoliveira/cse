@@ -14,7 +14,7 @@ export class UnidadeController {
         } catch (error: any) {
             return response.json({
                 error: true,
-                especie: null,
+                unidade: null,
                 message: error.message
             })
         }

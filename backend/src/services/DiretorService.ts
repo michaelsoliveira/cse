@@ -14,7 +14,11 @@ class DiretorService {
         const diretorExists = await prismaClient.diretor.findFirst({
             where: {
                 pessoa: {
-                    nome: data.pessoa_fisica.nome
+                    pessoaFisica: {
+                        some: {
+                            nome: data.diretor?.nome
+                        }
+                    }
                 } 
             }
         })
@@ -24,23 +28,24 @@ class DiretorService {
         }
 
         const diretor = await prismaClient.diretor.create({
-            include: {
-                pessoa: true
-            },
             data: {
+                unidade: {
+                    connect: { id: data?.unidade_id }
+                },
                 pessoa: {
                     create: {
-                        pessoa: {
+                        tipo: 'F',
+                        // telefone: data?.telefone,
+                        email: data?.email,
+                        pessoaFisica: {
                             create: {
-                                tipo: 'F',
-                                email: data?.email
+                                nome: data?.nome,
+                                rg: data?.rg,
+                                cpf: data?.cpf
                             }
-                        },
-                        nome: data?.nome,
-                        rg: data?.rg,
-                        cpf: data?.cpf
+                        }
                     }
-                },
+                }
             }
         })
 
@@ -48,23 +53,30 @@ class DiretorService {
     }
 
     async update(id: string, data: any): Promise<Diretor> {
-        await prismaClient.diretor.update({
+        const diretor = await prismaClient.diretor.update({
             where: {
                 id
             },
             data: {
+                unidade: {
+                    connect: { id: data?.unidade_id }
+                },
                 pessoa: {
                     update: {
-                        pessoa: {
+                        tipo: 'F',
+                        email: data?.email,
+                        pessoaFisica: {
                             update: {
-                                email: data?.email,
+                                data: {
+                                    nome: data?.nome
+                                },
+                                where: {
+                                    pessoa_id: data?.pessoa_id
+                                }
                             }
-                        },
-                        nome: data?.nome,
-                        rg: data?.rg,
-                        cpf: data?.cpf
-                    }
-                },
+                        }
+                    },
+                }
             }
         })
 
@@ -88,11 +100,24 @@ class DiretorService {
         let orderByTerm = {}
         const where = search
             // ? {OR: [{nome: {contains: search}}, {email: {contains: search}}]}
-            ? {OR: [{pessoa: {
-                npme: { mode: Prisma.QueryMode.insensitive, contains: search }
-            }}, {pessoa: {
-                cpf: search
-            }}]}
+            ? {OR: [
+                {
+                    pessoa: {
+                        pessoaFisica: {
+                            some: {
+                                nome: { mode: Prisma.QueryMode.insensitive, contains: search }
+                            }
+                        }
+                    }}, {
+                        pessoa: {
+                            pessoaFisica: {
+                                some: {
+                                    cpf: search
+                                }
+                            }
+                        }
+                    }
+                ]}
             : {};
         
         const orderByElement = orderBy ? orderBy.split('.') : {}
@@ -145,13 +170,14 @@ class DiretorService {
         const diretores = await prismaClient.diretor.findMany({
             where: {
                 pessoa: {
-                    nome: { mode: Prisma.QueryMode.insensitive, contains: text }
+                    pessoaFisica: {
+                        some: {
+                            nome: { mode: Prisma.QueryMode.insensitive, contains: text }
+                        }
+                    }
                 }
                 // OR: [{id: {mode: 'insensitive', contains: text}}, {uf: {mode: 'insensitive', contains: text}}]
             },
-            // orderBy: {
-            //     nome:   'asc'
-            // },
         })
 
         return diretores
