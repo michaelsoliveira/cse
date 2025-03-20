@@ -109,7 +109,7 @@ export function DataTableFilterBox({
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
@@ -144,7 +144,7 @@ export function DataTableFilterBox({
                     onSelect={resetFilter}
                     className='justify-center text-center'
                   >
-                    Clear filters
+                    Limpar filtros
                   </CommandItem>
                 </CommandGroup>
               </>

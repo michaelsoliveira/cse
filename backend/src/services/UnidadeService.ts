@@ -26,7 +26,7 @@ class UnidadeService {
             throw new Error('Já existe uma unidade escolar cadastrada com este nome')
         }
         
-        const estado = dataRequest?.endereco?.estado ? { 
+        const estado = dataRequest?.endereco?.estado_id ? { 
                 connect: { id: dataRequest?.endereco?.estado_id }
             } : {}
         
@@ -98,7 +98,7 @@ class UnidadeService {
     }
 
     async update(id: string, dataRequest: any): Promise<UnidadeEscolar> {
-        const estado = dataRequest?.endereco?.estado ? { 
+        const estado = dataRequest?.endereco?.estado_id ? { 
                 connect: { id: dataRequest?.endereco?.estado_id }
             } : {}
         

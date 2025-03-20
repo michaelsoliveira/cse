@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { notFound } from 'next/navigation';
-import UnidadeForm from './unidade-form';
+import UnidadeForm from './diretor-form';
 import { UnidadeEscolarType } from 'types';
 import { fetchWithAuth } from '@/lib/utils';
 

@@ -60,6 +60,8 @@ export interface DiretorType {
   id: string;
   pessoa_id: string;
   nome: string;
+  rg: string;
+  cpf: string;
   telefone: string;
   email: string;
   pessoa: PessoaType;

@@ -1,6 +1,6 @@
 import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as UnidadeTable } from '@/components/ui/table/data-table';
-import { columns } from './unidade-tables/columns';
+import { columns } from './diretor-tables/columns';
 import { auth } from '@/lib/auth';
 import { fetchWithAuth } from '@/lib/utils';
 

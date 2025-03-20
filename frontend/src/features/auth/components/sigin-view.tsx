@@ -24,7 +24,7 @@ export default function SignInViewPage() {
       </Link>
       <div className='relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex'>
         <div className='absolute inset-0 bg-zinc-400' />
-        <div className='flex flex-row items-center justify-between mx-10 space-x-4'>
+        <div className='flex flex-row items-center justify-between mx-24 space-x-2'>
           <div className='relative z-20 flex items-center text-lg font-medium'>
             <Image 
               src="/images/logo_unifap.png" 
@@ -51,7 +51,7 @@ export default function SignInViewPage() {
         </div>
       </div>
       <div className='flex h-full items-center p-4 lg:p-8'>
-        <div className='mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
+        <div className='mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]'>
           <div className='flex flex-col space-y-2 text-center'>
             <h1 className='text-2xl font-semibold tracking-tight'>
               Coordenadoria de Segurança Escolar
@@ -61,20 +61,20 @@ export default function SignInViewPage() {
             </p>
           </div>
           <UserAuthForm />
-          <p className='px-8 text-center text-sm text-muted-foreground'>
-            By clicking continue, you agree to our{' '}
+          <p className='px-8 text-center text-xs text-muted-foreground'>
+            Ao clicar em entrar, você está de acordo com os nossos {' '}
             <Link
               href='/terms'
               className='underline underline-offset-4 hover:text-primary'
             >
-              Terms of Service
+              Termos de Serviço
             </Link>{' '}
             and{' '}
             <Link
               href='/privacy'
               className='underline underline-offset-4 hover:text-primary'
             >
-              Privacy Policy
+              Política de Privacidade
             </Link>
             .
           </p>

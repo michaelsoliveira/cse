@@ -38,7 +38,6 @@ import { DiretorType, UnidadeEscolarType } from 'types';
 import { UnidadeFormValues, unidadeSchema } from '../utils/form-schema';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormDescription } from '@/components/ui/form';
-import UnidadeDetails from './unidade-details';
 
 export default function UnidadeForm({
   initialData,
@@ -107,11 +106,11 @@ const defaultValues = {
     pessoa_id: initialData?.pessoa_id || '',
     diretor_id: initialData?.diretor_id || '',
     diretor: {
-      nome: initialData?.diretor?.pessoa?.pessoaFisica?.nome || '',
-      rg: initialData?.diretor?.pessoa?.pessoaFisica?.rg || '',
-      cpf: initialData?.diretor?.pessoa?.pessoaFisica?.cpf || '',
-      telefone: initialData?.diretor?.pessoa?.telefone || '',
-      email: initialData?.diretor?.pessoa?.email || '',
+      nome: initialData?.diretor?.nome || '',
+      rg: initialData?.diretor?.rg || '',
+      cpf: initialData?.diretor?.cpf || '',
+      telefone: initialData?.diretor?.telefone || '',
+      email: initialData?.diretor?.email || '',
     },
     hasDiretorData: false,
     endereco: {
@@ -531,9 +530,9 @@ const defaultValues = {
                               onCheckedChange={field.onChange}
                             />
                           </FormControl>
-                          <div className="space-y-2 leading-4">
+                          <div className="space-y-1 leading-none">
                             <FormLabel>
-                              {initialData?.id ? 'Editar Diretor' : 'Cadastrar Diretor'}
+                              Cadastrar um Diretor
                             </FormLabel>
                             <FormDescription>
                               Permite vincular ou cadastrar o diretor da unidade escolar neste mesmo formulário
@@ -657,9 +656,6 @@ const defaultValues = {
                 </>
               )}
             </div>
-            {currentStep === 2 && (
-              <UnidadeDetails data={form.getValues()} />
-            ) }
             {(currentStep === steps.length - 1) && (
               <div className='flex flex-row w-full justify-center'>
                 <Button 
