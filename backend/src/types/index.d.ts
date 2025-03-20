@@ -15,9 +15,9 @@ export const pessoa_type: {
     id: string
     created_at: string
     updated_at: string
-    id_pessoa: string
-    id_endereco: any
-    id_diretor: string
+    pessoa_id: string
+    endereco_id: any
+    diretor_id: string
     pessoa: Pessoa
     diretor: Diretor
   }
@@ -32,12 +32,12 @@ export const pessoa_type: {
     inscricao_federal: any
     cnpj: any
     data_constituicao: any
-    id_pessoa: string
+    pessoa_id: string
   }
   
   export interface DiretorType {
     id: string
-    id_pessoa: string
+    pessoa_id: string
     pessoa: PessoaFisicaType
   }
   
@@ -49,6 +49,6 @@ export const pessoa_type: {
     rg: string
     cpf: string
     data_nascimento: any
-    id_pessoa: string
+    pessoa_id: string
   }
   

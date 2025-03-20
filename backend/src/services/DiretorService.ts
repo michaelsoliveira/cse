@@ -15,9 +15,7 @@ class DiretorService {
             where: {
                 pessoa: {
                     pessoaFisica: {
-                        some: {
-                            nome: data.diretor?.nome
-                        }
+                        nome: data?.nome
                     }
                 } 
             }
@@ -28,6 +26,13 @@ class DiretorService {
         }
 
         const diretor = await prismaClient.diretor.create({
+            include: {
+                pessoa: {
+                    include: {
+                        pessoaFisica: true
+                    }
+                }
+            },
             data: {
                 unidade: {
                     connect: { id: data?.unidade_id }
@@ -35,13 +40,14 @@ class DiretorService {
                 pessoa: {
                     create: {
                         tipo: 'F',
-                        // telefone: data?.telefone,
+                        telefone: data?.telefone,
                         email: data?.email,
                         pessoaFisica: {
                             create: {
                                 nome: data?.nome,
                                 rg: data?.rg,
-                                cpf: data?.cpf
+                                cpf: data?.cpf,
+                                data_nascimento: data?.data_nascimento
                             }
                         }
                     }
@@ -54,6 +60,13 @@ class DiretorService {
 
     async update(id: string, data: any): Promise<Diretor> {
         const diretor = await prismaClient.diretor.update({
+            include: {
+                pessoa: {
+                    include: {
+                        pessoaFisica: true
+                    }
+                }
+            },
             where: {
                 id
             },
@@ -65,10 +78,14 @@ class DiretorService {
                     update: {
                         tipo: 'F',
                         email: data?.email,
+                        telefone: data?.telefone,
                         pessoaFisica: {
                             update: {
                                 data: {
-                                    nome: data?.nome
+                                    nome: data?.nome,
+                                    rg: data?.rg,
+                                    cpf: data?.cpf,
+                                    data_nascimento: data?.data_nascimento
                                 },
                                 where: {
                                     pessoa_id: data?.pessoa_id
@@ -80,7 +97,7 @@ class DiretorService {
             }
         })
 
-        return this.findById(id)
+        return diretor
     }
 
     async delete(id: string): Promise<void> {
@@ -97,52 +114,43 @@ class DiretorService {
     async getAll(query?: any): Promise<any> {
         const { perPage, page, search, orderBy, order } = query
         const skip = (page - 1) * perPage
-        let orderByTerm = {}
+        
         const where = search
             // ? {OR: [{nome: {contains: search}}, {email: {contains: search}}]}
             ? {OR: [
                 {
                     pessoa: {
                         pessoaFisica: {
-                            some: {
                                 nome: { mode: Prisma.QueryMode.insensitive, contains: search }
-                            }
                         }
                     }}, {
                         pessoa: {
                             pessoaFisica: {
-                                some: {
-                                    cpf: search
-                                }
+                                cpf: search
                             }
                         }
                     }
                 ]}
             : {};
         
-        const orderByElement = orderBy ? orderBy.split('.') : {}
-        
-        if (orderByElement.length == 2) {
-            orderByTerm = {
-                [orderByElement[1]]: order
-            }
-        } else {
-            orderByTerm = {
-                [orderByElement]: order
-            }
-        }
+        const orderByElement: Array<string> = orderBy ? orderBy?.split('.') : {}
+        const orderByTerm = orderByElement?.length > 0 
+            ? orderByElement?.reverse().reduce((acc, key) => ({ [key]: acc }), order) 
+            : {}
         
         const [diretores, total] = await prismaClient.$transaction([
             prismaClient.diretor.findMany({
                 include: {
-                    pessoa: true
+                    pessoa: {
+                        include: {
+                            pessoaFisica: true
+                        }
+                    }
                 },
                 where,
                 take: perPage ? parseInt(perPage) : 50,
                 skip: skip ? skip : 0,
-                orderBy: {
-                    ...orderByTerm
-                },
+                orderBy: orderByTerm,
             }),
             prismaClient.diretor.count({where})
         ])
@@ -171,12 +179,9 @@ class DiretorService {
             where: {
                 pessoa: {
                     pessoaFisica: {
-                        some: {
-                            nome: { mode: Prisma.QueryMode.insensitive, contains: text }
-                        }
+                        nome: { mode: Prisma.QueryMode.insensitive, contains: text }
                     }
                 }
-                // OR: [{id: {mode: 'insensitive', contains: text}}, {uf: {mode: 'insensitive', contains: text}}]
             },
         })
 

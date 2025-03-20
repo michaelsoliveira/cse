@@ -60,12 +60,12 @@ export class UnidadeController {
 
     async findAll(request: Request, response: Response) {
         try {
-            const { data, perPage, page, orderBy, order, skip, count } = await unidadeService.getAll(request.query)
+            const { data, limit, page, orderBy, order, skip, count } = await unidadeService.getAll(request.query)
             
             return response.json({
                 error: false,
                 unidades: data,
-                perPage,
+                limit,
                 page,
                 skip,
                 orderBy,

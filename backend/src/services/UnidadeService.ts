@@ -1,130 +1,170 @@
-import { Prisma, UnidadeEscolar } from "@prisma/client";
+import { Prisma, TipoPessoa, UnidadeEscolar } from "@prisma/client";
 import { prismaClient } from "../database/prismaClient";
+import { OrderByTerm } from "../utils";
 
 export interface UnidadeType {
     pessoa_juridica: {
         nome_fantasia: string
     };
-    id_diretor: string;
+    diretor_id: string;
 }
 
 class UnidadeService {
-    async create(data: any): Promise<UnidadeEscolar> {
+    async create(dataRequest: any): Promise<UnidadeEscolar> {
         
         const unidadeExists = await prismaClient.unidadeEscolar.findFirst({
             where: {
                 pessoa: {
                     pessoaJuridica: {
-                        some: {
-                            nome_fantasia: data?.nome
-                        }
+                        nome_fantasia: dataRequest?.nome
                     }
                 }
             }
         })
 
         if (unidadeExists) {
-            throw new Error('Já existe uma unidade escolar cadastrada com este nome ou UF')
+            throw new Error('Já existe uma unidade escolar cadastrada com este nome')
         }
-
-        const unidadeEscolar = !data?.hasDiretorData ? await prismaClient.unidadeEscolar.create({
-            include: {
-                pessoa: true,
-                diretor: true
-            },
-            data: { 
-                diretor: {
-                    connect: {
-                        id: data?.id_diretor
-                    }
-                },
+        
+        const estado = dataRequest?.endereco?.estado ? { 
+                connect: { id: dataRequest?.endereco?.estado_id }
+            } : {}
+        
+        const diretor = dataRequest?.hasDiretorData ? {
+            create: {
                 pessoa: {
                     create: {
-                        tipo: 'J',
-                        email: data?.email,
-                        pessoaJuridica: {
+                        tipo: TipoPessoa.F,
+                        email: dataRequest?.diretor?.email,
+                        telefone: dataRequest?.diretor?.telefone,
+                        pessoaFisica: {
                             create: {
-                                nome_fantasia: data?.nome
-                            }
-                        },
-                        endereco: {
-                            create: {
-                                cep: data?.endereco?.cep,
-                                logradouro: data?.endereco?.logradouro,
-                                municipio: data?.endereco?.municipio,
-                                numero: data?.endereco?.numero,
-                                bairro: data?.endereco.bairro,
-                                estado_id: data?.endereco?.estado
+                                nome: dataRequest?.diretor?.nome,
+                                rg: dataRequest?.diretor?.rg,
+                                cpf: dataRequest?.diretor?.cpf
                             }
                         }
                     }
                 }
             }
-        }) : await prismaClient.unidadeEscolar.create({
-            include: {
-                pessoa: true,
-                diretor: true
-            },
-            data: { 
-                diretor: {
-                    create: {
-                        pessoa: {
-                            create: {
-                                tipo: 'F',
-                                email: data?.diretor?.email,
-                                telefone: data?.diretor?.telefone,
-                                pessoaFisica: {
-                                    create: {
-                                        nome: data?.diretor.nome,
-                                        rg: data?.diretor.rg,
-                                        cpf: data?.diretor.cpf
-                                    }
-                                }
-                            }
+        } : {
+            connect: {
+                id: dataRequest?.diretor_id
+            }
+        }
+        
+        const data = { 
+            inep: dataRequest?.inep,
+            zona: dataRequest?.zona,
+            diretor,
+            pessoa: {
+                create: {
+                    tipo: TipoPessoa.J,
+                    email: dataRequest?.email,
+                    telefone: dataRequest?.telefone,
+                    pessoaJuridica: {
+                        create: {
+                            nome_fantasia: dataRequest?.nome
                         }
-                    }
-                },
-                pessoa: {
-                    create: {
-                        tipo: 'J',
-                        email: data?.email,
-                        telefone: data?.telefone,
-                        pessoaJuridica: {
-                            create: {
-                                nome_fantasia: data?.nome
-                            }
-                        },
-                        endereco: {
-                            create: {
-                                cep: data?.endereco?.cep,
-                                logradouro: data?.endereco?.logradouro,
-                                municipio: data?.endereco?.municipio,
-                                numero: data?.endereco?.numero,
-                                bairro: data?.endereco?.bairro,
-                                estado_id: data?.endereco?.estado
-                            }
+                    },
+                    endereco: {
+                        create: {
+                            cep: dataRequest?.endereco?.cep,
+                            logradouro: dataRequest?.endereco?.logradouro,
+                            municipio: dataRequest?.endereco?.municipio,
+                            numero: dataRequest?.endereco?.numero,
+                            bairro: dataRequest?.endereco?.bairro,
+                            estado
                         }
                     }
                 }
             }
-        });
-
-        // if (data?.telefones?.lenght > 0) {
-        //     await prismaClient.pessoaTelefone.createMany({
-        //         data: data?.telefones?.map((tel: any) => {
-        //             return {
-        //                 ddd: tel.ddd,
-        //                 numero: tel.numero,
-        //                 pessoa_id: unidadeEscolar.pessoa_id
-        //             }
-        //         }),
-        //     })
-        // }
+        }
+        
+        const unidadeEscolar = await prismaClient.unidadeEscolar.create({
+            include: {
+                pessoa: {
+                    include: {
+                        pessoaJuridica: true,
+                        endereco: true
+                    }
+                },
+                diretor: true
+            },
+            data
+        })
 
         return unidadeEscolar
     }
 
-    async update(id: string, data: any): Promise<UnidadeEscolar> {
+    async update(id: string, dataRequest: any): Promise<UnidadeEscolar> {
+        const estado = dataRequest?.endereco?.estado ? { 
+                connect: { id: dataRequest?.endereco?.estado_id }
+            } : {}
+        
+        const diretor = dataRequest?.hasDiretorData ? {
+            update: {
+                pessoa: {
+                    update: {
+                        tipo: TipoPessoa.F,
+                        email: dataRequest?.diretor?.email,
+                        telefone: dataRequest?.diretor?.telefone,
+                        pessoaFisica: {
+                            update: {
+                                nome: dataRequest?.diretor?.nome,
+                                rg: dataRequest?.diretor?.rg,
+                                cpf: dataRequest?.diretor?.cpf
+                            }
+                        }
+                    }
+                }
+            }
+        } : {
+            connect: {
+                id: dataRequest?.diretor_id
+            }
+        }
+        
+        const data = { 
+            inep: dataRequest?.inep,
+            zona: dataRequest?.zona,
+            diretor,
+            pessoa: {
+                update: {
+                    tipo: TipoPessoa.J,
+                    email: dataRequest?.email,
+                    telefone: dataRequest?.telefone,
+                    pessoaJuridica: {
+                        update: {
+                            nome_fantasia: dataRequest?.nome
+                        }
+                    },
+                    endereco: {
+                        upsert: {
+                            where: {
+                                id: dataRequest?.pessoa?.endereco_id
+                            },
+                            update: {
+                                cep: dataRequest?.endereco?.cep,
+                                logradouro: dataRequest?.endereco?.logradouro,
+                                municipio: dataRequest?.endereco?.municipio,
+                                numero: dataRequest?.endereco?.numero,
+                                bairro: dataRequest?.endereco?.bairro,
+                                estado
+                            },
+                            create: {
+                                cep: dataRequest?.endereco?.cep,
+                                logradouro: dataRequest?.endereco?.logradouro,
+                                municipio: dataRequest?.endereco?.municipio,
+                                numero: dataRequest?.endereco?.numero,
+                                bairro: dataRequest?.endereco?.bairro,
+                                estado
+                            }
+                        }
+                    }
+                    }
+            }
+        }
         await prismaClient.unidadeEscolar.update({
             where: {
                 id
@@ -147,63 +187,74 @@ class UnidadeService {
     }
 
     async getAll(query?: any): Promise<any> {
-        const { perPage, page, search, orderBy, order } = query
-        const skip = (page - 1) * perPage
-        let orderByTerm = {}
-        const where = search ? 
+        const { limit, page, search, orderBy, order, zonas: zonasQuery, municipio } = query
+        const zonas = zonasQuery?.split('.')
+        const skip = (page - 1) * limit
+        
+        const wherePrepared = search ? 
             {
                 OR: [{pessoa: {
                     pessoaJuridica: {
-                        some: {
-                            nome_fantasia: { mode: Prisma.QueryMode.insensitive, contains: search }
-                        }
+                        nome_fantasia: { mode: Prisma.QueryMode.insensitive, contains: search }
                     }
                 }},
                 {pessoa: {
                     pessoaJuridica: {
-                        some: {
-                            razao_social: { mode: Prisma.QueryMode.insensitive, contains: search }
-                        }
+                        razao_social: { mode: Prisma.QueryMode.insensitive, contains: search }
                     }
                 }}]
             }
             : {};
         
-        const orderByElement = orderBy ? orderBy.split('.') : {}
-        
-        if (orderByElement.length == 2) {
-            orderByTerm = {
-                [orderByElement[1]]: order
-            }
-        } else {
-            orderByTerm = {
-                [orderByElement]: order
-            }
+        const where 
+        = zonas ? {
+            AND: [
+                {...wherePrepared},
+                {
+                    zona: {
+                        in: zonas
+                    }
+                }
+            ]
+        } : {
+            ...wherePrepared
         }
+        
+        const orderByElement: Array<string> = orderBy ? orderBy?.split('.') : []
+    const orderByTerm = orderByElement?.length > 0 
+        ? orderByElement?.reverse().reduce((acc: any, key) => ({ [key]: acc }), order) 
+        : {}
         
         const [unidades, total] = await prismaClient.$transaction([
             prismaClient.unidadeEscolar.findMany({
                 include: {
-                    pessoa: true,
+                    pessoa: {
+                        include: {
+                            endereco: true,
+                            pessoaJuridica: true
+                        }
+                    },
                     diretor: {
                         include: {
-                            pessoa: true
+                            pessoa: {
+                                include: {
+                                    pessoaFisica: true
+                                }
+                            }
                         }
                     }
                 },
                 where,
-                take: perPage ? parseInt(perPage) : 50,
+                take: limit ? parseInt(limit) : 50,
                 skip: skip ? skip : 0,
-                orderBy: {
-                    ...orderByTerm
-                },
+                orderBy: orderByTerm,
             }),
             prismaClient.unidadeEscolar.count({where})
         ])
 
         return {
             data: unidades,
-            perPage,
+            limit,
             page,
             skip,
             count: total,
@@ -225,9 +276,7 @@ class UnidadeService {
             where: {
                 pessoa: {
                     pessoaJuridica: { 
-                        some: {
-                            nome_fantasia: { mode: Prisma.QueryMode.insensitive, contains: text }
-                        }
+                        nome_fantasia: { mode: Prisma.QueryMode.insensitive, contains: text }
                      }
                 }
             },
@@ -237,7 +286,26 @@ class UnidadeService {
     }
 
     async findById(id: string) : Promise<any> {
-        const unidade = await prismaClient.unidadeEscolar.findUnique({ where: { id } })
+        const unidade = await prismaClient.unidadeEscolar.findUnique({ 
+            include: {
+                pessoa: {
+                    include: {
+                        endereco: true,
+                        pessoaJuridica: true
+                    }
+                },
+                diretor: {
+                    include: {
+                        pessoa: {
+                            include: {
+                                pessoaFisica: true
+                            }
+                        }
+                    }
+                }
+            },
+            where: { id } 
+        })
 
         return unidade
     }

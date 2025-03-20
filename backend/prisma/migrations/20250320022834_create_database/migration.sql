@@ -2,6 +2,9 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- CreateEnum
+CREATE TYPE "ZonaUnidade" AS ENUM ('rural', 'urbana');
+
+-- CreateEnum
 CREATE TYPE "TipoPessoa" AS ENUM ('F', 'J');
 
 -- CreateTable
@@ -76,8 +79,10 @@ CREATE TABLE "unidade_escolar" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "zona" "ZonaUnidade" NOT NULL DEFAULT 'urbana',
     "inep" INTEGER,
     "pessoa_id" UUID,
+    "diretor_id" UUID,
 
     CONSTRAINT "unidade_escolar_pkey" PRIMARY KEY ("id")
 );
@@ -98,7 +103,6 @@ CREATE TABLE "responsavel_registro" (
 CREATE TABLE "diretor" (
     "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "pessoa_id" UUID,
-    "unidade_id" UUID NOT NULL,
 
     CONSTRAINT "diretor_pkey" PRIMARY KEY ("id")
 );
@@ -268,6 +272,9 @@ CREATE TABLE "tipo_ocorrencia" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "pessoa_fisica_cpf_key" ON "pessoa_fisica"("cpf");
+
+-- CreateIndex
 CREATE INDEX "IDX_3309f5fa8d95935f0701027f2b" ON "permissions_roles"("permission_id");
 
 -- CreateIndex
@@ -313,6 +320,9 @@ ALTER TABLE "pessoa_juridica" ADD CONSTRAINT "pessoa_juridica_pessoa_id_fkey" FO
 ALTER TABLE "endereco" ADD CONSTRAINT "endereco_estado_id_fkey" FOREIGN KEY ("estado_id") REFERENCES "estado"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "unidade_escolar" ADD CONSTRAINT "unidade_escolar_diretor_id_fkey" FOREIGN KEY ("diretor_id") REFERENCES "diretor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "unidade_escolar" ADD CONSTRAINT "unidade_escolar_pessoa_id_fkey" FOREIGN KEY ("pessoa_id") REFERENCES "pessoa"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -320,9 +330,6 @@ ALTER TABLE "responsavel_registro" ADD CONSTRAINT "responsavel_registro_unidade_
 
 -- AddForeignKey
 ALTER TABLE "diretor" ADD CONSTRAINT "diretor_pessoa_id_fkey" FOREIGN KEY ("pessoa_id") REFERENCES "pessoa"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
-ALTER TABLE "diretor" ADD CONSTRAINT "diretor_unidade_id_fkey" FOREIGN KEY ("unidade_id") REFERENCES "unidade_escolar"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ocorrencia" ADD CONSTRAINT "ocorrencia_responsavel_id_fkey" FOREIGN KEY ("responsavel_id") REFERENCES "responsavel_registro"("id") ON DELETE SET NULL ON UPDATE CASCADE;

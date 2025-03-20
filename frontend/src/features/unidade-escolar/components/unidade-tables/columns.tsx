@@ -1,44 +1,28 @@
 'use client';
-import { Product } from '@/constants/data';
+// import { Product } from '@/constants/data';
 import { ColumnDef } from '@tanstack/react-table';
-import Image from 'next/image';
 import { CellAction } from './cell-action';
+import { UnidadeEscolarType } from 'types';
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<UnidadeEscolarType>[] = [
   {
-    accessorKey: 'photo_url',
-    header: 'IMAGE',
-    cell: ({ row }) => {
-      return (
-        <div className='relative aspect-square'>
-          <Image
-            src={row.getValue('photo_url')}
-            alt={row.getValue('name')}
-            fill
-            className='rounded-lg'
-          />
-        </div>
-      );
-    }
+    accessorKey: 'inep',
+    header: 'Cod. INEP'
   },
   {
-    accessorKey: 'name',
-    header: 'NAME'
+    accessorKey: 'pessoa.pessoaJuridica.nome_fantasia',
+    header: 'Escola'
   },
   {
-    accessorKey: 'category',
-    header: 'CATEGORY'
+    accessorKey: 'diretor.pessoa.pessoaFisica.nome',
+    header: 'Diretor'
   },
   {
-    accessorKey: 'price',
-    header: 'PRICE'
+    accessorKey: 'pessoa.endereco.municipio',
+    header: 'Município'
   },
   {
-    accessorKey: 'description',
-    header: 'DESCRIPTION'
-  },
-
-  {
+    header: 'Ações',
     id: 'actions',
     cell: ({ row }) => <CellAction data={row.original} />
   }

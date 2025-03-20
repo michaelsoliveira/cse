@@ -81,12 +81,13 @@ routes.get('/unidade/', Authentication(), new UnidadeController().findAll)
 routes.get('/unidade/:id', Authentication(), new UnidadeController().findOne)
 routes.get('/unidade/search/q', Authentication(), new UnidadeController().search)
 routes.post('/unidade', Authentication(), new UnidadeController().store)
+routes.put('/unidade/:id', Authentication(), new UnidadeController().update)
 
 //Unidades Escolares
 routes.get('/diretor/', Authentication(), new DiretorController().findAll)
 routes.get('/diretor/:id', Authentication(), new DiretorController().findOne)
 routes.get('/diretor/search/q', Authentication(), new DiretorController().search)
-
-const multerConfig = multer()
+routes.post('/diretor', Authentication(), new DiretorController().store)
+routes.put('/diretor/:id', Authentication(), new DiretorController().update)
 
 export default routes;

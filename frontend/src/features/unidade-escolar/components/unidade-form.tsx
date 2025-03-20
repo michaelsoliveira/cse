@@ -16,14 +16,13 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue
-// } from '@/components/ui/select';
-// import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -55,7 +54,7 @@ export default function ProductForm({
   const loadData = useCallback(async () => {
     if (typeof session !== typeof undefined) {
       const responseDiretores = await client.get('/diretor')
-      const responseEstados = await client.get('/estado')
+      const responseEstados = await client.get('/estado?orderBy=nome&order=asc')
 
       // Promise.all([responseDiretores, responseEstados]).then((res) => {
       //   console.log(res)
@@ -74,7 +73,7 @@ export default function ProductForm({
   function getDiretoresOptions() : OptionType[] {
       return diretores?.map((diretor: any) => {
           return {
-              label: diretor?.pessoa?.nome,
+              label: diretor?.pessoa?.pessoaFisica?.nome,
               value: diretor?.id
           }
       })
@@ -84,40 +83,47 @@ export default function ProductForm({
     return getDiretoresOptions().find((option) => option.value === id)
   }
 
-  function getEstadosOptions() : OptionType[] {
-    return estados?.map((estado: any) => {
+  const optionsEstados : OptionType[] = estados?.map((estado: any) => {
         return {
             label: estado?.uf,
             value: estado?.id
         }
     })
-}
 
-function getSelectedEstado(estado: string | null) {
-  return getEstadosOptions().find((option) => option.value === estado)
+
+function getSelectedEstado(estado_id: string | null) {
+  return optionsEstados?.find((option) => option.value === estado_id)
 }
 
 const defaultValues = {
-    nome: initialData?.nome || '',
-    id_pessoa: initialData?.id_pessoa || '',
-    id_diretor: initialData?.id_diretor || '',
+    nome: initialData?.pessoa?.pessoaJuridica?.nome_fantasia || '',
+    inep: initialData?.inep || '',
+    zona: initialData?.zona || 'urbana',
+    telefone: initialData?.pessoa?.telefone || '',
+    email: initialData?.pessoa?.email || '',
+    pessoa_id: initialData?.pessoa_id || '',
+    diretor_id: initialData?.diretor_id || '',
+    diretor: {
+      nome: initialData?.diretor?.nome || '',
+      telefone: initialData?.diretor?.telefone || '',
+      email: initialData?.diretor?.email || '',
+    },
     hasDiretorData: false,
     endereco: {
-      logradouro: initialData?.endereco?.logradouro || '',
-      numero: initialData?.endereco?.numero || '',
-      complemento: initialData?.endereco?.complemento || '',
-      bairro: initialData?.endereco?.bairro || '',
-      municipio: initialData?.endereco?.municipio || '',
-      estado: initialData?.endereco?.estado || '',
-      cep: initialData?.endereco?.cep || ''
-    },
-    telefones: []
+      logradouro: initialData?.pessoa?.endereco?.logradouro || '',
+      numero: initialData?.pessoa?.endereco?.numero || '',
+      complemento: initialData?.pessoa?.endereco?.complemento || '',
+      bairro: initialData?.pessoa?.endereco?.bairro || '',
+      municipio: initialData?.pessoa?.endereco?.municipio || '',
+      estado_id: initialData?.pessoa?.endereco?.estado_id || '',
+      cep: initialData?.pessoa?.endereco?.cep || ''
+    }
   }
 
   const form = useForm<UnidadeFormValues>({
     resolver: zodResolver(unidadeSchema),
     defaultValues,
-    mode: 'all'
+    mode: 'onChange'
   });
 
   const {
@@ -130,15 +136,22 @@ const defaultValues = {
   type FieldName = keyof UnidadeFormValues;
 
   async function onSubmit(data: UnidadeFormValues) {
-    await client.post('/unidade', data).then((res: any) => {
-      const { error, message } = res.data
+    try {
+      const response = initialData?.id 
+          ? await client.put(`/unidade/${initialData?.id}`, data) 
+          : await client.post('/unidade', data)
+      const { error, message } = response.data
       if (!error) {
         toast.success(message)
         router.push('/dashboard/unidade-escolar')
+      } else {
+        console.log(message)
+        toast.error(message)
       }
-    }).catch((error: any) => {
+    } catch(error: any) {
+      console.log(error?.message)
       toast.error(error?.message)
-    })
+    }
   }
 
   const next = async () => {
@@ -151,9 +164,9 @@ const defaultValues = {
     if (!output) return;
 
     if (currentStep < steps.length - 1) {
-      if (currentStep === steps.length - 2) {
-        await form.handleSubmit(processForm)();
-      }
+      // if (currentStep === steps.length - 2) {
+      //   await form.handleSubmit(processForm)();
+      // }
       setPreviousStep(currentStep);
       setCurrentStep((step) => step + 1);
     }
@@ -168,44 +181,37 @@ const defaultValues = {
 
   const hasDiretorData = useWatch({ control, name: 'hasDiretorData' })
 
-  const { append, remove, fields } = useFieldArray({
-      control,
-      name: 'telefones'
-    });
+  // const { append, remove, fields } = useFieldArray({
+  //     control,
+  //     name: 'telefones'
+  //   });
 
   const steps = [
     {
       id: 'Etapa 1',
       name: 'Informações Básicas',
-      fields: ['nome', 'endereco.logradouro', 'endereco.complemento', 'endereco.bairro', 'endereco.municipio', 'endereco.estado', 'endereco.cep']
+      fields: ['nome', 'email', 'telefone', 'endereco.logradouro', 'endereco.complemento', 'endereco.bairro', 'endereco.municipio', 'endereco.estado_id', 'endereco.cep']
     },
     {
       id: 'Etapa 2',
       name: 'Informações da Direção',
       // fields are mapping and flattening for the error to be trigger  for the dynamic fields
-      fields: ['diretor.nome', 'diretor.email']
+      fields: ['diretor.nome', 'diretor.email', 'diretor.telefone']
     },
-    {
-      id: 'Etapa 3',
-      name: 'Contatos',
-      // fields are mapping and flattening for the error to be trigger  for the dynamic fields
-      fields: fields
-        ?.map((_: any, index: number) => [
-          `telefones.${index}.ddd`,
-          `telefones.${index}.numero`,
-          // Add other field names as needed
-        ])
-        .flat()
-    },
-    { id: 'Etapa 4', name: 'Completo' }
+    // {
+    //   id: 'Etapa 3',
+    //   name: 'Contatos',
+    //   // fields are mapping and flattening for the error to be trigger  for the dynamic fields
+    //   fields: fields
+    //     ?.map((_: any, index: number) => [
+    //       `telefones.${index}.ddd`,
+    //       `telefones.${index}.numero`,
+    //       // Add other field names as needed
+    //     ])
+    //     .flat()
+    // },
+    { id: 'Etapa 3', name: 'Completo' }
   ];
-
-  const processForm: SubmitHandler<UnidadeFormValues> = (data: any) => {
-      console.log('data ==>', data);
-      // setData(data);
-      // api call and reset
-      // form.reset();
-    };
 
   return (
     <Card className='mx-auto w-full'>
@@ -276,12 +282,106 @@ const defaultValues = {
                   )}
                 />
               </div>
-              <div>
+              <FormField
+                control={form.control}
+                name='inep'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Código INEP</FormLabel>
+                    <FormControl>
+                      <Input type='number' placeholder='Entre com o código INEP' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='zona'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Zona</FormLabel>
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            defaultValue={field.value}
+                            placeholder='Selecione a Zona'
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {/* @ts-ignore  */}
+                        {["urbana", "rural"].map((zona, idx) => (
+                          <SelectItem key={idx} value={zona}>
+                            {zona}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className='col-span-2'>
+              <FormField
+                control={form.control}
+                name='email'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Institucional</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               </div>
+              <FormField
+                control={form.control}
+                name='telefone'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Telefone Principal</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className='col-span-4'>
                 <span className='text-md'>Endereço</span>
                 <Separator />
               </div>
+              <FormField
+                control={form.control}
+                name='endereco.cep'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CEP</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className='col-span-2'>
                 <FormField
                   control={form.control}
@@ -369,37 +469,40 @@ const defaultValues = {
                 )}
               />
               </div>
-              <div className='md:col-span-2'>
               <FormField
                 control={form.control}
-                name='endereco.cep'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CEP</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              </div>
-              <FormField
-                control={form.control}
-                name='endereco.estado'
+                name='endereco.estado_id'
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>UF</FormLabel>
-                    <SelectSearchable 
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder='Selecione um Estado'
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                        {optionsEstados.map((estado: OptionType) => (
+                          <SelectItem key={estado.value!} value={estado.value!}>
+                            {estado.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {/* <SelectSearchable 
                       callback={(e) => { form.setValue('endereco.estado', e.value) }} 
-                      options={getEstadosOptions()} 
+                      options={optionsEstados()} 
                       field={getSelectedEstado(field.value)} 
                       placeholder="Estado"
                       selectStyle="w-[200px]"
-                    />
+                    /> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -409,7 +512,7 @@ const defaultValues = {
               {currentStep === 1 && (
                 <>
                 <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
-                  <div className='mb-4'>
+                  <div className='mb-4 col-span-2'>
                     <FormField
                       control={form.control}
                       name="hasDiretorData"
@@ -433,17 +536,17 @@ const defaultValues = {
                       )}
                     />
                   </div>
-                  <div className='col-span-2'></div>
+                  <div className='col-span-2 md:col-span-3'><Separator /></div>
                 {!hasDiretorData ? (
                   <>
                     <FormField
                       control={form.control}
-                      name='id_diretor'
+                      name='diretor_id'
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
                           <FormLabel>Diretor</FormLabel>
                           <SelectSearchable 
-                            callback={(e) => { form.setValue('id_diretor', e.value) }} 
+                            callback={(e) => { form.setValue('diretor_id', e.value) }} 
                             options={getDiretoresOptions()} 
                             field={getSelectedDiretor(field.value)} 
                             placeholder="Selecione um Diretor..."
@@ -457,7 +560,8 @@ const defaultValues = {
 
                 ): (
                   <>
-                  <FormField
+                  <div className='col-span-2'>
+                    <FormField
                       control={form.control}
                       name='diretor.nome'
                       render={({ field }) => (
@@ -473,6 +577,7 @@ const defaultValues = {
                         </FormItem>
                       )}
                     />
+                    </div>
                     <FormField
                       control={form.control}
                       name='diretor.email'
@@ -490,6 +595,22 @@ const defaultValues = {
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={form.control}
+                      name='diretor.telefone'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Telefone</FormLabel>
+                          <FormControl>
+                            <Input
+                              disabled={loading}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </>
                 )}
                 </div>
@@ -497,7 +618,10 @@ const defaultValues = {
               )}
             </div>
             {(currentStep === steps.length - 1) && (
-                <Button onClick={form.handleSubmit(processForm)} className="mt-4">Salvar</Button>
+                <Button 
+                // onClick={form.handleSubmit(processForm)} 
+                type='submit'
+                className="mt-4">Salvar</Button>
             )}
           </form>
         </Form>

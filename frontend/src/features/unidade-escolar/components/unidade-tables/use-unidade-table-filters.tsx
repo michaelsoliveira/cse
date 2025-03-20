@@ -4,15 +4,9 @@ import { searchParams } from '@/lib/searchparams';
 import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 
-export const CATEGORY_OPTIONS = [
-  { value: 'Electronics', label: 'Electronics' },
-  { value: 'Furniture', label: 'Furniture' },
-  { value: 'Clothing', label: 'Clothing' },
-  { value: 'Toys', label: 'Toys' },
-  { value: 'Groceries', label: 'Groceries' },
-  { value: 'Books', label: 'Books' },
-  { value: 'Jewelry', label: 'Jewelry' },
-  { value: 'Beauty Products', label: 'Beauty Products' }
+export const ZONA_OPTIONS = [
+  { value: 'Rural', label: 'Rural' },
+  { value: 'Urbana', label: 'Urbana' }
 ];
 export function useUnidadeTableFilters() {
   const [searchQuery, setSearchQuery] = useQueryState(
@@ -22,9 +16,9 @@ export function useUnidadeTableFilters() {
       .withDefault('')
   );
 
-  const [categoriesFilter, setCategoriesFilter] = useQueryState(
-    'categories',
-    searchParams.categories.withOptions({ shallow: false }).withDefault('')
+  const [zonasFilter, setZonasFilter] = useQueryState(
+    'zonas',
+    searchParams.zonas.withOptions({ shallow: false }).withDefault('')
   );
 
   const [page, setPage] = useQueryState(
@@ -34,14 +28,14 @@ export function useUnidadeTableFilters() {
 
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
-    setCategoriesFilter(null);
+    setZonasFilter(null);
 
     setPage(1);
-  }, [setSearchQuery, setCategoriesFilter, setPage]);
+  }, [setSearchQuery, setZonasFilter, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery || !!categoriesFilter;
-  }, [searchQuery, categoriesFilter]);
+    return !!searchQuery || !!zonasFilter;
+  }, [searchQuery, zonasFilter]);
 
   return {
     searchQuery,
@@ -50,7 +44,7 @@ export function useUnidadeTableFilters() {
     setPage,
     resetFilters,
     isAnyFilterActive,
-    categoriesFilter,
-    setCategoriesFilter
+    zonasFilter,
+    setZonasFilter
   };
 }

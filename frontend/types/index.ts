@@ -10,15 +10,19 @@ export interface EnderecoType {
   municipio?: string | null;
   complemento?: string | null;
   bairro?: string | null;
-  estado: string;
+  estado_id: string;
+  numero_endereco?: string | null;
 }
 
 export interface PessoaType {
   id: string;
   tipo: "F" | "J";
-  numero_endereco?: string | null;
-  id_endereco?: string | null;
+  telefone?: string;
+  email?: string;
+  endereco_id?: string | null;
   endereco?: EnderecoType;
+  pessoaFisica?: PessoaFisicaType;
+  pessoaJuridica?: PessoaJuridicaType;
 }
 
 export interface TelefoneType {
@@ -30,14 +34,13 @@ export interface UnidadeEscolarType {
   id?: string
   created_at?: string | null;
   updated_at?: string | null;
-  nome: string;
-  endereco?: EnderecoType;
+  inep: number | null;
+  zona: string;
   hasDiretorData: boolean;
-  id_pessoa: string;
-  id_diretor: string;
-  pessoa?: PessoaJuridicaType;
+  pessoa_id: string;
+  diretor_id: string;
+  pessoa?: PessoaType;
   diretor?: DiretorType;
-  telefones: TelefoneType[]
 }
 
 export interface PessoaJuridicaType {
@@ -50,15 +53,16 @@ export interface PessoaJuridicaType {
   inscricao_federal: string | null;
   cnpj: string;
   data_constituicao?: string | null;
-  id_pessoa: string;
-  pessoa: PessoaType;
+  pessoa_id: string;
 }
 
 export interface DiretorType {
   id: string;
-  id_pessoa: string;
+  pessoa_id: string;
+  nome: string;
+  telefone: string;
   email: string;
-  pessoa: PessoaFisicaType;
+  pessoa: PessoaType;
 }
 
 export interface PessoaFisicaType {
@@ -69,7 +73,7 @@ export interface PessoaFisicaType {
   rg: string
   cpf: string
   data_nascimento?: string | null
-  id_pessoa: string
+  pessoa_id: string
 }
 
 export interface NavItem {

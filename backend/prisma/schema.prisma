@@ -64,9 +64,9 @@ model PessoaFisica {
   pessoa_id       String    @id @db.Uuid
   created_at      DateTime  @default(now()) @db.Timestamp(6)
   updated_at      DateTime  @default(now()) @db.Timestamp(6)
-  nome            String?
+  nome            String? 
   rg              String?   @db.VarChar(30)
-  cpf             String?   @db.VarChar(14)
+  cpf             String?   @unique @db.VarChar(14)
   data_nascimento DateTime?
   pessoa          Pessoa    @relation(fields: [pessoa_id], references: [id])
 
@@ -116,13 +116,21 @@ model Permission {
   @@map("permissions")
 }
 
+enum ZonaUnidade {
+  rural
+  urbana
+}
+
 model UnidadeEscolar {
   id                   String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   created_at           DateTime              @default(now()) @db.Timestamp(6)
   updated_at           DateTime              @default(now()) @db.Timestamp(6)
+  zona                 ZonaUnidade           @default(urbana)
   inep                 Int?
   pessoa_id            String?               @db.Uuid
-  diretor              Diretor[]
+  diretor_id           String?               @db.Uuid
+  diretor              Diretor?              @relation(fields: [diretor_id], references: [id])
+  // diretor              Diretor[]
   ocorrencia           Ocorrencia[]
   responsavel_registro ResponsavelRegistro[]
   pessoa               Pessoa?               @relation(fields: [pessoa_id], references: [id])
@@ -144,11 +152,10 @@ model ResponsavelRegistro {
 }
 
 model Diretor {
-  id         String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  pessoa_id  String?        @db.Uuid
-  unidade_id String         @db.Uuid
-  pessoa     Pessoa?        @relation(fields: [pessoa_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  unidade    UnidadeEscolar @relation(fields: [unidade_id], references: [id])
+  id         String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pessoa_id  String?          @db.Uuid
+  pessoa     Pessoa?          @relation(fields: [pessoa_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  unidade    UnidadeEscolar[]
 
   @@map("diretor")
 }

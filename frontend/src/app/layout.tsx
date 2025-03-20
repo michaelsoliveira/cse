@@ -3,17 +3,17 @@ import Providers from '@/components/layout/providers';
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { Lato } from 'next/font/google';
+import { Nunito } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 import { AuthProvider } from '@/context/AuthContext';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'Coordenadoria de Segurança Escolar',
+  description: 'Sistema de controle e acompanhamento da coordenadoria de segurança escolar'
 };
 
-const lato = Lato({
+const nunito = Nunito({
   subsets: ['latin'],
   weight: ['400', '700', '900'],
   display: 'swap'
@@ -26,7 +26,7 @@ export default async function RootLayout({
 }) {
   const session = await auth();
   return (
-    <html lang='en' className={`${lato.className}`} suppressHydrationWarning>
+    <html lang='en' className={`${nunito.className}`} suppressHydrationWarning>
       <body className={'overflow-hidden'}>
         <NextTopLoader showSpinner={false} />
         <NuqsAdapter>
