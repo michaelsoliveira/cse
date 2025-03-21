@@ -82,6 +82,7 @@ routes.get('/unidade/:id', Authentication(), new UnidadeController().findOne)
 routes.get('/unidade/search/q', Authentication(), new UnidadeController().search)
 routes.post('/unidade', Authentication(), new UnidadeController().store)
 routes.put('/unidade/:id', Authentication(), new UnidadeController().update)
+routes.delete('/unidade/:id', Authentication(), new UnidadeController().delete)
 
 //Unidades Escolares
 routes.get('/diretor/', Authentication(), new DiretorController().findAll)
@@ -89,5 +90,6 @@ routes.get('/diretor/:id', Authentication(), new DiretorController().findOne)
 routes.get('/diretor/search/q', Authentication(), new DiretorController().search)
 routes.post('/diretor', Authentication(), new DiretorController().store)
 routes.put('/diretor/:id', Authentication(), new DiretorController().update)
+routes.delete('/diretor/:id', Authentication(), new DiretorController().delete)
 
 export default routes;

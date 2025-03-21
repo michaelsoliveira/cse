@@ -10,7 +10,10 @@ import { prismaClient } from "../database/prismaClient";
 
 class DiretorService {
     async create(data: any): Promise<Diretor> {
-        
+        const estado = data?.endereco?.estado_id ? { 
+            connect: { id: data?.endereco?.estado_id }
+        } : {}
+
         const diretorExists = await prismaClient.diretor.findFirst({
             where: {
                 pessoa: {
@@ -34,9 +37,6 @@ class DiretorService {
                 }
             },
             data: {
-                unidade: {
-                    connect: { id: data?.unidade_id }
-                },
                 pessoa: {
                     create: {
                         tipo: 'F',
@@ -49,6 +49,16 @@ class DiretorService {
                                 cpf: data?.cpf,
                                 data_nascimento: data?.data_nascimento
                             }
+                        },
+                        endereco: {
+                            create: {
+                                cep: data?.endereco?.cep,
+                                logradouro: data?.endereco?.logradouro,
+                                municipio: data?.endereco?.municipio,
+                                numero: data?.endereco?.numero,
+                                bairro: data?.endereco?.bairro,
+                                estado
+                            }
                         }
                     }
                 }
@@ -59,6 +69,10 @@ class DiretorService {
     }
 
     async update(id: string, data: any): Promise<Diretor> {
+        const estado = data?.endereco?.estado_id ? { 
+            connect: { id: data?.endereco?.estado_id }
+        } : {}
+
         const diretor = await prismaClient.diretor.update({
             include: {
                 pessoa: {
@@ -71,9 +85,6 @@ class DiretorService {
                 id
             },
             data: {
-                unidade: {
-                    connect: { id: data?.unidade_id }
-                },
                 pessoa: {
                     update: {
                         tipo: 'F',
@@ -91,6 +102,29 @@ class DiretorService {
                                     pessoa_id: data?.pessoa_id
                                 }
                             }
+                        },
+                        endereco: {
+                            upsert: {
+                                where: {
+                                    id: data?.endereco_id
+                                },
+                                update: {
+                                    cep: data?.endereco?.cep,
+                                    logradouro: data?.endereco?.logradouro,
+                                    municipio: data?.endereco?.municipio,
+                                    numero: data?.endereco?.numero,
+                                    bairro: data?.endereco?.bairro,
+                                    estado
+                                },
+                                create: {
+                                    cep: data?.endereco?.cep,
+                                    logradouro: data?.endereco?.logradouro,
+                                    municipio: data?.endereco?.municipio,
+                                    numero: data?.endereco?.numero,
+                                    bairro: data?.endereco?.bairro,
+                                    estado
+                                }
+                            }
                         }
                     },
                 }
@@ -105,9 +139,6 @@ class DiretorService {
             where: {
                 id
             }
-        })
-        .then(response => {
-            console.log(response)
         })
     }
 
@@ -189,7 +220,17 @@ class DiretorService {
     }
 
     async findById(id: string) : Promise<any> {
-        const diretor = await prismaClient.diretor.findUnique({ where: { id } })
+        const diretor = await prismaClient.diretor.findUnique({ 
+            include: {
+                pessoa: {
+                    include: {
+                        endereco: true,
+                        pessoaFisica: true
+                    }
+                }
+            },
+            where: { id } 
+        })
 
         return diretor
     }

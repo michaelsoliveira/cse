@@ -103,17 +103,38 @@ class UnidadeService {
             } : {}
         
         const diretor = dataRequest?.hasDiretorData ? {
-            update: {
-                pessoa: {
-                    update: {
-                        tipo: TipoPessoa.F,
-                        email: dataRequest?.diretor?.email,
-                        telefone: dataRequest?.diretor?.telefone,
-                        pessoaFisica: {
-                            update: {
-                                nome: dataRequest?.diretor?.nome,
-                                rg: dataRequest?.diretor?.rg,
-                                cpf: dataRequest?.diretor?.cpf
+            upsert: {
+                where: {
+                    id: dataRequest?.diretor_id
+                },
+                create: {
+                    pessoa: {
+                        create: {
+                            tipo: TipoPessoa.F,
+                            email: dataRequest?.diretor?.email,
+                            telefone: dataRequest?.diretor?.telefone,
+                            pessoaFisica: {
+                                create: {
+                                    nome: dataRequest?.diretor?.nome,
+                                    rg: dataRequest?.diretor?.rg,
+                                    cpf: dataRequest?.diretor?.cpf
+                                }
+                            }
+                        }
+                    }
+                },
+                update: {
+                    pessoa: {
+                        update: {
+                            tipo: TipoPessoa.F,
+                            email: dataRequest?.diretor?.email,
+                            telefone: dataRequest?.diretor?.telefone,
+                            pessoaFisica: {
+                                update: {
+                                    nome: dataRequest?.diretor?.nome,
+                                    rg: dataRequest?.diretor?.rg,
+                                    cpf: dataRequest?.diretor?.cpf
+                                }
                             }
                         }
                     }
@@ -180,9 +201,6 @@ class UnidadeService {
             where: {
                 id
             }
-        })
-        .then(response => {
-            console.log(response)
         })
     }
 

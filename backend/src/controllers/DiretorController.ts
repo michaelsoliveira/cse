@@ -47,7 +47,7 @@ export class DiretorController {
 
             return response.status(200).json({
                 error: false,
-                message: 'Unidade deletada com Sucesso!!!'
+                message: 'Diretor deletado com Sucesso!!!'
             })
         } catch (error: any) {
             return response.json({
@@ -82,7 +82,7 @@ export class DiretorController {
         }
     }
 
-    async deleteUnidades(request: Request, response: Response) {
+    async deleteDiretores(request: Request, response: Response) {
         const { ids } = request.body
         
         await diretorService.deleteDiretores(ids)
