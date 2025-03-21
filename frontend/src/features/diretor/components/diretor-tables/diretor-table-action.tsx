@@ -10,10 +10,6 @@ import {
 
 export default function UnidadeTableAction() {
   const {
-    zonasFilter,
-    setZonasFilter,
-    isAnyFilterActive,
-    resetFilters,
     searchQuery,
     setPage,
     setSearchQuery
@@ -25,17 +21,6 @@ export default function UnidadeTableAction() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         setPage={setPage}
-      />
-      <DataTableFilterBox
-        filterKey='zonas'
-        title='Zonas'
-        options={ZONA_OPTIONS}
-        setFilterValue={setZonasFilter}
-        filterValue={zonasFilter}
-      />
-      <DataTableResetFilter
-        isFilterActive={isAnyFilterActive}
-        onReset={resetFilters}
       />
     </div>
   );

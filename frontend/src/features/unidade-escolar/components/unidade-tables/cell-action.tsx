@@ -9,9 +9,11 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Product } from '@/constants/data';
+import { useAuthContext } from '@/context/AuthContext';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { UnidadeEscolarType } from 'types';
 
 interface CellActionProps {
@@ -19,11 +21,30 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { client } = useAuthContext();
 
-  const onConfirm = async () => {};
+  const onConfirm = async () => {
+    try {
+      setLoading(true)
+      await client.delete(`/unidade/${data.id}`).then((res: any) => {
+        const { error, message } = res.data;
+        if (!error) {
+          toast.success(message)
+          router.refresh()
+        } else {
+          toast.error(message)
+        }
+        setOpen(false);
+      })
+    } catch (error: any) {
+      toast.error(error.message)
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>

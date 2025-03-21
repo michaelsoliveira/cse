@@ -39,6 +39,7 @@ import { UnidadeFormValues, unidadeSchema } from '../utils/form-schema';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormDescription } from '@/components/ui/form';
 import UnidadeDetails from './unidade-details';
+import LoadingModal from '@/components/loading-modal';
 
 export default function UnidadeForm({
   initialData,
@@ -51,10 +52,8 @@ export default function UnidadeForm({
   const { data: session } = useSession();
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
-  // const [unidade, setUnidade] = useState<UnidadeEscolarType | null>(null);
   const [diretores, setDiretores] = useState<DiretorType[]>([]);
   const [estados, setEstados] = useState([])
-  // const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
 
   const loadData = useCallback(async () => {
@@ -156,8 +155,9 @@ const defaultValues = {
         toast.error(message)
       }
     } catch(error: any) {
-      setLoading(false)
       toast.error(error?.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -171,17 +171,12 @@ const defaultValues = {
     if (!output) return;
 
     if (currentStep < steps.length - 1) {
-      // if (currentStep === steps.length - 2) {
-      //   await form.handleSubmit(processForm)();
-      // }
-      // setPreviousStep(currentStep);
       setCurrentStep((step) => step + 1);
     }
   };
 
   const prev = () => {
     if (currentStep > 0) {
-      // setPreviousStep(currentStep);
       setCurrentStep((step) => step - 1);
     }
   };
@@ -203,7 +198,7 @@ const defaultValues = {
       id: 'Etapa 2',
       name: 'Informações da Direção',
       // fields are mapping and flattening for the error to be trigger  for the dynamic fields
-      fields: ['diretor.nome', 'diretor.email', 'diretor.telefone']
+      fields: ['diretor_id', 'diretor.nome', 'diretor.rg', 'diretor.cpf', 'diretor.email', 'diretor.telefone']
     },
     // {
     //   id: 'Etapa 3',
@@ -221,503 +216,499 @@ const defaultValues = {
   ];
 
   return (
-    <Card className='mx-auto w-full'>
-      <CardHeader>
-        <CardTitle className='text-left text-2xl font-bold'>
-          {pageTitle}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div>
-          <ul className='flex gap-4'>
-            {steps.map((step, index) => (
-              <li key={step.name} className='md:flex-1'>
-                {currentStep > index ? (
-                  <div className='group flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
-                    <span className='text-sm font-medium text-sky-600 transition-colors'>
-                      {step.id}
-                    </span>
-                    <span className='text-sm font-medium'>{step.name}</span>
-                  </div>
-                ) : currentStep === index ? (
-                  <div
-                    className='flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'
-                    aria-current='step'
-                  >
-                    <span className='text-sm font-medium text-sky-600'>
-                      {step.id}
-                    </span>
-                    <span className='text-sm font-medium'>{step.name}</span>
-                  </div>
-                ) : (
-                  <div className='group flex h-full w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
-                    <span className='text-sm font-medium text-gray-500 transition-colors'>
-                      {step.id}
-                    </span>
-                    <span className='text-sm font-medium'>{step.name}</span>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <Separator />
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
-            <div
-              className={cn(
-                currentStep === 1
-                  ? 'w-full md:inline-block'
-                  : 'gap-8 md:grid md:grid-cols-4',
-                  'pt-4'
-              )}
-            >
-            {currentStep === 0 && (
-              <>
-              <div className='col-span-2'>
-                <FormField
-                  control={form.control}
-                  name='nome'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome</FormLabel>
-                      <FormControl>
-                        <Input placeholder='Entre com o nome da unidade escolar' {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name='inep'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Código INEP</FormLabel>
-                    <FormControl>
-                      <Input type='number' placeholder='Entre com o código INEP' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='zona'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Zona</FormLabel>
-                    <Select
-                      disabled={loading}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            defaultValue={field.value}
-                            placeholder='Selecione a Zona'
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {/* @ts-ignore  */}
-                        {["urbana", "rural"].map((zona, idx) => (
-                          <SelectItem key={idx} value={zona}>
-                            {zona}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className='col-span-2'>
-              <FormField
-                control={form.control}
-                name='email'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email Institucional</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              </div>
-              <FormField
-                control={form.control}
-                name='telefone'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Telefone Principal</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className='col-span-4'>
-                <span className='text-md'>Endereço</span>
-                <Separator />
-              </div>
-              <FormField
-                control={form.control}
-                name='endereco.cep'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CEP</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className='col-span-2'>
-                <FormField
-                  control={form.control}
-                  name='endereco.logradouro'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Logradouro</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder=''
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                </div>
-                <FormField
-                  control={form.control}
-                  name='endereco.numero'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Número</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              <FormField
-                control={form.control}
-                name='endereco.complemento'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Complemento</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className='col-span-2'>
-              <FormField
-                control={form.control}
-                name='endereco.bairro'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bairro</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              </div>
-              <div className='col-span-2'>
-              <FormField
-                control={form.control}
-                name='endereco.municipio'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Município</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              </div>
-              <FormField
-                control={form.control}
-                name='endereco.estado_id'
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>UF</FormLabel>
-                    <Select
-                      disabled={loading}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder='Selecione um Estado'
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className='overflow-y-auto max-h-[20rem]'>
-                        {optionsEstados.map((estado: OptionType) => (
-                          <SelectItem key={estado.value!} value={estado.value!}>
-                            {estado.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {/* <SelectSearchable 
-                      callback={(e) => { form.setValue('endereco.estado', e.value) }} 
-                      options={optionsEstados()} 
-                      field={getSelectedEstado(field.value)} 
-                      placeholder="Estado"
-                      selectStyle="w-[200px]"
-                    /> */}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              </>
-              )}
-              {currentStep === 1 && (
-                <>
-                <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
-                  <div className='mb-4 col-span-2'>
-                    <FormField
-                      control={form.control}
-                      name="hasDiretorData"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div className="space-y-2 leading-4">
-                            <FormLabel>
-                              {initialData?.id ? 'Editar Diretor' : 'Cadastrar Diretor'}
-                            </FormLabel>
-                            <FormDescription>
-                              Permite vincular ou cadastrar o diretor da unidade escolar neste mesmo formulário
-                            </FormDescription>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className='col-span-2 md:col-span-3'><Separator /></div>
-                {!hasDiretorData ? (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name='diretor_id'
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel>Diretor</FormLabel>
-                          <SelectSearchable 
-                            callback={(e) => { form.setValue('diretor_id', e.value) }} 
-                            options={getDiretoresOptions()} 
-                            field={getSelectedDiretor(field.value)} 
-                            placeholder="Selecione um Diretor..."
-                            selectStyle="w-[450px]"
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </>
-
-                ): (
-                  <>
-                  <div className='col-span-2'>
-                    <FormField
-                      control={form.control}
-                      name='diretor.nome'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nome</FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+    <>
+      <Card className='mx-auto w-full'>
+        <CardHeader>
+          <CardTitle className='text-left text-2xl font-bold'>
+            {pageTitle}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <ul className='flex gap-4'>
+              {steps.map((step, index) => (
+                <li key={step.name} className='md:flex-1'>
+                  {currentStep > index ? (
+                    <div className='group flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
+                      <span className='text-sm font-medium text-sky-600 transition-colors'>
+                        {step.id}
+                      </span>
+                      <span className='text-sm font-medium'>{step.name}</span>
                     </div>
-                    <FormField
-                      control={form.control}
-                      name='diretor.rg'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>RG</FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              {...field}
+                  ) : currentStep === index ? (
+                    <div
+                      className='flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'
+                      aria-current='step'
+                    >
+                      <span className='text-sm font-medium text-sky-600'>
+                        {step.id}
+                      </span>
+                      <span className='text-sm font-medium'>{step.name}</span>
+                    </div>
+                  ) : (
+                    <div className='group flex h-full w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
+                      <span className='text-sm font-medium text-gray-500 transition-colors'>
+                        {step.id}
+                      </span>
+                      <span className='text-sm font-medium'>{step.name}</span>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Separator />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+              <div
+                className={cn(
+                  currentStep === 1
+                    ? 'w-full md:inline-block'
+                    : 'gap-8 md:grid md:grid-cols-4',
+                    'pt-4'
+                )}
+              >
+              {currentStep === 0 && (
+                <>
+                <div className='col-span-2'>
+                  <FormField
+                    control={form.control}
+                    name='nome'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nome</FormLabel>
+                        <FormControl>
+                          <Input placeholder='Entre com o nome da unidade escolar' {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name='inep'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Código INEP</FormLabel>
+                      <FormControl>
+                        <Input type='number' placeholder='Entre com o código INEP' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='zona'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Zona</FormLabel>
+                      <Select
+                        disabled={loading}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              defaultValue={field.value}
+                              placeholder='Selecione a Zona'
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name='diretor.cpf'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>CPF</FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              {...field}
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {/* @ts-ignore  */}
+                          {["urbana", "rural"].map((zona, idx) => (
+                            <SelectItem key={idx} value={zona}>
+                              {zona}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name='email'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email Institucional</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                </div>
+                <FormField
+                  control={form.control}
+                  name='telefone'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefone Principal</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className='col-span-4'>
+                  <span className='text-md'>Endereço</span>
+                  <Separator />
+                </div>
+                <FormField
+                  control={form.control}
+                  name='endereco.cep'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CEP</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className='col-span-2'>
+                  <FormField
+                    control={form.control}
+                    name='endereco.logradouro'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Logradouro</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            placeholder=''
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name='endereco.numero'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Número</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                <FormField
+                  control={form.control}
+                  name='endereco.complemento'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Complemento</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name='endereco.bairro'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bairro</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                </div>
+                <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name='endereco.municipio'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Município</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                </div>
+                <FormField
+                  control={form.control}
+                  name='endereco.estado_id'
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>UF</FormLabel>
+                      <Select
+                        disabled={loading}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder='Selecione um Estado'
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='diretor.email'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              placeholder='michaeloliveira@email.com'
-                              {...field}
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                          {optionsEstados.map((estado: OptionType) => (
+                            <SelectItem key={estado.value!} value={estado.value!}>
+                              {estado.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                </>
+                )}
+                {currentStep === 1 && (
+                  <>
+                  <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
+                    <div className='mb-4 col-span-2'>
+                      <FormField
+                        control={form.control}
+                        name="hasDiretorData"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-2 leading-4">
+                              <FormLabel>
+                                {initialData?.id ? 'Editar Diretor' : 'Cadastrar Diretor'}
+                              </FormLabel>
+                              <FormDescription>
+                                Permite vincular ou cadastrar o diretor da unidade escolar neste mesmo formulário
+                              </FormDescription>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className='col-span-2 md:col-span-3'><Separator /></div>
+                  {!hasDiretorData ? (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name='diretor_id'
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Diretor</FormLabel>
+                            <SelectSearchable 
+                              callback={(e) => { form.setValue('diretor_id', e.value) }} 
+                              options={getDiretoresOptions()} 
+                              field={getSelectedDiretor(field.value)} 
+                              placeholder="Selecione um Diretor..."
+                              selectStyle="w-[450px]"
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='diretor.telefone'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Telefone</FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+
+                  ): (
+                    <>
+                    <div className='col-span-2'>
+                      <FormField
+                        control={form.control}
+                        name='diretor.nome'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nome</FormLabel>
+                            <FormControl>
+                              <Input
+                                disabled={loading}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      </div>
+                      <FormField
+                        control={form.control}
+                        name='diretor.rg'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>RG</FormLabel>
+                            <FormControl>
+                              <Input
+                                disabled={loading}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name='diretor.cpf'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>CPF</FormLabel>
+                            <FormControl>
+                              <Input
+                                disabled={loading}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='diretor.email'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input
+                                disabled={loading}
+                                placeholder='michaeloliveira@email.com'
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='diretor.telefone'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Telefone</FormLabel>
+                            <FormControl>
+                              <Input
+                                disabled={loading}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+                  </div>
                   </>
                 )}
-                </div>
-                </>
-              )}
-            </div>
-            {currentStep === 2 && (
-              <UnidadeDetails data={form.getValues()} />
-            ) }
-            {(currentStep === steps.length - 1) && (
-              <div className='flex flex-row w-full justify-center'>
-                <Button 
-                  type='submit'
-                  className="mt-4 w-48"
-                >Salvar</Button>
               </div>
-            )} 
-          </form>
-        </Form>
-        {/* Navigation */}
-          <div className='mt-8 pt-5'>
-            <div className='flex justify-between'>
-              <button
-                type='button'
-                onClick={() => {currentStep === 0 ? router.back() : prev() }}
-                // disabled={currentStep === 0}
-                className='rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 ring-1 shadow-xs ring-sky-300 ring-inset hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='1.5'
-                  stroke='currentColor'
-                  className='h-6 w-6'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M15.75 19.5L8.25 12l7.5-7.5'
-                  />
-                </svg>
-              </button>
+              {currentStep === 2 && (
+                <UnidadeDetails data={form.getValues()} />
+              ) }
+              {(currentStep === steps.length - 1) && (
+                <div className='flex flex-row w-full justify-center'>
+                  <Button 
+                    type='submit'
+                    className="mt-4 w-48"
+                  >Salvar</Button>
+                </div>
+              )} 
+            </form>
+          </Form>
+          {/* Navigation */}
+            <div className='mt-8 pt-5'>
+              <div className='flex justify-between'>
                 <button
                   type='button'
-                  onClick={next}
-                  disabled={currentStep === steps.length - 1}
+                  onClick={() => {currentStep === 0 ? router.back() : prev() }}
+                  // disabled={currentStep === 0}
                   className='rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 ring-1 shadow-xs ring-sky-300 ring-inset hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50'
                 >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='1.5'
-                  stroke='currentColor'
-                  className='h-6 w-6'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M8.25 4.5l7.5 7.5-7.5 7.5'
-                  />
-                </svg>
-              </button>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth='1.5'
+                    stroke='currentColor'
+                    className='h-6 w-6'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M15.75 19.5L8.25 12l7.5-7.5'
+                    />
+                  </svg>
+                </button>
+                  <button
+                    type='button'
+                    onClick={next}
+                    disabled={currentStep === steps.length - 1}
+                    className='rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 ring-1 shadow-xs ring-sky-300 ring-inset hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50'
+                  >
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth='1.5'
+                    stroke='currentColor'
+                    className='h-6 w-6'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M8.25 4.5l7.5 7.5-7.5 7.5'
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    <LoadingModal show={loading} />
+  </>
   );
 }

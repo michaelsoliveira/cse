@@ -58,7 +58,7 @@ const diretorDataSchema = z.discriminatedUnion("hasDiretorData", [
   }),
   z.object({
     hasDiretorData: z.literal(false),
-    diretor_id: z.string().nonempty('É necessário selecionar ou cadastrar um diretor'),
+    diretor_id: z.string().nonempty('É necessário cadastrar ou selecionar um diretor')
   })
 ]);
 
@@ -93,30 +93,7 @@ export const unidadeSchema = z.object({
       municipio: optionalFieldMin({ field: "municipio", min: 3 }),
       estado_id: z.string(),
       cep: optionalFieldMin({ field: "cep", min: 8 }),
-    }),
-    // telefones: z.array(
-    //   z.object({
-    //     ddd: z.number()
-    //     .min(2)
-    //     .max(2)
-    //     .positive()
-    //     .nullable()
-    //     .transform((value: any) => value ?? NaN),
-    //     numero: z.string()
-    //     .nullable()
-    //     // .transform((value: any) => value ?? NaN)
-    //     // startdate: z
-    //     //   .string()
-    //     //   .refine((value) => /^\d{4}-\d{2}-\d{2}$/.test(value), {
-    //     //     message: 'Start date should be in the format YYYY-MM-DD'
-    //     //   }),
-    //     // enddate: z
-    //     // .string()
-    //     // .refine((value) => /^\d{4}-\d{2}-\d{2}$/.test(value), {
-    //     //   message: 'End date should be in the format YYYY-MM-DD'
-    //     // })
-    //   })
-    // )
+    })
 }).and(diretorDataSchema);
 
 export type UnidadeFormValues = z.infer<typeof unidadeSchema>;

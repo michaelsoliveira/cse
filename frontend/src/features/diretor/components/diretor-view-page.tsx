@@ -1,31 +1,30 @@
 import { auth } from '@/lib/auth';
 import { notFound } from 'next/navigation';
-import UnidadeForm from './diretor-form';
-import { UnidadeEscolarType } from 'types';
+import DiretorForm from './diretor-form';
+import { DiretorType } from 'types';
 import { fetchWithAuth } from '@/lib/utils';
 
-type TUnidadeViewPageProps = {
-  unidadeId: string;
+type TDiretorViewPageProps = {
+  diretorId: string;
 };
 
-export default async function UnidadeViewPage({
-  unidadeId
-}: TUnidadeViewPageProps) {
-  let unidade = null;
-  let pageTitle = 'Cadastrar Unidade';
+export default async function DiretorViewPage({
+  diretorId
+}: TDiretorViewPageProps) {
+  let diretor = null;
+  let pageTitle = 'Cadastrar Diretor';
   const session = await auth();
 
-  if (session && unidadeId !== 'new') {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/unidade/${unidadeId}`
-    // const data = await client.get(url)
+  if (session && diretorId !== 'new') {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/diretor/${diretorId}`
     const data = await fetchWithAuth(url, session?.accessToken!)
-    unidade = data as UnidadeEscolarType;
+    diretor = data as DiretorType;
     
-    if (!unidade) {
+    if (!diretor) {
       notFound();
     }
-    pageTitle = `Editar Unidade`;
+    pageTitle = `Editar Diretor`;
   }
 
-  return <UnidadeForm initialData={unidade} pageTitle={pageTitle} />;
+  return <DiretorForm initialData={diretor} pageTitle={pageTitle} />;
 }

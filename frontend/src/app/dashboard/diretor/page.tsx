@@ -9,11 +9,11 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import UnidadeListingPage from '@/features/unidade-escolar/components/unidade-listing';
-import UnidadeTableAction from '@/features/unidade-escolar/components/unidade-tables/unidade-table-action';
+import DiretorListingPage from '@/features/diretor/components/diretor-listing';
+import DiretorTableAction from '@/features/diretor/components/diretor-tables/diretor-table-action';
 
 export const metadata = {
-  title: 'Dashboard: Unidades Escolares'
+  title: 'Dashboard: Diretores'
 };
 
 type pageProps = {
@@ -33,23 +33,23 @@ export default async function Page(props: pageProps) {
       <div className='flex flex-1 flex-col space-y-4'>
         <div className='flex items-start justify-between'>
           <Heading
-            title='Unidades Escolares'
-            description='Gerenciar as Unidades Escolares'
+            title='Diretores'
+            description='Gerenciar Diretores do Sistema'
           />
           <Link
-            href='/dashboard/unidade-escolar/new'
+            href='/dashboard/diretor/new'
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
             <Plus className='mr-2 h-4 w-4' /> Adicionar
           </Link>
         </div>
         <Separator />
-        <UnidadeTableAction />
+        <DiretorTableAction />
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}
         >
-          <UnidadeListingPage />
+          <DiretorListingPage />
         </Suspense>
       </div>
     </PageContainer>

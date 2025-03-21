@@ -50,7 +50,7 @@ export const navItems: NavItem[] = [
       },
       {
         title: 'Diretor',
-        url: '/dashboard/product',
+        url: '/dashboard/diretor',
         icon: 'user',
       },
     ]

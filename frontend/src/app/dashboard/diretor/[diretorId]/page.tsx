@@ -1,13 +1,13 @@
 import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
-import UnidadeViewPage from '@/features/unidade-escolar/components/unidade-view-page';
+import DiretorViewPage from '@/features/diretor/components/diretor-view-page';
 
 export const metadata = {
-  title: 'Dashboard : Unidade Escolar View'
+  title: 'Dashboard : Diretor View'
 };
 
-type PageProps = { params: Promise<{ unidadeId: string }> };
+type PageProps = { params: Promise<{ diretorId: string }> };
 
 export default async function Page(props: PageProps) {
   const params = await props.params;
@@ -15,7 +15,7 @@ export default async function Page(props: PageProps) {
     <PageContainer scrollable>
       <div className='flex-1 space-y-4'>
         <Suspense fallback={<FormCardSkeleton />}>
-          <UnidadeViewPage unidadeId={params.unidadeId} />
+          <DiretorViewPage diretorId={params.diretorId} />
         </Suspense>
       </div>
     </PageContainer>

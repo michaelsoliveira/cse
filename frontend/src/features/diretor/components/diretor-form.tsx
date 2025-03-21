@@ -34,16 +34,16 @@ import {
   useForm, 
   useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
-import { DiretorType, UnidadeEscolarType } from 'types';
-import { UnidadeFormValues, unidadeSchema } from '../utils/form-schema';
+import { DiretorType } from 'types';
+import { DiretorFormValues, diretorSchema } from '../utils/form-schema';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormDescription } from '@/components/ui/form';
 
-export default function UnidadeForm({
+export default function DiretorForm({
   initialData,
   pageTitle
 }: {
-  initialData: UnidadeEscolarType | null;
+  initialData: DiretorType | null;
   pageTitle: string;
 }) {
   const { client } = useAuthContext();
@@ -92,27 +92,14 @@ export default function UnidadeForm({
         }
     })
 
-
-// function getSelectedEstado(estado_id: string | null) {
-//   return optionsEstados?.find((option) => option.value === estado_id)
-// }
-
 const defaultValues = {
-    nome: initialData?.pessoa?.pessoaJuridica?.nome_fantasia || '',
-    inep: initialData?.inep || '',
-    zona: initialData?.zona || 'urbana',
+    nome: initialData?.pessoa?.pessoaFisica?.nome || '',
+    rg: initialData?.pessoa?.pessoaFisica?.rg || '',
+    cpf: initialData?.pessoa?.pessoaFisica?.cpf || '',
     telefone: initialData?.pessoa?.telefone || '',
     email: initialData?.pessoa?.email || '',
     pessoa_id: initialData?.pessoa_id || '',
-    diretor_id: initialData?.diretor_id || '',
-    diretor: {
-      nome: initialData?.diretor?.nome || '',
-      rg: initialData?.diretor?.rg || '',
-      cpf: initialData?.diretor?.cpf || '',
-      telefone: initialData?.diretor?.telefone || '',
-      email: initialData?.diretor?.email || '',
-    },
-    hasDiretorData: false,
+    hasEnderecoData: false,
     endereco: {
       logradouro: initialData?.pessoa?.endereco?.logradouro || '',
       numero: initialData?.pessoa?.endereco?.numero || '',
@@ -124,8 +111,8 @@ const defaultValues = {
     }
   }
 
-  const form = useForm<UnidadeFormValues>({
-    resolver: zodResolver(unidadeSchema),
+  const form = useForm<DiretorFormValues>({
+    resolver: zodResolver(diretorSchema),
     defaultValues,
     mode: 'onChange'
   });
@@ -135,21 +122,30 @@ const defaultValues = {
     // formState: { errors }
   } = form;
 
-  // const fullErrors: FieldErrors<Extract<UnidadeFormValues, { hasDiretorData: true}>> = errors
+  // const fullErrors: FieldErrors<Extract<DiretorFormValues, { hasDiretorData: true}>> = errors
 
-  type FieldName = keyof UnidadeFormValues;
+  type FieldName = keyof DiretorFormValues;
 
-  async function onSubmit(data: UnidadeFormValues) {
+  const fields = ['nome', 'email', 'telefone', 'endereco.logradouro', 'endereco.complemento', 'endereco.bairro', 'endereco.municipio', 'endereco.estado_id', 'endereco.cep']
+
+  async function onSubmit(data: DiretorFormValues) {
     try {
+
+      const output = await form.trigger(fields as FieldName[], {
+        shouldFocus: true
+      });
+  
+      if (!output) return;
+
       setLoading(true)
       const response = initialData?.id 
-          ? await client.put(`/unidade/${initialData?.id}`, data) 
-          : await client.post('/unidade', data)
+          ? await client.put(`/diretor/${initialData?.id}`, data) 
+          : await client.post('/diretor', data)
       const { error, message } = response.data
       if (!error) {
         setLoading(false)
         toast.success(message)
-        router.push('/dashboard/unidade-escolar')
+        router.push('/dashboard/diretor')
       } else {
         setLoading(false)
         toast.error(message)
@@ -160,64 +156,12 @@ const defaultValues = {
     }
   }
 
-  const next = async () => {
-    const fields = steps[currentStep].fields;
-
-    const output = await form.trigger(fields as FieldName[], {
-      shouldFocus: true
-    });
-
-    if (!output) return;
-
-    if (currentStep < steps.length - 1) {
-      // if (currentStep === steps.length - 2) {
-      //   await form.handleSubmit(processForm)();
-      // }
-      // setPreviousStep(currentStep);
-      setCurrentStep((step) => step + 1);
-    }
-  };
-
-  const prev = () => {
-    if (currentStep > 0) {
-      // setPreviousStep(currentStep);
-      setCurrentStep((step) => step - 1);
-    }
-  };
-
-  const hasDiretorData = useWatch({ control, name: 'hasDiretorData' })
+  const hasEnderecoData = useWatch({ control, name: 'hasEnderecoData' })
 
   // const { append, remove, fields } = useFieldArray({
   //     control,
   //     name: 'telefones'
   //   });
-
-  const steps = [
-    {
-      id: 'Etapa 1',
-      name: 'Informações Básicas',
-      fields: ['nome', 'email', 'telefone', 'endereco.logradouro', 'endereco.complemento', 'endereco.bairro', 'endereco.municipio', 'endereco.estado_id', 'endereco.cep']
-    },
-    {
-      id: 'Etapa 2',
-      name: 'Informações da Direção',
-      // fields are mapping and flattening for the error to be trigger  for the dynamic fields
-      fields: ['diretor.nome', 'diretor.email', 'diretor.telefone']
-    },
-    // {
-    //   id: 'Etapa 3',
-    //   name: 'Contatos',
-    //   // fields are mapping and flattening for the error to be trigger  for the dynamic fields
-    //   fields: fields
-    //     ?.map((_: any, index: number) => [
-    //       `telefones.${index}.ddd`,
-    //       `telefones.${index}.numero`,
-    //       // Add other field names as needed
-    //     ])
-    //     .flat()
-    // },
-    { id: 'Etapa 3', name: 'Completo' }
-  ];
 
   return (
     <Card className='mx-auto w-full'>
@@ -227,52 +171,12 @@ const defaultValues = {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div>
-          <ul className='flex gap-4'>
-            {steps.map((step, index) => (
-              <li key={step.name} className='md:flex-1'>
-                {currentStep > index ? (
-                  <div className='group flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
-                    <span className='text-sm font-medium text-sky-600 transition-colors'>
-                      {step.id}
-                    </span>
-                    <span className='text-sm font-medium'>{step.name}</span>
-                  </div>
-                ) : currentStep === index ? (
-                  <div
-                    className='flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'
-                    aria-current='step'
-                  >
-                    <span className='text-sm font-medium text-sky-600'>
-                      {step.id}
-                    </span>
-                    <span className='text-sm font-medium'>{step.name}</span>
-                  </div>
-                ) : (
-                  <div className='group flex h-full w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
-                    <span className='text-sm font-medium text-gray-500 transition-colors'>
-                      {step.id}
-                    </span>
-                    <span className='text-sm font-medium'>{step.name}</span>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
         <Separator />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
             <div
-              className={cn(
-                currentStep === 1
-                  ? 'w-full md:inline-block'
-                  : 'gap-8 md:grid md:grid-cols-4',
-                  'pt-4'
-              )}
+              className='gap-4 md:grid md:grid-cols-4'
             >
-            {currentStep === 0 && (
-              <>
               <div className='col-span-2'>
                 <FormField
                   control={form.control}
@@ -290,12 +194,15 @@ const defaultValues = {
               </div>
               <FormField
                 control={form.control}
-                name='inep'
+                name='rg'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Código INEP</FormLabel>
+                    <FormLabel>RG</FormLabel>
                     <FormControl>
-                      <Input type='number' placeholder='Entre com o código INEP' {...field} />
+                      <Input
+                        disabled={loading}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -303,44 +210,26 @@ const defaultValues = {
               />
               <FormField
                 control={form.control}
-                name='zona'
+                name='cpf'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Zona</FormLabel>
-                    <Select
-                      disabled={loading}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            defaultValue={field.value}
-                            placeholder='Selecione a Zona'
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {/* @ts-ignore  */}
-                        {["urbana", "rural"].map((zona, idx) => (
-                          <SelectItem key={idx} value={zona}>
-                            {zona}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>CPF</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <div className='col-span-2'>
               <FormField
                 control={form.control}
                 name='email'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Institucional</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
@@ -351,13 +240,12 @@ const defaultValues = {
                   </FormItem>
                 )}
               />
-              </div>
               <FormField
                 control={form.control}
                 name='telefone'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Telefone Principal</FormLabel>
+                    <FormLabel>Telefone</FormLabel>
                     <FormControl>
                       <Input
                         disabled={loading}
@@ -368,160 +256,13 @@ const defaultValues = {
                   </FormItem>
                 )}
               />
-              <div className='col-span-4'>
-                <span className='text-md'>Endereço</span>
-                <Separator />
-              </div>
-              <FormField
-                control={form.control}
-                name='endereco.cep'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CEP</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className='col-span-2'>
-                <FormField
-                  control={form.control}
-                  name='endereco.logradouro'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Logradouro</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          placeholder=''
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                </div>
-                <FormField
-                  control={form.control}
-                  name='endereco.numero'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Número</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              <FormField
-                control={form.control}
-                name='endereco.complemento'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Complemento</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className='col-span-2'>
-              <FormField
-                control={form.control}
-                name='endereco.bairro'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bairro</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              </div>
-              <div className='col-span-2'>
-              <FormField
-                control={form.control}
-                name='endereco.municipio'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Município</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              </div>
-              <FormField
-                control={form.control}
-                name='endereco.estado_id'
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>UF</FormLabel>
-                    <Select
-                      disabled={loading}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder='Selecione um Estado'
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className='overflow-y-auto max-h-[20rem]'>
-                        {optionsEstados.map((estado: OptionType) => (
-                          <SelectItem key={estado.value!} value={estado.value!}>
-                            {estado.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {/* <SelectSearchable 
-                      callback={(e) => { form.setValue('endereco.estado', e.value) }} 
-                      options={optionsEstados()} 
-                      field={getSelectedEstado(field.value)} 
-                      placeholder="Estado"
-                      selectStyle="w-[200px]"
-                    /> */}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              </>
-              )}
-              {currentStep === 1 && (
-                <>
-                <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
+              <div className='col-span-2'></div>
+            </div>
+            <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
                   <div className='mb-4 col-span-2'>
                     <FormField
                       control={form.control}
-                      name="hasDiretorData"
+                      name="hasEnderecoData"
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
                           <FormControl>
@@ -532,10 +273,10 @@ const defaultValues = {
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>
-                              Cadastrar um Diretor
+                              { initialData?.pessoa.endereco_id ? 'Editar Endereço' : 'Cadastrar Endereço' }
                             </FormLabel>
                             <FormDescription>
-                              Permite vincular ou cadastrar o diretor da unidade escolar neste mesmo formulário
+                              Permite cadastrar um endereço para o diretor
                             </FormDescription>
                           </div>
                         </FormItem>
@@ -543,39 +284,39 @@ const defaultValues = {
                     />
                   </div>
                   <div className='col-span-2 md:col-span-3'><Separator /></div>
-                {!hasDiretorData ? (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name='diretor_id'
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel>Diretor</FormLabel>
-                          <SelectSearchable 
-                            callback={(e) => { form.setValue('diretor_id', e.value) }} 
-                            options={getDiretoresOptions()} 
-                            field={getSelectedDiretor(field.value)} 
-                            placeholder="Selecione um Diretor..."
-                            selectStyle="w-[450px]"
+              { hasEnderecoData && (
+                <>
+                  <div className='col-span-4'>
+                    <span className='text-md'>Endereço</span>
+                    <Separator />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name='endereco.cep'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CEP</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
                           />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </>
-
-                ): (
-                  <>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <div className='col-span-2'>
                     <FormField
                       control={form.control}
-                      name='diretor.nome'
+                      name='endereco.logradouro'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nome</FormLabel>
+                          <FormLabel>Logradouro</FormLabel>
                           <FormControl>
                             <Input
                               disabled={loading}
+                              placeholder=''
                               {...field}
                             />
                           </FormControl>
@@ -586,10 +327,10 @@ const defaultValues = {
                     </div>
                     <FormField
                       control={form.control}
-                      name='diretor.rg'
+                      name='endereco.numero'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>RG</FormLabel>
+                          <FormLabel>Número</FormLabel>
                           <FormControl>
                             <Input
                               disabled={loading}
@@ -600,119 +341,98 @@ const defaultValues = {
                         </FormItem>
                       )}
                     />
-                    
-                    <FormField
-                      control={form.control}
-                      name='diretor.cpf'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>CPF</FormLabel>
+                  <FormField
+                    control={form.control}
+                    name='endereco.complemento'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Complemento</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className='col-span-2'>
+                  <FormField
+                    control={form.control}
+                    name='endereco.bairro'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bairro</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  </div>
+                  <div className='col-span-2'>
+                  <FormField
+                    control={form.control}
+                    name='endereco.municipio'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Município</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name='endereco.estado_id'
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>UF</FormLabel>
+                        <Select
+                          disabled={loading}
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
-                            <Input
-                              disabled={loading}
-                              {...field}
-                            />
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder='Selecione um Estado'
+                              />
+                            </SelectTrigger>
                           </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='diretor.email'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              placeholder='michaeloliveira@email.com'
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='diretor.telefone'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Telefone</FormLabel>
-                          <FormControl>
-                            <Input
-                              disabled={loading}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </>
-                )}
-                </div>
-                </>
-              )}
+                          <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                            {optionsEstados.map((estado: OptionType) => (
+                              <SelectItem key={estado.value!} value={estado.value!}>
+                                {estado.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>  
+              ) }
             </div>
-            {(currentStep === steps.length - 1) && (
-              <div className='flex flex-row w-full justify-center'>
-                <Button 
-                  type='submit'
-                  className="mt-4 w-48"
-                >Salvar</Button>
-              </div>
-            )} 
+            <Button 
+              type='submit'
+              className="mt-4 w-48"
+            >Salvar</Button>
           </form>
         </Form>
-        {/* Navigation */}
-          <div className='mt-8 pt-5'>
-            <div className='flex justify-between'>
-              <button
-                type='button'
-                onClick={() => {currentStep === 0 ? router.back() : prev() }}
-                // disabled={currentStep === 0}
-                className='rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 ring-1 shadow-xs ring-sky-300 ring-inset hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='1.5'
-                  stroke='currentColor'
-                  className='h-6 w-6'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M15.75 19.5L8.25 12l7.5-7.5'
-                  />
-                </svg>
-              </button>
-                <button
-                  type='button'
-                  onClick={next}
-                  disabled={currentStep === steps.length - 1}
-                  className='rounded bg-white px-2 py-1 text-sm font-semibold text-sky-900 ring-1 shadow-xs ring-sky-300 ring-inset hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50'
-                >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='1.5'
-                  stroke='currentColor'
-                  className='h-6 w-6'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M8.25 4.5l7.5 7.5-7.5 7.5'
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
       </CardContent>
     </Card>
   );

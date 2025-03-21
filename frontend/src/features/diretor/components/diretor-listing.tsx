@@ -1,5 +1,5 @@
 import { searchParamsCache } from '@/lib/searchparams';
-import { DataTable as UnidadeTable } from '@/components/ui/table/data-table';
+import { DataTable as DiretorTable } from '@/components/ui/table/data-table';
 import { columns } from './diretor-tables/columns';
 import { auth } from '@/lib/auth';
 import { fetchWithAuth } from '@/lib/utils';
@@ -11,22 +11,20 @@ export default async function UnidadeListingPage({}: UnidadeListingPage) {
   const page = searchParamsCache.get('page') || 1;
   const search = searchParamsCache.get('q') || '';
   const pageLimit = searchParamsCache.get('limit') || 10;
-  const zonas = searchParamsCache.get('zonas');
-  const orderBy = searchParamsCache.get('orderBy') || 'pessoa.pessoaJuridica.nome_fantasia'
+  const orderBy = searchParamsCache.get('orderBy') || 'pessoa.pessoaFisica.nome'
   const order = searchParamsCache.get('orderBy') || 'asc'
 
   const session = await auth();
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/unidade?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
-  const urlWithZonas = zonas ? `${url}&zonas=${zonas}` : url
-  const data = await fetchWithAuth(urlWithZonas, session?.accessToken!)
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/diretor?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
+  const data = await fetchWithAuth(url, session?.accessToken!)
   
-  const { unidades, error, count } = data;
+  const { diretores, error, count } = data;
   
   if (!error){
     return (
-      <UnidadeTable
+      <DiretorTable
         columns={columns}
-        data={unidades}
+        data={diretores}
         totalItems={count}
       />
     );
