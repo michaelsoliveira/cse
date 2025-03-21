@@ -20,9 +20,9 @@ export class EstadoController {
             })
         }
     }
-
+    
      async update(request : Request, response: Response) : Promise<Response> {
-        const { id } = request.params
+        const id: number = parseInt(request.params.id)
          try {    
             const estado = await estadoService.update(id, request.body)
             return response.json({
@@ -41,7 +41,7 @@ export class EstadoController {
      }
     
     async delete(request: Request, response: Response): Promise<any> {
-        const { id } = request.params
+        const id: number = parseInt(request.params.id)
 
         try {
             await estadoService.delete(id)
@@ -55,6 +55,25 @@ export class EstadoController {
                 error: true,
                 estado: null,
                 message: error.message
+            })
+        }
+    }
+
+    async getMunicipios(request: Request, response: Response) {
+        const estado_id: number = parseInt(request.params.estado_id);
+        try {
+            const municipios = await estadoService.getMunicipiosByEstado(estado_id)
+
+            return response.json({
+                error: false,
+                message: null,
+                municipios
+            })
+        } catch (error: any) {
+            return response.json({
+                error: true,
+                message: null,
+                municipios: []
             })
         }
     }
@@ -104,7 +123,7 @@ export class EstadoController {
     }
 
     async findOne(request: Request, response: Response) {
-        const { id } = request.params
+        const id: number = parseInt(request.params.id)
         try {
             const estado = await estadoService.findById(id)
 

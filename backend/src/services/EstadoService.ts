@@ -1,4 +1,4 @@
-import { Estado, Prisma } from "@prisma/client";
+import { Estado, Municpio, Prisma } from "@prisma/client";
 import { prismaClient } from "../database/prismaClient";
 
 export interface EstadoType {
@@ -36,7 +36,7 @@ class EstadoService {
         return estado
     }
 
-    async update(id: string, data: EstadoType): Promise<Estado> {
+    async update(id: number, data: EstadoType): Promise<Estado> {
         await prismaClient.estado.update({
             where: {
                 id
@@ -47,7 +47,7 @@ class EstadoService {
         return this.findById(id)
     }
 
-    async delete(id: string): Promise<void> {
+    async delete(id: number): Promise<void> {
         await prismaClient.estado.delete({
             where: {
                 id
@@ -56,6 +56,16 @@ class EstadoService {
         .then(response => {
             console.log(response)
         })
+    }
+
+    async getMunicipiosByEstado(estado_id: number): Promise<Municpio[]> {
+        const municipios = await prismaClient.municpio.findMany({
+            where: {
+                estado_id: estado_id
+            }
+        })
+
+        return municipios
     }
 
     async getAll(query?: any): Promise<any> {
@@ -100,7 +110,7 @@ class EstadoService {
         }
     }
 
-    async deleteEstados(estados: string[]): Promise<any> {
+    async deleteEstados(estados: number[]): Promise<any> {
           
         await prismaClient.estado.deleteMany({
             where: {
@@ -123,7 +133,7 @@ class EstadoService {
         return estados
     }
 
-    async findById(id: string) : Promise<any> {
+    async findById(id: number) : Promise<any> {
         const estado = await prismaClient.estado.findUnique({ where: { id } })
 
         return estado

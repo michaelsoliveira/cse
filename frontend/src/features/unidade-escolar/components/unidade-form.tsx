@@ -54,40 +54,58 @@ export default function UnidadeForm({
   const [loading, setLoading] = useState<boolean>(false)
   const [diretores, setDiretores] = useState<DiretorType[]>([]);
   const [estados, setEstados] = useState([])
+  const [municipios, setMunicipios] = useState([])
   const [currentStep, setCurrentStep] = useState(0);
+  const [estado_id, setEstadoId] = useState(4);
 
   const loadData = useCallback(async () => {
     if (typeof session !== typeof undefined) {
-      const responseDiretores = await client.get('/diretor')
-      const responseEstados = await client.get('/estado?orderBy=nome&order=asc')
-
-      const { diretores } = responseDiretores.data
-      const { estados } = responseEstados.data
-      setDiretores(diretores);
-      setEstados(estados);
+      const fetchDiretores = client.get('/diretor')
+      const fetchEstados = client.get('/estado?orderBy=nome&order=asc')
+      
+      await Promise.all([fetchDiretores, fetchEstados]).then(([resDiretores, restEstados]) => {
+        setDiretores(resDiretores.data.diretores)
+        setEstados(restEstados.data.estados)
+      })
     }
   }, [session, client])
 
+  const loadMunicipios = useCallback(async () => {
+    const responseMunicipios = await client.get(`/estado/get-municipios/${estado_id}`)
+      const { municipios } = responseMunicipios.data
+      setMunicipios(municipios)
+  }, [client, estado_id])
+
   useEffect(() => {
     loadData()
-  }, [loadData])
+    loadMunicipios()
+  }, [loadData, loadMunicipios])
   
-  function getDiretoresOptions() : OptionType[] {
-      return diretores?.map((diretor: any) => {
+  const optionsDiretores : OptionType[] = diretores?.map((diretor: any) => {
           return {
               label: diretor?.pessoa?.pessoaFisica?.nome,
               value: diretor?.id
           }
       })
-  }
 
   function getSelectedDiretor(id: string) {
-    return getDiretoresOptions().find((option) => option.value === id)
+    return optionsDiretores.find((option) => option.value === id)
+  }
+
+  const optionsMunicipios : OptionType[] = municipios?.map((municipio: any) => {
+      return {
+          label: municipio?.nome,
+          value: municipio?.id
+      }
+  })
+
+  function getSelectedMunicipio(id: number) {
+  return optionsMunicipios.find((option: any) => option.value === id)
   }
 
   const optionsEstados : OptionType[] = estados?.map((estado: any) => {
         return {
-            label: estado?.uf,
+            label: estado?.nome,
             value: estado?.id
         }
     })
@@ -118,8 +136,8 @@ const defaultValues = {
       numero: initialData?.pessoa?.endereco?.numero || '',
       complemento: initialData?.pessoa?.endereco?.complemento || '',
       bairro: initialData?.pessoa?.endereco?.bairro || '',
-      municipio: initialData?.pessoa?.endereco?.municipio || '',
-      estado_id: initialData?.pessoa?.endereco?.estado_id || '',
+      municipio_id: initialData?.pessoa?.endereco?.municipio_id || 209,
+      estado_id: initialData?.pessoa?.endereco?.estado_id || 4,
       cep: initialData?.pessoa?.endereco?.cep || ''
     }
   }
@@ -182,7 +200,7 @@ const defaultValues = {
   };
 
   const hasDiretorData = useWatch({ control, name: 'hasDiretorData' })
-
+  
   // const { append, remove, fields } = useFieldArray({
   //     control,
   //     name: 'telefones'
@@ -454,24 +472,6 @@ const defaultValues = {
                   )}
                 />
                 </div>
-                <div className='col-span-2'>
-                <FormField
-                  control={form.control}
-                  name='endereco.municipio'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Município</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                </div>
                 <FormField
                   control={form.control}
                   name='endereco.estado_id'
@@ -481,8 +481,8 @@ const defaultValues = {
                       <Select
                         disabled={loading}
                         onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
+                        value={field.value.toString()}
+                        defaultValue={field.value.toString()}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -503,6 +503,39 @@ const defaultValues = {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name='endereco.municipio_id'
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Município</FormLabel>
+                      <SelectSearchable 
+                        callback={(e) => { form.setValue('endereco.municipio_id', e.value) }} 
+                        options={optionsMunicipios} 
+                        field={getSelectedMunicipio(field.value)} 
+                        placeholder="Selecione um Diretor..."
+                        selectStyle="w-[450px]"
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* <FormField
+                  control={form.control}
+                  name='endereco.municipio'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Município</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> */}
                 </>
                 )}
                 {currentStep === 1 && (

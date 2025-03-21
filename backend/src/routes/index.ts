@@ -57,6 +57,7 @@ routes.get('/estado/:id', Authentication(), new EstadoController().findOne)
 routes.get('/estado/search/q', Authentication(), new EstadoController().search)
 routes.put('/estado/:id', Authentication(), new EstadoController().update)
 routes.delete('/estado/single/:id', Authentication(), new EstadoController().delete)
+routes.get('/estado/get-municipios/:estado_id', Authentication(), new EstadoController().getMunicipios)
 
 //Role
 routes.post('/role/', Authentication(), new RoleController().store)

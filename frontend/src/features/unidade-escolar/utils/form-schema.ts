@@ -20,8 +20,7 @@ const optionalFieldMin = ({ field, min, type = "string" }: optionFieldMinType) =
         });
     case "number":
       return z.literal("").transform(() => undefined)
-      .or(z.coerce.number());
-      // .positive()
+      .or(z.coerce.number().positive());
       // .nullable()
       // .transform((value: any) => value ?? NaN)
     case "email": 
@@ -90,8 +89,8 @@ export const unidadeSchema = z.object({
       complemento: optionalFieldMin({ field: "complemento", min: 4 }),
       // .min(3, { message: 'O campo complemento deve conter no mínimo 3 caracteres' }),
       bairro: optionalFieldMin({ field: "bairro", min: 3 }),
-      municipio: optionalFieldMin({ field: "municipio", min: 3 }),
-      estado_id: z.string(),
+      municipio_id: z.number({ required_error: 'O município é obrigratório' }).int(),
+      estado_id: z.number({ required_error: 'O estado é obrigratório' }).int(),
       cep: optionalFieldMin({ field: "cep", min: 8 }),
     })
 }).and(diretorDataSchema);
