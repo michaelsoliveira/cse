@@ -13,17 +13,36 @@ view OcorrenciasUnidade {
   id     String @id
   escola String
   total_ocorrencias Int
+
+  @@map("ocorrencias_unidade")
 }
 
 view OcorrenciasTipo {
   id    String @id
   tipo_ocorrencia   String
   total_ocorrencias Int
+
+  @@map("ocorrencias_tipo")
+}
+
+view OcorrenciasTiposTotais {
+  id Int @id
+  furto Int
+  roubo Int
+  vulneravel Int
+  intrusao Int
+  ameaca Int
+  uso_arma Int
+  porte_arma Int
+  danos_patrimonio Int
+  ameaca_escola Int
 }
 
 view OcorrenciasMes {
   mes   String  @id
   total_ocorrencias Int
+
+  @@map("ocorrencias_mes")
 }
 
 view OcorrenciasEnvolvidos {
@@ -31,6 +50,8 @@ view OcorrenciasEnvolvidos {
   nome_envolvido    String
   tipo_envolvido    String
   papel             String
+
+  @@map("ocorrencias_envolvidos")
 }
 
 view OcorrenciasResponsavel {
@@ -41,6 +62,17 @@ view OcorrenciasResponsavel {
   local         String
   status        String
   registrado_por  String
+
+  @@map("ocorrencias_responsavel")
+}
+
+view TotaisDashboard {
+  id    Int @id
+  total_escolas Int
+  total_ocorrencias Int
+  total_ocorrencias_mes Int
+
+  @@map("totais_dashboard")
 }
 
 model Pessoa {
@@ -52,7 +84,7 @@ model Pessoa {
   telefone        String?
   endereco_id     String?          @db.Uuid
   diretor         Diretor[]
-  endereco        Endereco?        @relation(fields: [endereco_id], references: [id], onDelete: Cascade)
+  endereco        Endereco?        @relation(fields: [endereco_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   pessoaFisica    PessoaFisica?
   pessoaJuridica  PessoaJuridica?
   unidade_escolar UnidadeEscolar[]
@@ -66,8 +98,8 @@ model PessoaFisica {
   updated_at      DateTime  @default(now()) @db.Timestamp(6)
   nome            String? 
   rg              String?   @db.VarChar(30)
-  cpf             String?   @unique @db.VarChar(14)
-  data_nascimento DateTime?
+  cpf             String?   @db.VarChar(14)
+  data_nascimento DateTime? @db.Date
   pessoa          Pessoa    @relation(fields: [pessoa_id], references: [id])
 
   @@map("pessoa_fisica")
@@ -83,7 +115,7 @@ model PessoaJuridica {
   inscricao_federal  String?   @db.VarChar(30)
   cnpj               String?   @db.VarChar(14)
   data_constituicao  DateTime?
-  pessoa             Pessoa    @relation(fields: [pessoa_id], references: [id])
+  pessoa             Pessoa    @relation(fields: [pessoa_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("pessoa_juridica")
 }
@@ -93,11 +125,13 @@ model Endereco {
   created_at DateTime @default(now()) @db.Timestamp(6)
   updated_at DateTime @default(now()) @db.Timestamp(6)
   cep        String?  @db.VarChar(8)
-  logradouro String?  @db.VarChar(60)
+  logradouro String?  @db.VarChar
   numero     String?
-  municipio  String?  @db.VarChar(30)
-  bairro     String?  @db.VarChar(50)
+  bairro     String?  @db.VarChar
   lat_lon    Unsupported("Point")?
+  complemento String?
+  municipio_id  Int?
+  municipio     Municipio?  @relation(fields: [municipio_id], references: [id])
   estado_id  Int?
   estado     Estado?  @relation(fields: [estado_id], references: [id])
   pessoa     Pessoa[]
@@ -134,7 +168,7 @@ model UnidadeEscolar {
   // diretor              Diretor[]
   ocorrencia           Ocorrencia[]
   responsavel_registro ResponsavelRegistro[]
-  pessoa               Pessoa?               @relation(fields: [pessoa_id], references: [id])
+  pessoa               Pessoa?               @relation(fields: [pessoa_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("unidade_escolar")
 }
@@ -340,16 +374,17 @@ model Estado {
   nome          String
   ibge          Int?
   ddd           Json?
+  municipios    Municipio[]
   enderecos     Endereco[]
-  municipios    Municpio[]
   @@map("estado")
 }
 
-model Municpio {
+model Municipio {
   id          Int     @id @default(autoincrement())
   nome        String
   ibge        Int?
   lat_lon     Unsupported("Point")?
+  enderecos   Endereco[]
   estado_id   Int
   estado      Estado @relation(fields: [estado_id], references: [id])
   @@map("municipio")

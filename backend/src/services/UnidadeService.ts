@@ -26,9 +26,13 @@ class UnidadeService {
             throw new Error('Já existe uma unidade escolar cadastrada com este nome')
         }
         
-        const estado = dataRequest?.endereco?.estado_id ? { 
-                connect: { id: dataRequest?.endereco?.estado_id }
+        const municipio = dataRequest?.endereco?.municipio_id ? { 
+                connect: { id: parseInt(dataRequest?.endereco?.municipio_id) }
             } : {}
+
+        const estado = dataRequest?.endereco?.estado_id ? { 
+            connect: { id: parseInt(dataRequest?.endereco?.estado_id) }
+        } : {}
         
         const diretor = dataRequest?.hasDiretorData ? {
             create: {
@@ -47,11 +51,11 @@ class UnidadeService {
                     }
                 }
             }
-        } : {
+        } : dataRequest?.diretor_id ? {
             connect: {
                 id: dataRequest?.diretor_id
             }
-        }
+        } : {}
         
         const data = { 
             inep: dataRequest?.inep,
@@ -71,9 +75,9 @@ class UnidadeService {
                         create: {
                             cep: dataRequest?.endereco?.cep,
                             logradouro: dataRequest?.endereco?.logradouro,
-                            municipio: dataRequest?.endereco?.municipio,
                             numero: dataRequest?.endereco?.numero,
                             bairro: dataRequest?.endereco?.bairro,
+                            municipio,
                             estado
                         }
                     }
@@ -98,9 +102,13 @@ class UnidadeService {
     }
 
     async update(id: string, dataRequest: any): Promise<UnidadeEscolar> {
+        const municipio = dataRequest?.endereco?.municipio_id ? { 
+            connect: { id: parseInt(dataRequest?.endereco?.municipio_id) }
+        } : {}
+
         const estado = dataRequest?.endereco?.estado_id ? { 
-                connect: { id: dataRequest?.endereco?.estado_id }
-            } : {}
+            connect: { id: parseInt(dataRequest?.endereco?.estado_id) }
+        } : {}
         
         const diretor = dataRequest?.hasDiretorData ? {
             upsert: {
@@ -140,11 +148,11 @@ class UnidadeService {
                     }
                 }
             }
-        } : {
+        } : dataRequest?.diretor_id ? {
             connect: {
                 id: dataRequest?.diretor_id
             }
-        }
+        } : {}
         
         const data = { 
             inep: dataRequest?.inep,
@@ -168,17 +176,17 @@ class UnidadeService {
                             update: {
                                 cep: dataRequest?.endereco?.cep,
                                 logradouro: dataRequest?.endereco?.logradouro,
-                                municipio: dataRequest?.endereco?.municipio,
                                 numero: dataRequest?.endereco?.numero,
                                 bairro: dataRequest?.endereco?.bairro,
+                                municipio,
                                 estado
                             },
                             create: {
                                 cep: dataRequest?.endereco?.cep,
                                 logradouro: dataRequest?.endereco?.logradouro,
-                                municipio: dataRequest?.endereco?.municipio,
                                 numero: dataRequest?.endereco?.numero,
                                 bairro: dataRequest?.endereco?.bairro,
+                                municipio,
                                 estado
                             }
                         }
@@ -248,7 +256,11 @@ class UnidadeService {
                 include: {
                     pessoa: {
                         include: {
-                            endereco: true,
+                            endereco: {
+                                include: {
+                                    municipio: true
+                                }
+                            },
                             pessoaJuridica: true
                         }
                     },

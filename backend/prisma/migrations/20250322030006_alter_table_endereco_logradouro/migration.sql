@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "endereco" ALTER COLUMN "logradouro" SET DATA TYPE VARCHAR,
+ALTER COLUMN "bairro" SET DATA TYPE VARCHAR;

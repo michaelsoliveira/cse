@@ -34,7 +34,7 @@ import {
   useForm, 
   useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
-import { DiretorType, UnidadeEscolarType } from 'types';
+import { DiretorType, EstadoType, MunicipioType, UnidadeEscolarType } from 'types';
 import { UnidadeFormValues, unidadeSchema } from '../utils/form-schema';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormDescription } from '@/components/ui/form';
@@ -56,68 +56,10 @@ export default function UnidadeForm({
   const [estados, setEstados] = useState([])
   const [municipios, setMunicipios] = useState([])
   const [currentStep, setCurrentStep] = useState(0);
-  const [estado_id, setEstadoId] = useState(4);
 
-  const loadData = useCallback(async () => {
-    if (typeof session !== typeof undefined) {
-      const fetchDiretores = client.get('/diretor')
-      const fetchEstados = client.get('/estado?orderBy=nome&order=asc')
-      
-      await Promise.all([fetchDiretores, fetchEstados]).then(([resDiretores, restEstados]) => {
-        setDiretores(resDiretores.data.diretores)
-        setEstados(restEstados.data.estados)
-      })
-    }
-  }, [session, client])
-
-  const loadMunicipios = useCallback(async () => {
-    const responseMunicipios = await client.get(`/estado/get-municipios/${estado_id}`)
-      const { municipios } = responseMunicipios.data
-      setMunicipios(municipios)
-  }, [client, estado_id])
-
-  useEffect(() => {
-    loadData()
-    loadMunicipios()
-  }, [loadData, loadMunicipios])
-  
-  const optionsDiretores : OptionType[] = diretores?.map((diretor: any) => {
-          return {
-              label: diretor?.pessoa?.pessoaFisica?.nome,
-              value: diretor?.id
-          }
-      })
-
-  function getSelectedDiretor(id: string) {
-    return optionsDiretores.find((option) => option.value === id)
-  }
-
-  const optionsMunicipios : OptionType[] = municipios?.map((municipio: any) => {
-      return {
-          label: municipio?.nome,
-          value: municipio?.id
-      }
-  })
-
-  function getSelectedMunicipio(id: number) {
-  return optionsMunicipios.find((option: any) => option.value === id)
-  }
-
-  const optionsEstados : OptionType[] = estados?.map((estado: any) => {
-        return {
-            label: estado?.nome,
-            value: estado?.id
-        }
-    })
-
-
-// function getSelectedEstado(estado_id: string | null) {
-//   return optionsEstados?.find((option) => option.value === estado_id)
-// }
-
-const defaultValues = {
+  const defaultValues = {
     nome: initialData?.pessoa?.pessoaJuridica?.nome_fantasia || '',
-    inep: initialData?.inep || '',
+    inep: initialData?.inep || undefined,
     zona: initialData?.zona || 'urbana',
     telefone: initialData?.pessoa?.telefone || '',
     email: initialData?.pessoa?.email || '',
@@ -152,10 +94,68 @@ const defaultValues = {
     control,
     // formState: { errors }
   } = form;
-
+  const formData = form.getValues()
   // const fullErrors: FieldErrors<Extract<UnidadeFormValues, { hasDiretorData: true}>> = errors
 
   type FieldName = keyof UnidadeFormValues;
+
+  const loadData = useCallback(async () => {
+    if (typeof session !== typeof undefined) {
+      const fetchDiretores = client.get('/diretor')
+      const fetchEstados = client.get('/estado?orderBy=nome&order=asc')
+      
+      await Promise.all([fetchDiretores, fetchEstados]).then(([resDiretores, restEstados]) => {
+        setDiretores(resDiretores.data.diretores)
+        setEstados(restEstados.data.estados)
+      })
+    }
+  }, [session, client])
+
+  const loadMunicipios = useCallback(async () => {
+    const responseMunicipios = await client.get(`/estado/get-municipios/${form.getValues('endereco.estado_id')}`)
+      const { municipios } = responseMunicipios.data
+      setMunicipios(municipios)
+  }, [client, form.getValues('endereco.estado_id')])
+
+  useEffect(() => {
+    loadData()
+    loadMunicipios()
+  }, [loadData, loadMunicipios])
+  
+  const optionsDiretores : OptionType[] = diretores?.map((diretor: any) => {
+          return {
+              label: diretor?.pessoa?.pessoaFisica?.nome,
+              value: diretor?.id
+          }
+      })
+
+  function getSelectedDiretor(id: string) {
+    return optionsDiretores.find((option) => option.value === id)
+  }
+
+  const optionsMunicipios : OptionType[] = municipios?.map((municipio: any) => {
+      return {
+          label: municipio?.nome,
+          value: municipio?.id
+      }
+  })
+
+  function getSelectedMunicipio(id: number) {
+    return optionsMunicipios.find((option: any) => option.value === id)
+  }
+
+  const optionsEstados : OptionType[] = estados?.map((estado: any) => {
+      return {
+          label: estado?.nome,
+          value: estado?.id
+      }
+  })
+
+  const selecMunicipio: MunicipioType | undefined = municipios.find((municipio: MunicipioType) => municipio.id === formData.endereco.municipio_id)
+  const selecEstado: EstadoType | undefined = estados.find((estado: EstadoType) => estado.id === formData.endereco.estado_id)
+// function getSelectedEstado(estado_id: string | null) {
+//   return optionsEstados?.find((option) => option.value === estado_id)
+// }
 
   async function onSubmit(data: UnidadeFormValues) {
     try {
@@ -165,12 +165,12 @@ const defaultValues = {
           : await client.post('/unidade', data)
       const { error, message } = response.data
       if (!error) {
-        setLoading(false)
         toast.success(message)
         router.push('/dashboard/unidade-escolar')
-      } else {
         setLoading(false)
+      } else {
         toast.error(message)
+        setLoading(false)
       }
     } catch(error: any) {
       toast.error(error?.message)
@@ -210,7 +210,7 @@ const defaultValues = {
     {
       id: 'Etapa 1',
       name: 'Informações Básicas',
-      fields: ['nome', 'email', 'telefone', 'endereco.logradouro', 'endereco.complemento', 'endereco.bairro', 'endereco.municipio', 'endereco.estado_id', 'endereco.cep']
+      fields: ['nome', 'email', 'telefone', 'endereco.logradouro', 'endereco.complemento', 'endereco.bairro', 'endereco.municipio_id', 'endereco.estado_id', 'endereco.cep']
     },
     {
       id: 'Etapa 2',
@@ -438,22 +438,24 @@ const defaultValues = {
                       </FormItem>
                     )}
                   />
-                <FormField
-                  control={form.control}
-                  name='endereco.complemento'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Complemento</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <div className='col-span-2'>
+                  <FormField
+                    control={form.control}
+                    name='endereco.complemento'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Complemento</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <div className='col-span-2'>
                 <FormField
                   control={form.control}
@@ -480,9 +482,9 @@ const defaultValues = {
                       <FormLabel>UF</FormLabel>
                       <Select
                         disabled={loading}
-                        onValueChange={field.onChange}
-                        value={field.value.toString()}
-                        defaultValue={field.value.toString()}
+                        onValueChange={(value) => field.onChange(Number(value)) }
+                        value={String(field.value)}
+                        defaultValue={String(field.value)}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -492,8 +494,8 @@ const defaultValues = {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className='overflow-y-auto max-h-[20rem]'>
-                          {optionsEstados.map((estado: OptionType) => (
-                            <SelectItem key={estado.value!} value={estado.value!}>
+                          {optionsEstados?.map((estado: any) => (
+                            <SelectItem key={estado.value} value={estado.value.toString()}>
                               {estado.label}
                             </SelectItem>
                           ))}
@@ -513,29 +515,13 @@ const defaultValues = {
                         callback={(e) => { form.setValue('endereco.municipio_id', e.value) }} 
                         options={optionsMunicipios} 
                         field={getSelectedMunicipio(field.value)} 
-                        placeholder="Selecione um Diretor..."
+                        placeholder="Selecione um Município..."
                         selectStyle="w-[450px]"
                       />
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                {/* <FormField
-                  control={form.control}
-                  name='endereco.municipio'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Município</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={loading}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
                 </>
                 )}
                 {currentStep === 1 && (
@@ -576,7 +562,7 @@ const defaultValues = {
                             <FormLabel>Diretor</FormLabel>
                             <SelectSearchable 
                               callback={(e) => { form.setValue('diretor_id', e.value) }} 
-                              options={getDiretoresOptions()} 
+                              options={optionsDiretores} 
                               field={getSelectedDiretor(field.value)} 
                               placeholder="Selecione um Diretor..."
                               selectStyle="w-[450px]"
@@ -680,10 +666,12 @@ const defaultValues = {
                 )}
               </div>
               {currentStep === 2 && (
-                <UnidadeDetails data={form.getValues()} />
+                <UnidadeDetails data={
+                  { ...formData, endereco: { ...formData.endereco, estado: selecEstado, municipio: selecMunicipio } }
+                } />
               ) }
               {(currentStep === steps.length - 1) && (
-                <div className='flex flex-row w-full justify-center'>
+                <div className='flex flex-row justify-center'>
                   <Button 
                     type='submit'
                     className="mt-4 w-48"

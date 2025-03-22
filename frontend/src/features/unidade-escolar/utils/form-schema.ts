@@ -19,10 +19,11 @@ const optionalFieldMin = ({ field, min, type = "string" }: optionFieldMinType) =
           message: `O campo '${field}' deve ter ao menos ${min} caracteres, se preenchido.`,
         });
     case "number":
-      return z.literal("").transform(() => undefined)
+      return z.literal("")
+      .transform(() => undefined)
+      .or(z.number().transform((value: any) => value ?? NaN))
       .or(z.coerce.number().positive());
       // .nullable()
-      // .transform((value: any) => value ?? NaN)
     case "email": 
       return z.string()
           .optional()
@@ -57,7 +58,7 @@ const diretorDataSchema = z.discriminatedUnion("hasDiretorData", [
   }),
   z.object({
     hasDiretorData: z.literal(false),
-    diretor_id: z.string().nonempty('É necessário cadastrar ou selecionar um diretor')
+    diretor_id: z.string()
   })
 ]);
 
@@ -89,8 +90,8 @@ export const unidadeSchema = z.object({
       complemento: optionalFieldMin({ field: "complemento", min: 4 }),
       // .min(3, { message: 'O campo complemento deve conter no mínimo 3 caracteres' }),
       bairro: optionalFieldMin({ field: "bairro", min: 3 }),
-      municipio_id: z.number({ required_error: 'O município é obrigratório' }).int(),
-      estado_id: z.number({ required_error: 'O estado é obrigratório' }).int(),
+      municipio_id: z.number({ required_error: 'O campo município é obrigratório' }).int(),
+      estado_id: z.number({ required_error: 'O campo estado é obrigratório' }).int(),
       cep: optionalFieldMin({ field: "cep", min: 8 }),
     })
 }).and(diretorDataSchema);

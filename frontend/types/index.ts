@@ -2,15 +2,13 @@ import { Icons } from '@/components/icons';
 
 export interface EnderecoType {
   id: string;
-  cep: string;
+  cep?: string;
   logradouro?: string;
-  numero: string;
+  numero?: string;
   municipio_id: number;
   estado_id: number;
-  municipio: MunicipioType;
-  complemento: string;
-  bairro: string;
-  numero_endereco: string;
+  complemento?: string;
+  bairro?: string;
 }
 
 export interface EstadoType {
@@ -65,10 +63,10 @@ export interface DiretorType {
   id: string;
   pessoa_id: string;
   nome: string;
-  rg: string;
-  cpf: string;
-  telefone: string;
-  email: string;
+  rg?: string;
+  cpf?: string;
+  telefone?: string;
+  email?: string;
   pessoa: PessoaType;
 }
 

@@ -21,7 +21,7 @@ import {
 
 export interface OptionType {
     readonly label: string;
-    readonly value: string | undefined;
+    readonly value: string | number;
 }
 
 

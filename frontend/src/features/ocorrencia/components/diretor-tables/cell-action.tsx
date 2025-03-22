@@ -8,28 +8,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Product } from '@/constants/data';
 import { useAuthContext } from '@/context/AuthContext';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { UnidadeEscolarType } from 'types';
+import { DiretorType } from 'types';
 
 interface CellActionProps {
-  data: UnidadeEscolarType;
+  data: DiretorType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { client } = useAuthContext();
+  const { client } = useAuthContext()
 
   const onConfirm = async () => {
     try {
       setLoading(true)
-      await client.delete(`/unidade/${data.id}`).then((res: any) => {
+      await client.delete(`/diretor/${data.id}`).then((res: any) => {
         const { error, message } = res.data;
         if (!error) {
           toast.success(message)
@@ -62,15 +61,15 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
-          <DropdownMenuLabel>Ações</DropdownMenuLabel>
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/unidade-escolar/${data.id}`)}
+            onClick={() => router.push(`/dashboard/diretor/${data.id}`)}
           >
-            <Edit className='mr-2 h-4 w-4' /> Editar
+            <Edit className='mr-2 h-4 w-4' /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className='mr-2 h-4 w-4' /> Excluir
+            <Trash className='mr-2 h-4 w-4' /> Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

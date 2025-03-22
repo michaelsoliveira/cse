@@ -6,20 +6,16 @@ import { UnidadeEscolarType } from 'types';
 
 export const columns: ColumnDef<UnidadeEscolarType>[] = [
   {
-    accessorKey: 'inep',
-    header: 'Cod. INEP'
+    accessorKey: 'pessoa.pessoaFisica.nome',
+    header: 'Nome'
   },
   {
-    accessorKey: 'pessoa.pessoaJuridica.nome_fantasia',
-    header: 'Escola'
+    accessorKey: 'pessoa.email',
+    header: 'Email'
   },
   {
-    accessorKey: 'diretor.pessoa.pessoaFisica.nome',
-    header: 'Diretor'
-  },
-  {
-    accessorKey: 'pessoa.endereco.municipio.nome',
-    header: 'Município'
+    accessorKey: 'pessoa.telefone',
+    header: 'Telefone'
   },
   {
     header: 'Ações',

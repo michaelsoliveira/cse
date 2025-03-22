@@ -10,8 +10,12 @@ import { prismaClient } from "../database/prismaClient";
 
 class DiretorService {
     async create(data: any): Promise<Diretor> {
+        const municipio = data?.endereco?.municipio_id ? { 
+            connect: { id: parseInt(data?.endereco?.municipio_id) }
+        } : {}
+
         const estado = data?.endereco?.estado_id ? { 
-            connect: { id: data?.endereco?.estado_id }
+            connect: { id: parseInt(data?.endereco?.estado_id) }
         } : {}
 
         const diretorExists = await prismaClient.diretor.findFirst({
@@ -54,9 +58,9 @@ class DiretorService {
                             create: {
                                 cep: data?.endereco?.cep,
                                 logradouro: data?.endereco?.logradouro,
-                                municipio: data?.endereco?.municipio,
                                 numero: data?.endereco?.numero,
                                 bairro: data?.endereco?.bairro,
+                                municipio,
                                 estado
                             }
                         }
@@ -69,8 +73,8 @@ class DiretorService {
     }
 
     async update(id: string, data: any): Promise<Diretor> {
-        const estado = data?.endereco?.estado_id ? { 
-            connect: { id: data?.endereco?.estado_id }
+        const municipio = data?.endereco?.municipio_id ? { 
+            connect: { id: parseInt(data?.endereco?.municipio_id) }
         } : {}
 
         const diretor = await prismaClient.diretor.update({
@@ -111,18 +115,16 @@ class DiretorService {
                                 update: {
                                     cep: data?.endereco?.cep,
                                     logradouro: data?.endereco?.logradouro,
-                                    municipio: data?.endereco?.municipio,
                                     numero: data?.endereco?.numero,
                                     bairro: data?.endereco?.bairro,
-                                    estado
+                                    municipio
                                 },
                                 create: {
                                     cep: data?.endereco?.cep,
                                     logradouro: data?.endereco?.logradouro,
-                                    municipio: data?.endereco?.municipio,
                                     numero: data?.endereco?.numero,
                                     bairro: data?.endereco?.bairro,
-                                    estado
+                                    municipio
                                 }
                             }
                         }
@@ -174,6 +176,11 @@ class DiretorService {
                 include: {
                     pessoa: {
                         include: {
+                            endereco: {
+                                include: {
+                                    municipio: true
+                                }
+                            },
                             pessoaFisica: true
                         }
                     }

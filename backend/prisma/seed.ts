@@ -200,7 +200,7 @@ async function main() {
       { nome: "Roubo" },
       { nome: "Furto" },
       { nome: "Vulnerabilidade" },
-      { nome: "Intrusao" },
+      { nome: "Intrusão" },
       { nome: "Ameaça" },
       { nome: "Uso de Arma de Fogo" },
       { nome: "Porte de Arma" },

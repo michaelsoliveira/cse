@@ -1,4 +1,4 @@
-import { Estado, Municpio, Prisma } from "@prisma/client";
+import { Estado, Municipio, Prisma } from "@prisma/client";
 import { prismaClient } from "../database/prismaClient";
 
 export interface EstadoType {
@@ -58,8 +58,8 @@ class EstadoService {
         })
     }
 
-    async getMunicipiosByEstado(estado_id: number): Promise<Municpio[]> {
-        const municipios = await prismaClient.municpio.findMany({
+    async getMunicipiosByEstado(estado_id: number): Promise<Municipio[]> {
+        const municipios = await prismaClient.municipio.findMany({
             where: {
                 estado_id: estado_id
             }
