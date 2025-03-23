@@ -11,6 +11,17 @@ export interface EnderecoType {
   bairro?: string;
 }
 
+export interface OcorrenciaType {
+  id: string;
+  descricao?: string;
+  data?: string;
+  hora?: string;
+  classificacao: string;
+  origem_id?: string;
+  unidade_id: string;
+  tipo_id: string;
+}
+
 export interface EstadoType {
   id: number;
   nome: string;

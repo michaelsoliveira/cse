@@ -36,6 +36,8 @@ view OcorrenciasTiposTotais {
   porte_arma Int
   danos_patrimonio Int
   ameaca_escola Int
+
+  @@map("ocorrencias_tipos_totais")
 }
 
 view OcorrenciasMes {
@@ -59,7 +61,7 @@ view OcorrenciasResponsavel {
   escola  String
   tipo    String
   data_ocorrencia   DateTime @db.Date
-  local         String
+  hora         String
   status        String
   registrado_por  String
 
@@ -195,13 +197,24 @@ model Diretor {
   @@map("diretor")
 }
 
+enum ClassificacaoOcorrencia {
+  seguranca_patrimonial
+  seguranca_escolar
+}
+
+model OrigemOcorrencia {
+  id    String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nome  String
+  ocorrencia  Ocorrencia[]
+}
+
 model Ocorrencia {
   id              String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   created_at      DateTime              @default(now()) @db.Timestamp(6)
   updated_at      DateTime              @default(now()) @db.Timestamp(6)
   data            DateTime?             @db.Date
   hora            DateTime?             @db.Time(0)
-  local           String?
+  classificacao   ClassificacaoOcorrencia
   descricao       String?
   tipo_id         String                @db.Uuid
   responsavel_id  String?               @db.Uuid
@@ -209,6 +222,8 @@ model Ocorrencia {
   unidade_id      String                @db.Uuid
   anexos          AnexoOcorrencia[]
   envolvidos      EnvolvidoOcorrencia[]
+  origem_id       String? @db.Uuid
+  origem          OrigemOcorrencia?      @relation(fields: [origem_id], references: [id])
   registro_por    ResponsavelRegistro?  @relation(fields: [responsavel_id], references: [id])
   tipo_ocorrencia TipoOcorrencia        @relation(fields: [tipo_id], references: [id])
   unidade_escolar UnidadeEscolar        @relation(fields: [unidade_id], references: [id])

@@ -1,13 +1,13 @@
 import FormCardSkeleton from '@/components/form-card-skeleton';
 import PageContainer from '@/components/layout/page-container';
 import { Suspense } from 'react';
-import DiretorViewPage from '@/features/diretor/components/diretor-view-page';
+import OcorrenciaViewPage from '@/features/ocorrencia/components/ocorrencia-view-page';
 
 export const metadata = {
-  title: 'Dashboard : Diretor View'
+  title: 'Dashboard : Ocorrência View'
 };
 
-type PageProps = { params: Promise<{ diretorId: string }> };
+type PageProps = { params: Promise<{ ocorrenciaId: string }> };
 
 export default async function Page(props: PageProps) {
   const params = await props.params;
@@ -15,7 +15,7 @@ export default async function Page(props: PageProps) {
     <PageContainer scrollable>
       <div className='flex-1 space-y-4'>
         <Suspense fallback={<FormCardSkeleton />}>
-          <DiretorViewPage diretorId={params.diretorId} />
+          <OcorrenciaViewPage ocorrenciaId={params.ocorrenciaId} />
         </Suspense>
       </div>
     </PageContainer>

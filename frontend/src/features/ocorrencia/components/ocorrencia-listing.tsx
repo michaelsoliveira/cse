@@ -1,6 +1,6 @@
 import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as DiretorTable } from '@/components/ui/table/data-table';
-import { columns } from './diretor-tables/columns';
+import { columns } from './ocorrencia-tables/columns';
 import { auth } from '@/lib/auth';
 import { fetchWithAuth } from '@/lib/utils';
 
@@ -15,16 +15,16 @@ export default async function UnidadeListingPage({}: UnidadeListingPage) {
   const order = searchParamsCache.get('orderBy') || 'asc'
 
   const session = await auth();
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/diretor?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/ocorrencia?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
   const data = await fetchWithAuth(url, session?.accessToken!)
   
-  const { diretores, error, count } = data;
+  const { ocorrencias, error, count } = data;
   
   if (!error){
     return (
       <DiretorTable
         columns={columns}
-        data={diretores}
+        data={ocorrencias}
         totalItems={count}
       />
     );
