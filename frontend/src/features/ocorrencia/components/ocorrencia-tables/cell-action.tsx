@@ -13,10 +13,10 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { DiretorType } from 'types';
+import { OcorrenciaType } from 'types';
 
 interface CellActionProps {
-  data: DiretorType;
+  data: OcorrenciaType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -28,7 +28,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true)
-      await client.delete(`/diretor/${data.id}`).then((res: any) => {
+      await client.delete(`/ocorrencia/${data.id}`).then((res: any) => {
         const { error, message } = res.data;
         if (!error) {
           toast.success(message)
@@ -64,7 +64,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/diretor/${data.id}`)}
+            onClick={() => router.push(`/dashboard/ocorrencia/${data.id}`)}
           >
             <Edit className='mr-2 h-4 w-4' /> Update
           </DropdownMenuItem>

@@ -2,20 +2,20 @@
 // import { Product } from '@/constants/data';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { UnidadeEscolarType } from 'types';
+import { OcorrenciaType } from 'types';
 
-export const columns: ColumnDef<UnidadeEscolarType>[] = [
+export const columns: ColumnDef<OcorrenciaType>[] = [
   {
-    accessorKey: 'pessoa.pessoaFisica.nome',
-    header: 'Nome'
+    accessorKey: 'data',
+    header: 'Data da Ocorrência'
   },
   {
-    accessorKey: 'pessoa.email',
-    header: 'Email'
+    accessorKey: 'hora',
+    header: 'Hora'
   },
   {
-    accessorKey: 'pessoa.telefone',
-    header: 'Telefone'
+    accessorKey: 'tipo_ocorrencia.nome',
+    header: 'Tipo da Ocorrência'
   },
   {
     header: 'Ações',

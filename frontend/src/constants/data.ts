@@ -55,6 +55,11 @@ export const navItems: NavItem[] = [
       },
     ]
   },
+  {
+    title: 'Ocorrência',
+    url: '/dashboard/ocorrencia',
+    icon: 'ellipsis'
+  },
   // {
   //   title: 'Kanban',
   //   url: '/dashboard/kanban',

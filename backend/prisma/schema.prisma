@@ -206,6 +206,8 @@ model OrigemOcorrencia {
   id    String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   nome  String
   ocorrencia  Ocorrencia[]
+
+  @@map("origem_ocorrencia")
 }
 
 model Ocorrencia {

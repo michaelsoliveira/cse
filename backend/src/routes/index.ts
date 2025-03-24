@@ -10,6 +10,7 @@ import { RoleController } from "../controllers/RoleController"
 import { PermissionController } from "../controllers/PermissionController"
 import { UnidadeController } from '../controllers/UnidadeController';
 import { DiretorController } from '../controllers/DiretorController';
+import { OcorrenciaController } from '../controllers/OcorrenciaController';
 
 const express = require('express')
 const multer = require('multer')
@@ -92,5 +93,12 @@ routes.get('/diretor/search/q', Authentication(), new DiretorController().search
 routes.post('/diretor', Authentication(), new DiretorController().store)
 routes.put('/diretor/:id', Authentication(), new DiretorController().update)
 routes.delete('/diretor/:id', Authentication(), new DiretorController().delete)
+
+//Unidades Escolares
+routes.get('/ocorrencia/', Authentication(), new OcorrenciaController().findAll)
+routes.get('/ocorrencia/:id', Authentication(), new OcorrenciaController().findOne)
+routes.post('/ocorrencia', Authentication(), new OcorrenciaController().store)
+routes.put('/ocorrencia/:id', Authentication(), new OcorrenciaController().update)
+routes.delete('/ocorrencia/:id', Authentication(), new OcorrenciaController().delete)
 
 export default routes;

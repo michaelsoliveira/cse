@@ -23,7 +23,7 @@ export default async function OcorrenciaViewPage({
     if (!ocorrencia) {
       notFound();
     }
-    pageTitle = `Editar ocorrencia`;
+    pageTitle = `Editar Ocorrência`;
   }
 
   return <OcorrenciaForm initialData={ocorrencia} pageTitle={pageTitle} />;

@@ -12,7 +12,10 @@ export const searchParams = {
   zonas: parseAsString,
   categories: parseAsString,
   orderBy: parseAsString,
-  order: parseAsString
+  order: parseAsString,
+  dataInicio: parseAsString,
+  dataFim: parseAsString,
+  classificacao_ocorrencia: parseAsString
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);
