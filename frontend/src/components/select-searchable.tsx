@@ -55,7 +55,7 @@ export function SelectSearchable({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-[300px] justify-between",
+            "justify-between",
             !field && "text-muted-foreground",
             selectStyle
           )}
@@ -66,13 +66,13 @@ export function SelectSearchable({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={cn("w-[300px] p-0", selectStyle)}>
+      <PopoverContent className={cn("md:w-full p-0", selectStyle)}>
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandList>
             <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
             <CommandGroup>
-              {options?.map((option: OptionType) => (
+              {options?.map((option: OptionType, idx: number) => (
                 <CommandItem
                   key={option.value}
                   value={option.label}

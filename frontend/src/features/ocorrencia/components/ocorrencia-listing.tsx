@@ -60,7 +60,4 @@ export default async function OcorrenciaListingPage() {
   
 
 }
-function useQuery<T>(arg0: { queryKey: string[]; queryFn: () => Promise<any>; }): { data: any; isLoading: any; isError: any; } {
-  throw new Error('Function not implemented.');
-}
 

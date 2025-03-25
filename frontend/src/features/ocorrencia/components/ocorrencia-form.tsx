@@ -13,7 +13,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import InputMask from 'react-input-mask'
+import ReactInputMask from 'react-input-mask';
 import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/context/AuthContext';
 import {
@@ -38,6 +38,7 @@ import { OcorrenciaType } from 'types';
 import { OcorrenciaFormValues, ocorrenciaSchema } from '../utils/form-schema';
 import { Textarea } from '@/components/ui/textarea';
 import { InputHora } from '@/components/input-hora';
+import { ocorrencias_classificacao } from './ocorrencia-tables/use-ocorrencia-table-filters';
 
 export default function OcorrenciaForm({
   initialData,
@@ -101,7 +102,6 @@ export default function OcorrenciaForm({
 
   async function onSubmit(data: OcorrenciaFormValues) {
     try {
-
       const output = await form.trigger(fields as FieldName[], {
         shouldFocus: true
       });
@@ -129,9 +129,8 @@ export default function OcorrenciaForm({
 
   const loadData = useCallback(async () => {
     if (typeof session !== typeof undefined) {
-      const { data: { error, unidades } } = await client.get('/unidade?orderBy=pessoa.pessoaJuridica.nome_fantasia&order=asc')
+      const { data: { count, unidades } } = await client.get('/unidade?orderBy=pessoa.pessoaJuridica.nome_fantasia&order=asc')
       const { data: tipos } = await client.get('/ocorrencia/get-tipos')
-
       setUnidades(unidades);
       setTiposOcorrencia(tipos);
     }
@@ -171,7 +170,20 @@ export default function OcorrenciaForm({
                     </FormItem>
                   )}
                 />
-                <div className='col-span-3'>
+                <FormField
+                  control={form.control}
+                  name='hora'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hora</FormLabel>
+                      <FormControl>
+                        <Input placeholder='00:00' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
               <FormField
                 control={form.control}
                 name='unidade_id'
@@ -183,33 +195,12 @@ export default function OcorrenciaForm({
                       options={optionsUnidades} 
                       field={getSelectUnidade(field.value)} 
                       placeholder="Selecione uma Unidade..."
-                      selectStyle="w-full"
                     />
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-            
-            <FormField
-              control={form.control}
-              name="hora"
-              render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="hora">Hora</FormLabel>
-                    <FormControl>
-                      <InputHora
-                        {...field} // Passa as props do react-hook-form
-                        onBlur={(e) => {
-                          field.onBlur(); // Garante que o onBlur do react-hook-form seja chamado
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage>{errors.hora?.message}</FormMessage>
-                  </FormItem>
-                )
-              }
-            />
+    
             
             <FormField
               control={form.control}
@@ -219,7 +210,7 @@ export default function OcorrenciaForm({
                   <FormLabel>Tipo Ocorrência</FormLabel>
                   <Select
                     disabled={loading}
-                    onValueChange={(value) => field.onChange(Number(value)) }
+                    onValueChange={(value) => field.onChange(value) }
                     value={String(field.value)}
                     defaultValue={String(field.value)}
                   >
@@ -242,6 +233,38 @@ export default function OcorrenciaForm({
                 </FormItem>
               )}
             />  
+            <FormField
+              control={form.control}
+              name='classificacao'
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Classificação</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={(value) => field.onChange(value) }
+                    value={String(field.value)}
+                    defaultValue={String(field.value)}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder='Selecione um Tipo'
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                      {ocorrencias_classificacao?.map((tipo: any) => (
+                        <SelectItem key={tipo.value} value={tipo.value.toString()}>
+                          {tipo.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            /> 
+            
             <div className='col-span-4'>
             <FormField
               control={form.control}

@@ -1,8 +1,6 @@
 'use client';
 
-import { useUpdateSearchParams } from '@/hooks/use-update-search-params';
 import { searchParams } from '@/lib/searchparams';
-import { useSearchParams } from 'next/navigation';
 import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 

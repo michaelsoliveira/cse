@@ -8,9 +8,11 @@ interface HoraInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   error?: string;
   onBlur?: React.FocusEventHandler<HTMLInputElement> | undefined;
+  className?: string;
 }
 
-export const InputHora = ({ value, onChange, onBlur, error, className, ...props }: HoraInputProps) => {
+export const InputHora = React.forwardRef<HTMLInputElement, HoraInputProps>(
+  ({ value, onChange, error, onBlur, className, ...props }, ref) => {
   return (
     <div className="flex flex-col space-y-1">
       <InputMask
@@ -33,5 +35,7 @@ export const InputHora = ({ value, onChange, onBlur, error, className, ...props 
       </InputMask>
       {error && <span className="text-red-500 text-sm">{error}</span>}
     </div>
-  )
-}
+  )}
+);
+
+InputHora.displayName = "InputHora";

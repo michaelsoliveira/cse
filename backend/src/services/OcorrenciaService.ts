@@ -3,15 +3,14 @@ import { prismaClient } from "../database/prismaClient";
 
 class OcorrenciaService {
     async create(data: any): Promise<Ocorrencia> {
-
         const ocorrencia = await prismaClient.ocorrencia.create({
             data: {
                 unidade_id: data?.unidade_id,
                 classificacao: data?.classificacao,
-                data: data?.data_ocorrencia ? new Date(data?.data_ocorrencia) : undefined,
+                data: data?.data ? new Date(data?.data) : undefined,
                 hora: data?.hora ? new Date(`1970-01-01T${data?.hora}`) : undefined,
                 user_id: data?.user_id,
-                origem_id: data?.origem_id,
+                // origem_id: data?.origem_id,
                 tipo_id: data?.tipo_id,
                 descricao: data?.descricao
             }
@@ -29,7 +28,7 @@ class OcorrenciaService {
             data: {
                 unidade_id: data?.unidade_id,
                 classificacao: data?.classificacao,
-                data: data?.data_ocorrencia ? new Date(data?.data_ocorrencia) : undefined,
+                data: data?.data ? new Date(data?.data) : undefined,
                 hora: data?.hora ? new Date(`1970-01-01T${data?.hora}`) : undefined,
                 origem_id: data?.origem_id,
                 tipo_id: data?.tipo_id,
@@ -66,6 +65,8 @@ class OcorrenciaService {
         let filters: any = {}
 
         const skip = (page - 1) * perPage
+
+        const limit = perPage ? parseInt(perPage) : undefined
         
         const orderByElement: Array<string> = orderBy ? orderBy?.split('.') : {}
         const orderByTerm = orderByElement?.length > 0 
@@ -115,7 +116,7 @@ class OcorrenciaService {
                         anexos: true,
                     },
                     where: filters,
-                    take: perPage ? parseInt(perPage) : 50,
+                    take: limit,
                     skip: skip ? skip : 0,
                     orderBy: orderByTerm,
                 }),

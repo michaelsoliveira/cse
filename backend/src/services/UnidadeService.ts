@@ -253,15 +253,21 @@ class UnidadeService {
         
         const [unidades, total] = await prismaClient.$transaction([
             prismaClient.unidadeEscolar.findMany({
-                include: {
+                select: {
+                    id: true,
                     pessoa: {
-                        include: {
+                        select: {
                             endereco: {
                                 include: {
                                     municipio: true
                                 }
                             },
-                            pessoaJuridica: true
+                            pessoaJuridica: {
+                                select: {
+                                    pessoa_id: true,
+                                    nome_fantasia: true
+                                }
+                            }
                         }
                     },
                     diretor: {
@@ -275,7 +281,7 @@ class UnidadeService {
                     }
                 },
                 where,
-                take: limit ? parseInt(limit) : 50,
+                take: limit ? parseInt(limit) : undefined,
                 skip: skip ? skip : 0,
                 orderBy: orderByTerm,
             }),
