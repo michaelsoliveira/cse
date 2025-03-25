@@ -1,4 +1,4 @@
-import { Ocorrencia } from "@prisma/client";
+import { Ocorrencia, TipoOcorrencia } from "@prisma/client";
 import { prismaClient } from "../database/prismaClient";
 
 class OcorrenciaService {
@@ -142,6 +142,16 @@ class OcorrenciaService {
             }
         })
         
+    }
+
+    async getTiposOcorrencia() : Promise<TipoOcorrencia[]>{
+        const tipos = await prismaClient.tipoOcorrencia.findMany({
+            orderBy: {
+                nome: 'asc'
+            }
+        })
+
+        return tipos
     }
 
     async findById(id: string) : Promise<any> {

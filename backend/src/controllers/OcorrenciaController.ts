@@ -113,4 +113,14 @@ export class OcorrenciaController {
             return response.json(error.message)
         }
     }
+
+    async getTiposOcorrencia(request: Request, response: Response) {
+        try {
+            const tipos = await ocorrenciaService.getTiposOcorrencia()
+
+            return response.json(tipos)
+        } catch (error: any) {
+            return response.json(error.message)
+        }
+    }
 }

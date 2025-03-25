@@ -53,8 +53,8 @@ export default function UnidadeForm({
   const router = useRouter()
   const [loading, setLoading] = useState<boolean>(false)
   const [diretores, setDiretores] = useState<DiretorType[]>([]);
-  const [estados, setEstados] = useState([])
-  const [municipios, setMunicipios] = useState([])
+  const [estados, setEstados] = useState<EstadoType[]>([])
+  const [municipios, setMunicipios] = useState<MunicipioType[]>([])
   const [currentStep, setCurrentStep] = useState(0);
 
   const defaultValues = {
@@ -92,7 +92,9 @@ export default function UnidadeForm({
 
   const {
     control,
-    // formState: { errors }
+    formState: { errors },
+    getValues,
+    setValue
   } = form;
   const formData = form.getValues()
   // const fullErrors: FieldErrors<Extract<UnidadeFormValues, { hasDiretorData: true}>> = errors
@@ -232,6 +234,30 @@ export default function UnidadeForm({
     // },
     { id: 'Etapa 3', name: 'Completo' }
   ];
+
+  const getCep: any = async (cepField: string) => {
+    const cep = cepField.replace(/\D/g, "")
+    
+    try {
+      const data = await fetch(`https://viacep.com.br/ws/${cep}/json`).then((data) => data.json())
+      
+      const estado = estados.find((est: any) => est.uf == data.uf)
+      const municipio = municipios.find((mun: any) => mun.nome == data.localidade)
+      console.log(municipio)
+      setValue("endereco.logradouro", data.logradouro)
+      setValue("endereco.bairro", data.bairro)
+      if (estado) {
+        setValue("endereco.estado_id", estado?.id);
+        loadMunicipios();
+      }
+      if (municipio) {
+        setValue("endereco.municipio_id", municipio?.id)
+      }
+    } catch (error) {
+      alert("Erro ao buscar o endereço.")
+      console.error(error)
+    }
+  }
 
   return (
     <>
@@ -395,8 +421,12 @@ export default function UnidadeForm({
                       <FormLabel>CEP</FormLabel>
                       <FormControl>
                         <Input
-                          disabled={loading}
                           {...field}
+                          disabled={loading}
+                          onBlur={(e) => {
+                            field.onBlur()
+                            getCep(e.target.value)
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -482,7 +512,7 @@ export default function UnidadeForm({
                       <FormLabel>UF</FormLabel>
                       <Select
                         disabled={loading}
-                        onValueChange={(value) => field.onChange(Number(value)) }
+                        onValueChange={(value) => {field.onChange(Number(value)); loadMunicipios()} }
                         value={String(field.value)}
                         defaultValue={String(field.value)}
                       >

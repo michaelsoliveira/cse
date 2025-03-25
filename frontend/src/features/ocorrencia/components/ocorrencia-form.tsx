@@ -13,6 +13,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import InputMask from 'react-input-mask'
 import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/context/AuthContext';
 import {
@@ -35,11 +36,10 @@ import {
 import { toast } from 'sonner';
 import { OcorrenciaType } from 'types';
 import { OcorrenciaFormValues, ocorrenciaSchema } from '../utils/form-schema';
-import { Checkbox } from '@/components/ui/checkbox';
-import { FormDescription } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { InputHora } from '@/components/input-hora';
 
-export default function DiretorForm({
+export default function OcorrenciaForm({
   initialData,
   pageTitle
 }: {
@@ -70,9 +70,10 @@ export default function DiretorForm({
   });
 
   const {
-    control,
-    // formState: { errors }
-  } = form;
+    watch,
+    setValue,
+    formState: { errors }
+  } = form
 
   // const fullErrors: FieldErrors<Extract<DiretorFormValues, { hasDiretorData: true}>> = errors
 
@@ -80,26 +81,22 @@ export default function DiretorForm({
 
   const fields = ['unidade_id', 'tipo_id', 'data', 'hora', 'tipo_id', 'classificacao', 'origem_id']
 
-  const optionsUnidades : OptionType[] = unidades?.map((estado: any) => {
+  const optionsUnidades : OptionType[] = unidades?.map((unidade: any) => {
     return {
-        label: estado?.uf,
-        value: estado?.id
+        label: unidade?.pessoa.pessoaJuridica.nome_fantasia,
+        value: unidade?.id
     }
   })
   
-  const optionsTiposOcorrencia : OptionType[] = tiposOcorrencia?.map((municipio: any) => {
+  const optionsTiposOcorrencia : OptionType[] = tiposOcorrencia?.map((tipo: any) => {
       return {
-          label: municipio?.nome,
-          value: municipio?.id
+          label: tipo?.nome,
+          value: tipo?.id
       }
   })
 
-  function getSelectedUnidade(id: string) {
+  function getSelectUnidade(id: string) {
     return optionsUnidades.find((option: any) => option.value === id)
-  }
-
-  function getSelectedTipoOcorrencia(id: string) {
-    return optionsTiposOcorrencia.find((option: any) => option.value === id)
   }
 
   async function onSubmit(data: OcorrenciaFormValues) {
@@ -132,13 +129,11 @@ export default function DiretorForm({
 
   const loadData = useCallback(async () => {
     if (typeof session !== typeof undefined) {
-      const responseUnidades = await client.get('/unidade?orderBy=nome&order=asc')
-      const responseTiposOcorrencia = await client.get('/tipo-ocorrencia?orderBy=nome&order=asc')
+      const { data: { error, unidades } } = await client.get('/unidade?orderBy=pessoa.pessoaJuridica.nome_fantasia&order=asc')
+      const { data: tipos } = await client.get('/ocorrencia/get-tipos')
 
-      const { unidades } = responseUnidades.data
-      const { tipos_ocorrencia } = responseTiposOcorrencia.data
       setUnidades(unidades);
-      setTiposOcorrencia(tipos_ocorrencia);
+      setTiposOcorrencia(tipos);
     }
   }, [session, client])
 
@@ -158,7 +153,7 @@ export default function DiretorForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
             <div
-              className='gap-4 md:grid md:grid-cols-4'
+              className='gap-4 md:grid md:grid-cols-4 mt-4'
             >
                 <FormField
                   control={form.control}
@@ -176,88 +171,96 @@ export default function DiretorForm({
                     </FormItem>
                   )}
                 />
-              <FormField
-                  control={form.control}
-                  name='data'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Data</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type='date'
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              <FormField
-                    control={form.control}
-                    name='unidade_id'
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Município</FormLabel>
-                        <SelectSearchable 
-                          callback={(e) => { form.setValue('unidade_id', e.value) }} 
-                          options={optionsUnidades} 
-                          field={getSelectedUnidade(field.value)} 
-                          placeholder="Selecione uma Unidade..."
-                          selectStyle="w-[450px]"
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-            
+                <div className='col-span-3'>
               <FormField
                 control={form.control}
-                name='tipo_id'
+                name='unidade_id'
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>UF</FormLabel>
-                    <Select
-                      disabled={loading}
-                      onValueChange={field.onChange}
-                      value={field.value.toString()}
-                      defaultValue={field.value.toString()}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder='Selecione um Estado'
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className='overflow-y-auto max-h-[20rem]'>
-                        {optionsTiposOcorrencia?.map((tipo: OptionType) => (
-                          <SelectItem key={tipo.value?.toString()!} value={tipo.value?.toString()!}>
-                            {tipo.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Local</FormLabel>
+                    <SelectSearchable 
+                      callback={(e) => { form.setValue('unidade_id', e.value) }} 
+                      options={optionsUnidades} 
+                      field={getSelectUnidade(field.value)} 
+                      placeholder="Selecione uma Unidade..."
+                      selectStyle="w-full"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name='descricao'
-                render={({ field }) => (
+            </div>
+            
+            <FormField
+              control={form.control}
+              name="hora"
+              render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Telefone</FormLabel>
+                    <FormLabel htmlFor="hora">Hora</FormLabel>
                     <FormControl>
-                      <Textarea
-                        disabled={loading}
-                        {...field}
+                      <InputHora
+                        {...field} // Passa as props do react-hook-form
+                        onBlur={(e) => {
+                          field.onBlur(); // Garante que o onBlur do react-hook-form seja chamado
+                        }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage>{errors.hora?.message}</FormMessage>
                   </FormItem>
-                )}
-              />
-              <div className='col-span-2'></div>
+                )
+              }
+            />
+            
+            <FormField
+              control={form.control}
+              name='tipo_id'
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Tipo Ocorrência</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={(value) => field.onChange(Number(value)) }
+                    value={String(field.value)}
+                    defaultValue={String(field.value)}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder='Selecione um Tipo'
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                      {optionsTiposOcorrencia?.map((tipo: any) => (
+                        <SelectItem key={tipo.value} value={tipo.value.toString()}>
+                          {tipo.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />  
+            <div className='col-span-4'>
+            <FormField
+              control={form.control}
+              name='descricao'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descrição</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className='w-full'
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            </div>
             </div>
             
             <Button 

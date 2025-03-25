@@ -28,10 +28,10 @@ const fetchOcorrencias = async (params: URLSearchParams) => {
   return await fetchWithAuth(url, session?.accessToken!);
 }
 
-export default async function UnidadeListingPage() {
+export default async function OcorrenciaListingPage() {
   const page = searchParamsCache.get('page') || 1;
   const pageLimit = searchParamsCache.get('limit') || 10;
-  const orderBy = searchParamsCache.get('orderBy') || 'pessoa.pessoaFisica.nome'
+  const orderBy = searchParamsCache.get('orderBy') || 'data'
   const order = searchParamsCache.get('orderBy') || 'asc'
   const dataInicio = searchParamsCache.get('dataInicio') || ''
   const dataFim = searchParamsCache.get('dataFim') || ''
@@ -40,7 +40,7 @@ export default async function UnidadeListingPage() {
   const session = await auth();
   const url = `${process.env.NEXT_PUBLIC_API_URL}/ocorrencia?dataInicio=${dataInicio}&dataFim=${dataFim}&classificacao=${classificacao}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
   const data = await fetchWithAuth(url, session?.accessToken!);
-  console.log(data)
+  
   // const { data, isLoading, isError } = useQuery<Ocorrencia[]>({
   //   queryKey: ['ocorrencias', params.toString()],
   //   queryFn: () => fetchOcorrencias(params),

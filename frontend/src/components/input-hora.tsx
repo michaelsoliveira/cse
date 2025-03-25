@@ -1,22 +1,25 @@
-import React from "react"
+import React, { FocusEventHandler } from "react"
 import InputMask from "react-input-mask"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils" // se usar função de classes
 
 interface HoraInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  error?: string
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  error?: string;
+  onBlur?: React.FocusEventHandler<HTMLInputElement> | undefined;
 }
 
-export const InputHora = ({ value, onChange, error, className, ...props }: HoraInputProps) => {
+export const InputHora = ({ value, onChange, onBlur, error, className, ...props }: HoraInputProps) => {
   return (
     <div className="flex flex-col space-y-1">
       <InputMask
-        mask="99:99"
+        mask="00:00"
         value={value}
         onChange={onChange}
         maskChar=""
+        disabled={false}
+        onBlur={onBlur}
       >
         {(inputProps: any) => (
           <Input
@@ -24,6 +27,7 @@ export const InputHora = ({ value, onChange, error, className, ...props }: HoraI
             {...props}
             className={cn("w-full", error && "border-red-500", className)}
             placeholder="00:00"
+            disabled={false}
           />
         )}
       </InputMask>

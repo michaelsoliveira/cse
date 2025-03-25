@@ -96,6 +96,7 @@ routes.delete('/diretor/:id', Authentication(), new DiretorController().delete)
 
 //Unidades Escolares
 routes.get('/ocorrencia/', Authentication(), new OcorrenciaController().findAll)
+routes.get('/ocorrencia/get-tipos', Authentication(), new OcorrenciaController().getTiposOcorrencia)
 routes.get('/ocorrencia/:id', Authentication(), new OcorrenciaController().findOne)
 routes.post('/ocorrencia', Authentication(), new OcorrenciaController().store)
 routes.put('/ocorrencia/:id', Authentication(), new OcorrenciaController().update)
