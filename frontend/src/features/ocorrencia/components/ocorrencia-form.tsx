@@ -187,7 +187,7 @@ export default function OcorrenciaForm({
                   </FormItem>
                 )}
               />
-              <div className='md:col-span-3'>
+              <div className='md:col-span-2'>
                 <FormField
                   control={form.control}
                   name='unidade_id'
@@ -266,7 +266,38 @@ export default function OcorrenciaForm({
                   <FormMessage />
                 </FormItem>
               )}
-            />              
+            />  
+            <FormField
+              control={form.control}
+              name='comunicante_id'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Comunicante</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={(value) => field.onChange(value) }
+                    value={String(field.value)}
+                    defaultValue={String(field.value)}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder='Selecione o Comunicante'
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                      {optionsTiposOcorrencia?.map((tipo: any) => (
+                        <SelectItem key={tipo.value} value={tipo.value.toString()}>
+                          {tipo.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />            
             <div className='col-span-4'>
             <FormField
               control={form.control}

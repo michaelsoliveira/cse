@@ -37,17 +37,25 @@ export function SelectSearchable({
     callback,
     placeholder,
     field,
-    className,
     options
 } : SelectItemsProps) {
   const [open, setOpen] = useState(false)
   const [width, setWidth] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
+  const updateWidth = () => {
     if (triggerRef.current) {
       setWidth(triggerRef.current.offsetWidth);
     }
+  };
+
+  useEffect(() => {
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    
+    return () => {
+      window.removeEventListener("resize", updateWidth);
+    };
   }, []);
 
   return (
