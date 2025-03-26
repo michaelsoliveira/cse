@@ -13,7 +13,6 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import ReactInputMask from 'react-input-mask';
 import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/context/AuthContext';
 import {
@@ -37,8 +36,9 @@ import { toast } from 'sonner';
 import { OcorrenciaType } from 'types';
 import { OcorrenciaFormValues, ocorrenciaSchema } from '../utils/form-schema';
 import { Textarea } from '@/components/ui/textarea';
-import { InputHora } from '@/components/input-hora';
+import { InputMasked } from '@/components/input-hora';
 import { ocorrencias_classificacao } from './ocorrencia-tables/use-ocorrencia-table-filters';
+import moment from 'moment';
 
 export default function OcorrenciaForm({
   initialData,
@@ -57,11 +57,11 @@ export default function OcorrenciaForm({
   const defaultValues = {
     unidade_id: initialData?.unidade_id || '',
     tipo_id: initialData?.tipo_id || '',
-    data: initialData?.data || '',
-    hora: initialData?.hora || '',
+    data: initialData?.data && moment(initialData?.data).format('YYYY-MM-DD') || '',
+    hora: initialData?.hora && moment(initialData?.hora).format('hh:mm') || '',
     descricao: initialData?.descricao || '',
     classificacao: initialData?.classificacao || '',
-    origem_id: initialData?.origem_id || ''
+    comunicante_id: initialData?.comunicante_id || ''
   }
 
   const form = useForm<OcorrenciaFormValues>({
@@ -152,56 +152,92 @@ export default function OcorrenciaForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
             <div
-              className='gap-4 md:grid md:grid-cols-4 mt-4'
+              className='gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 mt-4'
             >
-                <FormField
-                  control={form.control}
-                  name='data'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Data</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type='date'
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name='hora'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Hora</FormLabel>
-                      <FormControl>
-                        <Input placeholder='00:00' {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
               <FormField
                 control={form.control}
-                name='unidade_id'
+                name='data'
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Local</FormLabel>
-                    <SelectSearchable 
-                      callback={(e) => { form.setValue('unidade_id', e.value) }} 
-                      options={optionsUnidades} 
-                      field={getSelectUnidade(field.value)} 
-                      placeholder="Selecione uma Unidade..."
-                    />
+                  <FormItem>
+                    <FormLabel>Data</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type='date'
+                        {...field} 
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-    
-            
+              <FormField
+                control={form.control}
+                name='hora'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hora</FormLabel>
+                    <FormControl>
+                    <InputMasked
+                      { ...field }
+                      mask='__:__'
+                      replacement={{ _: /\d/ }}
+                    />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className='col-span-2'></div>
+              <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name='unidade_id'
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col'>
+                      <FormLabel>Instituição</FormLabel>
+                      <SelectSearchable 
+                        callback={(e) => { form.setValue('unidade_id', e.value) }} 
+                        options={optionsUnidades} 
+                        field={getSelectUnidade(field.value)} 
+                        placeholder="Selecione uma Unidade..."
+                        className='w-auto'
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            <FormField
+              control={form.control}
+              name='classificacao'
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Classificação</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={(value) => field.onChange(value) }
+                    value={String(field.value)}
+                    defaultValue={String(field.value)}
+                  >
+                  <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder='Selecione um Tipo'
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                      {ocorrencias_classificacao?.map((tipo: any) => (
+                        <SelectItem key={tipo.value} value={tipo.value.toString()}>
+                          {tipo.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            /> 
             <FormField
               control={form.control}
               name='tipo_id'
@@ -232,39 +268,7 @@ export default function OcorrenciaForm({
                   <FormMessage />
                 </FormItem>
               )}
-            />  
-            <FormField
-              control={form.control}
-              name='classificacao'
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Classificação</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={(value) => field.onChange(value) }
-                    value={String(field.value)}
-                    defaultValue={String(field.value)}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder='Selecione um Tipo'
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className='overflow-y-auto max-h-[20rem]'>
-                      {ocorrencias_classificacao?.map((tipo: any) => (
-                        <SelectItem key={tipo.value} value={tipo.value.toString()}>
-                          {tipo.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> 
-            
+            />              
             <div className='col-span-4'>
             <FormField
               control={form.control}

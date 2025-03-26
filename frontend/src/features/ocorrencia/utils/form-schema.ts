@@ -53,7 +53,7 @@ export const ocorrenciaSchema = z.object({
     }),
   descricao: optionalFieldMin({ field: "descricao", min: 5 }),
   classificacao: z.string(),
-  origem_id: z.string()
+  comunicante_id: z.string()
 });
 
 export type OcorrenciaFormValues = z.infer<typeof ocorrenciaSchema>;

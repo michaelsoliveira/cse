@@ -4,6 +4,7 @@ import { columns } from './ocorrencia-tables/columns';
 import { auth } from '@/lib/auth';
 import { fetchWithAuth } from '@/lib/utils';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
+import OcorrenciaPdf from './ocorrencia-pdf';
 
 type Ocorrencia = {
   id: string
@@ -50,11 +51,13 @@ export default async function OcorrenciaListingPage() {
   
   if (!error){
     return (
+    <>
       <OcorrenciaTable
         columns={columns}
         data={ocorrencias}
         totalItems={count}
       />
+    </>
     );
   }
   

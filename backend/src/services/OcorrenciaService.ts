@@ -10,7 +10,7 @@ class OcorrenciaService {
                 data: data?.data ? new Date(data?.data) : undefined,
                 hora: data?.hora ? new Date(`1970-01-01T${data?.hora}`) : undefined,
                 user_id: data?.user_id,
-                // origem_id: data?.origem_id,
+                // comunicante_id: data?.comunicante_id,
                 tipo_id: data?.tipo_id,
                 descricao: data?.descricao
             }
@@ -30,7 +30,7 @@ class OcorrenciaService {
                 classificacao: data?.classificacao,
                 data: data?.data ? new Date(data?.data) : undefined,
                 hora: data?.hora ? new Date(`1970-01-01T${data?.hora}`) : undefined,
-                origem_id: data?.origem_id,
+                comunicante_id: data?.comunicante_id,
                 tipo_id: data?.tipo_id,
                 descricao: data?.descricao
             }
@@ -53,7 +53,7 @@ class OcorrenciaService {
             dataFinal,
             classificacao,
             unidade_id,
-            origem_id,
+            comunicante_id,
             user_id,
             tipo_id,
             perPage, 
@@ -102,17 +102,25 @@ class OcorrenciaService {
             filters.user_id = user_id
             }
 
-            if (origem_id) {
-                filters.origem_id = origem_id
+            if (comunicante_id) {
+                filters.comunicante_id = comunicante_id
             }    
             
             const [ocorrencias, total] = await prismaClient.$transaction([
                 prismaClient.ocorrencia.findMany({
                     include: {
                         tipo_ocorrencia: true,
-                        unidade_escolar: true,
+                        unidade_escolar: {
+                            include:{
+                                pessoa: {
+                                    include: {
+                                        pessoaJuridica: true
+                                    }
+                                }
+                            }
+                        },
                         user: true,
-                        origem: true,
+                        comunicante: true,
                         anexos: true,
                     },
                     where: filters,
@@ -161,7 +169,7 @@ class OcorrenciaService {
                 tipo_ocorrencia: true,
                 unidade_escolar: true,
                 user: true,
-                origem: true,
+                comunicante: true,
                 anexos: true,
             },
             where: { id } 

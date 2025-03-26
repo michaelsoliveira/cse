@@ -202,7 +202,7 @@ enum ClassificacaoOcorrencia {
   seguranca_escolar
 }
 
-model OrigemOcorrencia {
+model Comunicante {
   id    String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   nome  String
   ocorrencia  Ocorrencia[]
@@ -224,8 +224,8 @@ model Ocorrencia {
   unidade_id      String                @db.Uuid
   anexos          AnexoOcorrencia[]
   envolvidos      EnvolvidoOcorrencia[]
-  origem_id       String? @db.Uuid
-  origem          OrigemOcorrencia?      @relation(fields: [origem_id], references: [id])
+  comunicante_id       String? @db.Uuid
+  comunicante          Comunicante?      @relation(fields: [comunicante_id], references: [id])
   registro_por    ResponsavelRegistro?  @relation(fields: [responsavel_id], references: [id])
   tipo_ocorrencia TipoOcorrencia        @relation(fields: [tipo_id], references: [id])
   unidade_escolar UnidadeEscolar        @relation(fields: [unidade_id], references: [id])

@@ -26,23 +26,18 @@ export interface OptionType {
 
 
 export type SelectItemsProps = {
-    // label?: string;
     callback: (option: any) => void;
     placeholder?: string;
     field?: any;
     options?: OptionType[] | null;
-    // isMulti?: boolean;
-    // initialData?: any;
-    // styleLabel?: string;
-    selectStyle?: string;
-    // filterOption?: any;
+    className?: string;
 }
 
 export function SelectSearchable({ 
     callback,
     placeholder,
     field,
-    selectStyle,
+    className,
     options
 } : SelectItemsProps) {
   const [open, setOpen] = React.useState(false)
@@ -55,9 +50,9 @@ export function SelectSearchable({
           role="combobox"
           aria-expanded={open}
           className={cn(
+            className,
             "justify-between",
-            !field && "text-muted-foreground",
-            selectStyle
+            !field && "text-muted-foreground"
           )}
         >
           {field?.value
@@ -66,7 +61,7 @@ export function SelectSearchable({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={cn("md:w-full p-0", selectStyle)}>
+      <PopoverContent className={cn(className, 'p-0')}>
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandList>
