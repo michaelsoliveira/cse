@@ -152,7 +152,7 @@ export default function OcorrenciaForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
             <div
-              className='gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 mt-4'
+              className='gap-4 w-full flex flex-col md:grid md:grid-cols-4 mt-4'
             >
               <FormField
                 control={form.control}
@@ -187,20 +187,18 @@ export default function OcorrenciaForm({
                   </FormItem>
                 )}
               />
-              <div className='col-span-2'></div>
-              <div className='col-span-2'>
+              <div className='md:col-span-3'>
                 <FormField
                   control={form.control}
                   name='unidade_id'
                   render={({ field }) => (
-                    <FormItem className='flex flex-col'>
+                    <FormItem>
                       <FormLabel>Instituição</FormLabel>
                       <SelectSearchable 
                         callback={(e) => { form.setValue('unidade_id', e.value) }} 
                         options={optionsUnidades} 
                         field={getSelectUnidade(field.value)} 
                         placeholder="Selecione uma Unidade..."
-                        className='w-auto'
                       />
                       <FormMessage />
                     </FormItem>
@@ -211,7 +209,7 @@ export default function OcorrenciaForm({
               control={form.control}
               name='classificacao'
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem>
                   <FormLabel>Classificação</FormLabel>
                   <Select
                     disabled={loading}
@@ -242,7 +240,7 @@ export default function OcorrenciaForm({
               control={form.control}
               name='tipo_id'
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem>
                   <FormLabel>Tipo Ocorrência</FormLabel>
                   <Select
                     disabled={loading}

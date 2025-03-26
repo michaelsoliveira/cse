@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import { useState, useRef, useEffect } from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -40,55 +40,69 @@ export function SelectSearchable({
     className,
     options
 } : SelectItemsProps) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
+  const [width, setWidth] = useState(0);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (triggerRef.current) {
+      setWidth(triggerRef.current.offsetWidth);
+    }
+  }, []);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className={cn(
-            className,
-            "justify-between",
-            !field && "text-muted-foreground"
-          )}
+    <div className="relative max-w-5xl">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            ref={triggerRef}
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn(
+              "w-full justify-between",
+              !field && "text-muted-foreground"
+            )}
+          >
+            {field?.value
+              ? options?.find((option: OptionType) => option.value === field.value)?.label
+              : "Selecione um Item"}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent 
+          style={{ width: width }}
+          className="p-0"
+          align="start"
         >
-          {field?.value
-            ? options?.find((option: OptionType) => option.value === field.value)?.label
-            : "Selecione um Item"}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className={cn(className, 'p-0')}>
-        <Command>
-          <CommandInput placeholder={placeholder} />
-          <CommandList>
-            <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
-            <CommandGroup>
-              {options?.map((option: OptionType, idx: number) => (
-                <CommandItem
-                  key={option.value}
-                  value={option.label}
-                  onSelect={() => {
-                    callback(option)  
-                    setOpen(false)
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      field?.value === option.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {option.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+          <Command className="w-full">
+            <CommandInput placeholder={placeholder} />
+            <CommandList>
+              <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
+              <CommandGroup>
+                {options?.map((option: OptionType, idx: number) => (
+                  <CommandItem
+                    key={option.value}
+                    value={option.label}
+                    onSelect={() => {
+                      callback(option)  
+                      setOpen(false)
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        field?.value === option.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
   )
 }

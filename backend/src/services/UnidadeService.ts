@@ -255,6 +255,7 @@ class UnidadeService {
             prismaClient.unidadeEscolar.findMany({
                 select: {
                     id: true,
+                    inep: true,
                     pessoa: {
                         select: {
                             endereco: {
