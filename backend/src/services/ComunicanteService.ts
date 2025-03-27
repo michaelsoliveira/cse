@@ -18,29 +18,26 @@ class ComunicanteService {
             connect: { id: parseInt(data?.endereco?.estado_id) }
         } : {}
 
-        const comunicanteExists = await prismaClient.comunicante.findFirst({
-            where: {
-                OR: [
-                    {
-                        pessoa: {
-                            pessoaFisica: {
-                                nome: data?.nome
-                            }
-                        }
-                    },
-                    {
-                        pessoa: {
-                            pessoaJuridica: {
-                                nome_fantasia: data?.nome
-                            }
-                        }
-                    }
-                ] 
+        const nomeEquals = data?.tipo_pessoa == 'F' ? {
+            pessoa: {
+                pessoaFisica: {
+                    nome: data?.pessoaFisica?.nome
+                }
             }
+        } : {
+            pessoa: {
+                pessoaFisica: {
+                    nome: data?.pessoaJuridica?.nome_fantasia
+                }
+            }
+        }
+
+        const comunicanteExists = await prismaClient.comunicante.findFirst({
+            where: nomeEquals
         })
 
         if (comunicanteExists) {
-            throw new Error('Já existe uma diretor cadastrada com este nome ou UF')
+            throw new Error('Já existe um comunicante cadastrado com este nome')
         }
         
         const preparedPessoa = data?.tipo_pessoa == 'F' ? {

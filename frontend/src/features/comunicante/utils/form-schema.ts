@@ -49,7 +49,7 @@ const enderecoDataSchema = z.discriminatedUnion("hasEnderecoData", [
       complemento: optionalFieldMin({ field: "complemento", min: 4 }),
       bairro: optionalFieldMin({ field: "bairro", min: 3 }),
       municipio_id: z.number({ required_error: 'O município é obrigratório' }).int(),
-      estado_id: z.number({ required_error: 'O estado é obrigratório' }).int(),
+      estado_id: z.string().nonempty('O campo estado é obrigatório'),
       cep: optionalFieldMin({ field: "cep", min: 8 })
     })
   }),

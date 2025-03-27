@@ -64,7 +64,7 @@ export default function DiretorForm({
     })
 
   const pessoaFisica = initialData?.pessoa?.tipo === 'F' && {
-    tipo_pessoa: "F" as "F",
+    tipo_pessoa:  'F' as "F",
     pessoaFisica: {
       nome: initialData?.pessoa?.pessoaFisica?.nome || '',
       rg: initialData?.pessoa?.pessoaFisica?.rg || '',
@@ -92,22 +92,20 @@ export default function DiretorForm({
       : pessoaJuridica
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const defaultValues = {
-    telefone: '',
-    email: '',
+    telefone: initialData?.pessoa?.telefone || '',
+    email: initialData?.pessoa?.email || '',
     endereco: {
-      logradouro: '',
-      numero: '',
-      complemento: '',
-      bairro: '',
-      municipio_id: 209,
-      estado_id: 4,
-      cep: ''
+      logradouro: initialData?.pessoa?.endereco?.logradouro || '',
+      numero: initialData?.pessoa?.endereco?.numero || '',
+      complemento: initialData?.pessoa?.endereco?.complemento || '',
+      bairro: initialData?.pessoa?.endereco?.bairro || '',
+      municipio_id: initialData?.pessoa?.endereco?.municipio_id || 209,
+      estado_id: initialData?.pessoa?.endereco?.estado_id || '4',
+      cep: initialData?.pessoa?.endereco?.cep || ''
     },
-    tipo_pessoa: 'F' as "F",
     ...pessoaFisica,
-    hasEnderecoData: false
+    ...pessoaJuridica
   }
 
   const form = useForm<ComunicanteFormValues>({
@@ -123,27 +121,6 @@ export default function DiretorForm({
     control,
     watch
   } = form;
-
-  useEffect(() => {
-
-    if (initialData) {
-      form.reset({
-        telefone: initialData?.pessoa?.telefone || '',
-        email: initialData?.pessoa?.email || '',
-        endereco: {
-          logradouro: initialData?.pessoa?.endereco?.logradouro || '',
-          numero: initialData?.pessoa?.endereco?.numero || '',
-          complemento: initialData?.pessoa?.endereco?.complemento || '',
-          bairro: initialData?.pessoa?.endereco?.bairro || '',
-          municipio_id: initialData?.pessoa?.endereco?.municipio_id || 209,
-          estado_id: initialData?.pessoa?.endereco?.estado_id || 4,
-          cep: initialData?.pessoa?.endereco?.cep || ''
-        },
-        ...getDataTipo({ tipo: initialData?.pessoa?.tipo ? initialData?.pessoa?.tipo : 'F' })
-      });
-    }
-
-  }, [form, getDataTipo, initialData]);
 
   const tipoPessoa = useWatch({control, name: 'tipo_pessoa'});
   const hasEnderecoData = useWatch({control, name: 'hasEnderecoData'});
@@ -234,20 +211,27 @@ export default function DiretorForm({
                 name="tipo_pessoa"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="block mb-2">
-                      Tipo Pessoa{" "}
-                      <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <RadioGroup className="flex border border-gray-300 rounded-md px-4 items-center justify-center space-x-4" {...field}>
-                        <Input type="radio" name='tipo_pessoa' value="F" />
+                  <FormLabel className="block mb-2">
+                    Tipo Pessoa <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup 
+                      className="flex border border-gray-300 rounded-md px-4 items-center justify-center space-x-4"
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <Input type="radio" id="tipoPessoa-F" value="F" checked={field.value === "F"} onChange={() => field.onChange("F")} />
                         <Label htmlFor="tipoPessoa-F">Física</Label>
-                        <Input type="radio" name='tipo_pessoa' value="J" />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Input type="radio" id="tipoPessoa-J" value="J" checked={field.value === "J"} onChange={() => field.onChange("J")} />
                         <Label htmlFor="tipoPessoa-J">Jurídica</Label>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
                 )}
               />
               </div>
@@ -355,7 +339,7 @@ export default function DiretorForm({
                     name='pessoaJuridica.inscricao_federal'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Instição Municipal</FormLabel>
+                        <FormLabel>Inscrição Federal</FormLabel>
                         <FormControl>
                           <Input
                             disabled={loading}
@@ -368,22 +352,24 @@ export default function DiretorForm({
                   />
                 </>
               )}
-              <FormField
-                control={form.control}
-                name='email'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className='col-span-2'>
+                <FormField
+                  control={form.control}
+                  name='email'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name='telefone'
