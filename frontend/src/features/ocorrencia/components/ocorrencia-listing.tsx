@@ -37,9 +37,10 @@ export default async function OcorrenciaListingPage() {
   const dataInicio = searchParamsCache.get('dataInicio') || ''
   const dataFim = searchParamsCache.get('dataFim') || ''
   const classificacao = searchParamsCache.get('classificacao_ocorrencia') || ''
+  const tipo_ocorrencia = searchParamsCache.get('tipo_ocorrencia') || ''
 
   const session = await auth();
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/ocorrencia?dataInicio=${dataInicio}&dataFim=${dataFim}&classificacao=${classificacao}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/ocorrencia?dataInicio=${dataInicio}&dataFim=${dataFim}&classificacao=${classificacao}&tipo_ocorrencia=${tipo_ocorrencia}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
   const data = await fetchWithAuth(url, session?.accessToken!);
   
   // const { data, isLoading, isError } = useQuery<Ocorrencia[]>({

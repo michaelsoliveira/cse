@@ -8,11 +8,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import React, { ReactNode, useState, useTransition } from 'react';
 import { ocorrencias_classificacao } from './use-ocorrencia-table-filters';
+import { OptionType } from '@/components/select-searchable';
+import { TipoOcorrenciaType } from 'types';
 
 interface DataTableSearchProps {
   dataInicio: string;
   dataFim: string;
   classificacao: string;
+  tiposOcorrencia: Array<TipoOcorrenciaType>
+  tipoOcorrencia: string;
+  setTipoOcorrencia: (
+    value: string | ((old: string) => string | null) | null,
+    options?: Options | undefined
+  ) => Promise<URLSearchParams>;
   setDataInicio: (
     value: string | ((old: string) => string | null) | null,
     options?: Options | undefined
@@ -35,6 +43,9 @@ interface DataTableSearchProps {
 export function OcorrenciaDataTableSearch({
   dataInicio,
   dataFim,
+  tiposOcorrencia,
+  tipoOcorrencia,
+  setTipoOcorrencia,
   setDataInicio,
   setDataFim,
   setClassificacao,
@@ -48,6 +59,11 @@ export function OcorrenciaDataTableSearch({
     setPage(1);
   };
 
+  const handleTipoOcorrencia = (value: string) => {
+    setTipoOcorrencia(value, { startTransition });
+    setPage(1);
+  }
+
   const handleDataFim = (value: string) => {
     setDataFim(value, { startTransition });
     setPage(1); // Reset page to 1 when search changes
@@ -57,6 +73,13 @@ export function OcorrenciaDataTableSearch({
     setClassificacao(value);
     setPage(1); // Reset page to 1 when search changes
   };
+
+  const optionsTiposOcorrencia : OptionType[] = tiposOcorrencia?.map((tipo: any) => {
+        return {
+            label: tipo?.nome,
+            value: tipo?.id
+        }
+    })
 
   return (
     <Card className="mb-4 w-full">
@@ -88,7 +111,7 @@ export function OcorrenciaDataTableSearch({
             <Label htmlFor="classificacao">Classificação</Label>
             <Select
               value={classificacao}
-              onValueChange={(value) => setClassificacao(value)}
+              onValueChange={(value) => handleDataClassificacao(value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione" />
@@ -101,10 +124,26 @@ export function OcorrenciaDataTableSearch({
               </SelectContent>
             </Select>
           </div>
-          {/* <div>
-            <Button type="submit" className="w-full">Filtrar</Button>
-          </div> */}
-
+          <div className='flex flex-col space-y-1'>
+            <Label htmlFor="tipo_ocorrencia">Tipo Ocorrência</Label>
+            <Select
+              onValueChange={(value) => handleTipoOcorrencia(value) }
+              value={tipoOcorrencia}
+            >
+              <SelectTrigger>
+                <SelectValue
+                  placeholder='Selecione'
+                />
+              </SelectTrigger>
+              <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                {optionsTiposOcorrencia?.map((tipo: any) => (
+                  <SelectItem key={tipo.value} value={tipo.value.toString()}>
+                    {tipo.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div>
             { children }
           </div>

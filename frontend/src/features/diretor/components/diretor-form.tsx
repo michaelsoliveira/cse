@@ -68,7 +68,6 @@ const defaultValues = {
     telefone: initialData?.pessoa?.telefone || '',
     email: initialData?.pessoa?.email || '',
     pessoa_id: initialData?.pessoa_id || '',
-    hasEnderecoData: false,
     endereco: {
       logradouro: initialData?.pessoa?.endereco?.logradouro || '',
       numero: initialData?.pessoa?.endereco?.numero || '',
@@ -77,12 +76,15 @@ const defaultValues = {
       municipio_id: initialData?.pessoa?.endereco?.municipio_id || 209,
       estado_id: initialData?.pessoa?.endereco?.estado_id || '4',
       cep: initialData?.pessoa?.endereco?.cep || ''
-    }
+    },
   }
 
   const form = useForm<DiretorFormValues>({
     resolver: zodResolver(diretorSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      hasEnderecoData: false
+    },
     mode: 'onChange'
   });
 
@@ -413,7 +415,6 @@ const defaultValues = {
                           options={optionsMunicipios} 
                           field={getSelectedMunicipio(field.value)} 
                           placeholder="Selecione um Município..."
-                          selectStyle="w-[450px]"
                         />
                         <FormMessage />
                       </FormItem>

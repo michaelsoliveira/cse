@@ -29,6 +29,11 @@ export function useOcorrenciaTableFilters() {
     searchParams.classificacao_ocorrencia.withOptions({ shallow: false }).withDefault('')
   );
 
+  const [tipoOcorrencia, setTipoOcorrencia] = useQueryState(
+    'tipo_ocorrencia',
+    searchParams.tipo_ocorrencia.withOptions({ shallow: false }).withDefault('')
+  );
+
   const [page, setPage] = useQueryState(
     'page',
     searchParams.page.withDefault(1)
@@ -38,13 +43,13 @@ export function useOcorrenciaTableFilters() {
     setDataInicio(null);
     setDataFim(null);
     setClassificacao(null)
-
+    setTipoOcorrencia(null)
     setPage(1);
   }, [setDataInicio, setDataFim, setClassificacao, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!setDataInicio || !!setDataFim || !!setClassificacao;
-  }, [setDataInicio, setDataFim, setClassificacao]);
+    return !!dataInicio || !!dataFim || !!classificacao || !!tipoOcorrencia;
+  }, [dataInicio, dataFim, classificacao, tipoOcorrencia]);
 
   return {
     dataInicio,
@@ -56,6 +61,8 @@ export function useOcorrenciaTableFilters() {
     resetFilters,
     isAnyFilterActive,
     classificacao,
-    setClassificacao
+    setClassificacao,
+    tipoOcorrencia, 
+    setTipoOcorrencia
   };
 }

@@ -20,6 +20,12 @@ export interface OcorrenciaType {
   comunicante_id?: string;
   unidade_id: string;
   tipo_id: string;
+  anexos: any;
+}
+
+export interface TipoOcorrenciaType {
+  id: string;
+  nome: string;
 }
 
 export interface EstadoType {

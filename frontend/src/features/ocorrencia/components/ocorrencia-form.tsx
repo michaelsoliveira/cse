@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -39,6 +40,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { InputMasked } from '@/components/input-hora';
 import { ocorrencias_classificacao } from './ocorrencia-tables/use-ocorrencia-table-filters';
 import moment from 'moment';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FileUploader } from '@/components/file-uploader';
 
 export default function OcorrenciaForm({
   initialData,
@@ -61,7 +64,9 @@ export default function OcorrenciaForm({
     hora: initialData?.hora && moment(initialData?.hora).format('hh:mm') || '',
     descricao: initialData?.descricao || '',
     classificacao: initialData?.classificacao || '',
-    comunicante_id: initialData?.comunicante_id || ''
+    comunicante_id: initialData?.comunicante_id || '',
+    anexos: initialData?.anexos || [],
+    hasAnexoData: false
   }
 
   const form = useForm<OcorrenciaFormValues>({
@@ -71,7 +76,7 @@ export default function OcorrenciaForm({
   });
 
   const {
-    watch,
+    control,
     setValue,
     formState: { errors }
   } = form
@@ -99,6 +104,8 @@ export default function OcorrenciaForm({
   function getSelectUnidade(id: string) {
     return optionsUnidades.find((option: any) => option.value === id)
   }
+
+  const hasAnexoData = useWatch({ control, name: 'hasAnexoData' });
 
   async function onSubmit(data: OcorrenciaFormValues) {
     try {
@@ -318,11 +325,78 @@ export default function OcorrenciaForm({
             />
             </div>
             </div>
-            
+            <div className='grid grid-cols-2 gap-4 md:grid-cols-3'>
+              <div className='mb-4 col-span-2'>
+                <FormField
+                  control={form.control}
+                  name="hasAnexoData"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>
+                          { initialData?.anexos ? 'Editar Anexos' : 'Cadastrar Anexos' }
+                        </FormLabel>
+                        <FormDescription>
+                          Permite inserir anexos a uma ocorrência
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className='col-span-2 md:col-span-3'><Separator /></div>
+          { hasAnexoData && (
+            <>
+              <div className='col-span-4'>
+                <span className='text-md'>Anexos</span>
+                <Separator />
+              </div>
+              <div className='col-span-4'>
+              <FormField
+                  control={form.control}
+                  name='anexo'
+                  render={({ field }) => (
+                    <div className='space-y-6'>
+                      <FormItem className='w-full'>
+                        <FormLabel>Imagens</FormLabel>
+                        <FormControl>
+                          <FileUploader
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            maxFiles={4}
+                            maxSize={4 * 1024 * 1024}
+                            // disabled={loading}
+                            // progresses={progresses}
+                            // pass the onUpload function here for direct upload
+                            // onUpload={uploadFiles}
+                            // disabled={isUploading}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    </div>
+                  )}
+                />
+                </div>
+              </>
+              )}
+              </div>
+            <div className='flex flex-row w-full justify-between'>
+            <Button 
+              onClick={(e) => {e.preventDefault(); router.back();}}
+              className="mt-4 w-48 hover:bg-secondary-foreground/50 bg-secondary text-black"
+            >Voltar</Button>
             <Button 
               type='submit'
               className="mt-4 w-48"
             >Salvar</Button>
+            </div>
           </form>
         </Form>
       </CardContent>

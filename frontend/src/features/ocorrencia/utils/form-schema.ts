@@ -9,6 +9,13 @@ type optionFieldMinType = {
 }
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_FILE_SIZE = 5000000;
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp'
+];
 
 const optionalFieldMin = ({ field, min, type = "string" }: optionFieldMinType) => {
   switch(type) {
@@ -38,6 +45,26 @@ const optionalFieldMin = ({ field, min, type = "string" }: optionFieldMinType) =
   }
 }
 
+const anexoDataSchema = z.discriminatedUnion("hasAnexoData", [
+  z.object({
+    hasAnexoData: z.literal(true),
+    anexo: z
+    .any()
+    .refine((files) => files?.length == 1, 'Image is required.')
+    .refine(
+      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+      `Max file size is 5MB.`
+    )
+    .refine(
+      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      '.jpg, .jpeg, .png and .webp files are accepted.'
+    )
+  }),
+  z.object({
+    hasAnexoData: z.literal(false),
+  })
+])
+
 export const ocorrenciaSchema = z.object({
   unidade_id: z.string().nonempty('O campo unidade escolar é obrigatório'),
   tipo_id: z.string().nonempty('O campo tipo da ocorrência é obrigatório'),
@@ -54,6 +81,6 @@ export const ocorrenciaSchema = z.object({
   descricao: optionalFieldMin({ field: "descricao", min: 5 }),
   classificacao: z.string(),
   comunicante_id: z.string()
-});
+}).and(anexoDataSchema);
 
 export type OcorrenciaFormValues = z.infer<typeof ocorrenciaSchema>;

@@ -15,7 +15,8 @@ export const searchParams = {
   order: parseAsString,
   dataInicio: parseAsString,
   dataFim: parseAsString,
-  classificacao_ocorrencia: parseAsString
+  classificacao_ocorrencia: parseAsString,
+  tipo_ocorrencia: parseAsString
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);

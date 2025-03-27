@@ -49,13 +49,13 @@ class OcorrenciaService {
 
     async getAll(query?: any): Promise<any> {
         const { 
-            dataInicial,
-            dataFinal,
+            dataInicio,
+            dataFim,
             classificacao,
             unidade_id,
             comunicante_id,
             user_id,
-            tipo_id,
+            tipo_ocorrencia,
             perPage, 
             page, 
             orderBy, 
@@ -75,13 +75,13 @@ class OcorrenciaService {
 
         try {
             // Filtro por intervalo de datas
-            if (dataInicial || dataFinal) {
+            if (dataInicio || dataFim) {
             filters.data = {}
-            if (dataInicial) {
-                filters.data.gte = new Date(dataInicial as string)
+            if (dataInicio) {
+                filters.data.gte = new Date(dataInicio)
             }
-            if (dataFinal) {
-                filters.data.lte = new Date(dataFinal as string)
+            if (dataFim) {
+                filters.data.lte = new Date(dataFim)
             }
             }
 
@@ -94,8 +94,8 @@ class OcorrenciaService {
             filters.unidade_id = unidade_id
             }
 
-            if (tipo_id) {
-            filters.tipo_id = tipo_id
+            if (tipo_ocorrencia) {
+            filters.tipo_id = tipo_ocorrencia
             }
 
             if (user_id) {
@@ -111,16 +111,24 @@ class OcorrenciaService {
                     include: {
                         tipo_ocorrencia: true,
                         unidade_escolar: {
-                            include:{
+                            select:{
                                 pessoa: {
-                                    include: {
-                                        pessoaJuridica: true
+                                    select: {
+                                        pessoaJuridica: {
+                                            select: {
+                                                nome_fantasia: true
+                                            }
+                                        }
                                     }
                                 }
                             }
                         },
-                        user: true,
-                        comunicante: true,
+                        comunicante: {
+                            select: {
+                                id: true,
+                                nome: true
+                            }
+                        },
                         anexos: true,
                     },
                     where: filters,

@@ -1,6 +1,6 @@
-import { UnidadeEscolarType } from "types";
+import { OcorrenciaType } from "types";
 
-const UnidadeDetails = (data: UnidadeEscolarType) => {
+const OcorrenciaDetails = (data: OcorrenciaType) => {
     return (
         <div>
 
@@ -8,4 +8,4 @@ const UnidadeDetails = (data: UnidadeEscolarType) => {
     )
 }
 
-export default UnidadeDetails
+export default OcorrenciaDetails
