@@ -34,16 +34,18 @@ import {
   useForm, 
   useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
-import { DiretorType, MunicipioType } from 'types';
-import { DiretorFormValues, diretorSchema } from '../utils/form-schema';
+import { ComunicanteType, MunicipioType } from 'types';
+import { ComunicanteFormValues, comunicanteSchema } from '../utils/form-schema';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormDescription } from '@/components/ui/form';
+import { RadioGroup } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 export default function DiretorForm({
   initialData,
   pageTitle
 }: {
-  initialData: DiretorType | null;
+  initialData: ComunicanteType | null;
   pageTitle: string;
 }) {
   const { client } = useAuthContext();
@@ -61,26 +63,55 @@ export default function DiretorForm({
         }
     })
 
-const defaultValues = {
-    nome: initialData?.pessoa?.pessoaFisica?.nome || '',
-    rg: initialData?.pessoa?.pessoaFisica?.rg || '',
-    cpf: initialData?.pessoa?.pessoaFisica?.cpf || '',
-    telefone: initialData?.pessoa?.telefone || '',
-    email: initialData?.pessoa?.email || '',
-    pessoa_id: initialData?.pessoa_id || '',
-    endereco: {
-      logradouro: initialData?.pessoa?.endereco?.logradouro || '',
-      numero: initialData?.pessoa?.endereco?.numero || '',
-      complemento: initialData?.pessoa?.endereco?.complemento || '',
-      bairro: initialData?.pessoa?.endereco?.bairro || '',
-      municipio_id: initialData?.pessoa?.endereco?.municipio_id || 209,
-      estado_id: initialData?.pessoa?.endereco?.estado_id || '4',
-      cep: initialData?.pessoa?.endereco?.cep || ''
-    },
+  const pessoaFisica = initialData?.pessoa?.tipo === 'F' && {
+    tipo_pessoa: "F" as "F",
+    pessoaFisica: {
+      nome: initialData?.pessoa?.pessoaFisica?.nome || '',
+      rg: initialData?.pessoa?.pessoaFisica?.rg || '',
+      cpf: initialData?.pessoa?.pessoaFisica?.cpf || ''
+    }
   }
 
-  const form = useForm<DiretorFormValues>({
-    resolver: zodResolver(diretorSchema),
+  const pessoaJuridica = {
+    tipo_pessoa: "J" as "J",
+    pessoaJuridica: {
+      nome_fantasia: initialData?.pessoa?.pessoaJuridica?.nome_fantasia || '',
+      razao_social: initialData?.pessoa?.pessoaJuridica?.razao_social || '',
+      inscricao_estadual: initialData?.pessoa?.pessoaJuridica?.inscricao_estadual || '',
+      inscricao_federal: initialData?.pessoa?.pessoaJuridica?.inscricao_federal || ''
+    }
+  }
+
+  type getDataTipo = {
+    tipo?: string;
+  }
+
+  const getDataTipo = ({ tipo }: getDataTipo) => {
+    return tipo === 'F'
+      ? pessoaFisica
+      : pessoaJuridica
+  }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const defaultValues = {
+    telefone: '',
+    email: '',
+    endereco: {
+      logradouro: '',
+      numero: '',
+      complemento: '',
+      bairro: '',
+      municipio_id: 209,
+      estado_id: 4,
+      cep: ''
+    },
+    tipo_pessoa: 'F' as "F",
+    ...pessoaFisica,
+    hasEnderecoData: false
+  }
+
+  const form = useForm<ComunicanteFormValues>({
+    resolver: zodResolver(comunicanteSchema),
     defaultValues: {
       ...defaultValues,
       hasEnderecoData: false
@@ -90,12 +121,36 @@ const defaultValues = {
 
   const {
     control,
-    // formState: { errors }
+    watch
   } = form;
 
-  // const fullErrors: FieldErrors<Extract<DiretorFormValues, { hasDiretorData: true}>> = errors
+  useEffect(() => {
 
-  type FieldName = keyof DiretorFormValues;
+    if (initialData) {
+      form.reset({
+        telefone: initialData?.pessoa?.telefone || '',
+        email: initialData?.pessoa?.email || '',
+        endereco: {
+          logradouro: initialData?.pessoa?.endereco?.logradouro || '',
+          numero: initialData?.pessoa?.endereco?.numero || '',
+          complemento: initialData?.pessoa?.endereco?.complemento || '',
+          bairro: initialData?.pessoa?.endereco?.bairro || '',
+          municipio_id: initialData?.pessoa?.endereco?.municipio_id || 209,
+          estado_id: initialData?.pessoa?.endereco?.estado_id || 4,
+          cep: initialData?.pessoa?.endereco?.cep || ''
+        },
+        ...getDataTipo({ tipo: initialData?.pessoa?.tipo ? initialData?.pessoa?.tipo : 'F' })
+      });
+    }
+
+  }, [form, getDataTipo, initialData]);
+
+  const tipoPessoa = useWatch({control, name: 'tipo_pessoa'});
+  const hasEnderecoData = useWatch({control, name: 'hasEnderecoData'});
+
+  // const fullErrors: FieldErrors<Extract<ComunicanteFormValues, { hasDiretorData: true}>> = errors
+  
+  type FieldName = keyof ComunicanteFormValues;
 
   const fields = ['nome', 'email', 'telefone', 'endereco.logradouro', 'endereco.complemento', 'endereco.bairro', 'endereco.municipio', 'endereco.estado_id', 'endereco.municipio_id', 'endereco.cep']
   
@@ -110,9 +165,9 @@ const defaultValues = {
       return optionsMunicipios.find((option: any) => option.value === id)
     }
 
-  async function onSubmit(data: DiretorFormValues) {
+  async function onSubmit(data: ComunicanteFormValues) {
     try {
-
+      console.log(data)
       const output = await form.trigger(fields as FieldName[], {
         shouldFocus: true
       });
@@ -121,13 +176,13 @@ const defaultValues = {
 
       setLoading(true)
       const response = initialData?.id 
-          ? await client.put(`/diretor/${initialData?.id}`, data) 
-          : await client.post('/diretor', data)
+          ? await client.put(`/comunicante/${initialData?.id}`, data) 
+          : await client.post('/comunicante', data)
       const { error, message } = response.data
       if (!error) {
         setLoading(false)
         toast.success(message)
-        router.push('/dashboard/diretor')
+        router.push('/dashboard/comunicante')
       } else {
         setLoading(false)
         toast.error(message)
@@ -137,8 +192,6 @@ const defaultValues = {
       toast.error(error?.message)
     }
   }
-
-  const hasEnderecoData = useWatch({ control, name: 'hasEnderecoData' });
 
   const loadData = useCallback(async () => {
     if (typeof session !== typeof undefined) {
@@ -175,53 +228,146 @@ const defaultValues = {
             <div
               className='gap-4 md:grid md:grid-cols-4 mt-4'
             >
-              <div className='col-span-2'>
-                <FormField
-                  control={form.control}
-                  name='nome'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome</FormLabel>
-                      <FormControl>
-                        <Input placeholder='Entre com o nome da unidade escolar' {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className='flex flex-row col-span-4'>
+              <FormField
+                control={form.control}
+                name="tipo_pessoa"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="block mb-2">
+                      Tipo Pessoa{" "}
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <RadioGroup className="flex border border-gray-300 rounded-md px-4 items-center justify-center space-x-4" {...field}>
+                        <Input type="radio" name='tipo_pessoa' value="F" />
+                        <Label htmlFor="tipoPessoa-F">Física</Label>
+                        <Input type="radio" name='tipo_pessoa' value="J" />
+                        <Label htmlFor="tipoPessoa-J">Jurídica</Label>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               </div>
-              <FormField
-                control={form.control}
-                name='rg'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>RG</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='cpf'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CPF</FormLabel>
-                    <FormControl>
-                      <Input
-                        disabled={loading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              { tipoPessoa === 'F' ? (
+                <>
+                  <div className='col-span-2'>
+                    <FormField
+                      control={form.control}
+                      name='pessoaFisica.nome'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome</FormLabel>
+                          <FormControl>
+                            <Input placeholder='Entre com o nome da unidade escolar' {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name='pessoaFisica.rg'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>RG</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='pessoaFisica.cpf'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CPF</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              ) : (
+                <>
+                  <div className='col-span-2'>
+                    <FormField
+                      control={form.control}
+                      name='pessoaJuridica.nome_fantasia'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome</FormLabel>
+                          <FormControl>
+                            <Input placeholder='Entre com o nome da unidade escolar' {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name='pessoaJuridica.razao_social'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Razão Social</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='pessoaJuridica.inscricao_estadual'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Inscrição Estadual</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='pessoaJuridica.inscricao_federal'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Instição Municipal</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={loading}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
               <FormField
                 control={form.control}
                 name='email'

@@ -90,6 +90,7 @@ model Pessoa {
   pessoaFisica    PessoaFisica?
   pessoaJuridica  PessoaJuridica?
   unidade_escolar UnidadeEscolar[]
+  comunicante     Comunicante[]
 
   @@map("pessoa")
 }
@@ -204,7 +205,8 @@ enum ClassificacaoOcorrencia {
 
 model Comunicante {
   id    String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  nome  String
+  pessoa_id   String @db.Uuid
+  pessoa      Pessoa @relation(fields: [pessoa_id], references: [id])
   ocorrencia  Ocorrencia[]
 
   @@map("origem_ocorrencia")

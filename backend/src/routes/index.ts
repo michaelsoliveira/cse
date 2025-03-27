@@ -11,6 +11,7 @@ import { PermissionController } from "../controllers/PermissionController"
 import { UnidadeController } from '../controllers/UnidadeController';
 import { DiretorController } from '../controllers/DiretorController';
 import { OcorrenciaController } from '../controllers/OcorrenciaController';
+import { ComunicanteController } from '../controllers/ComunicanteController';
 
 const express = require('express')
 const multer = require('multer')
@@ -94,12 +95,19 @@ routes.post('/diretor', Authentication(), new DiretorController().store)
 routes.put('/diretor/:id', Authentication(), new DiretorController().update)
 routes.delete('/diretor/:id', Authentication(), new DiretorController().delete)
 
-//Unidades Escolares
+//Ocorrencias
 routes.get('/ocorrencia/', Authentication(), new OcorrenciaController().findAll)
 routes.get('/ocorrencia/get-tipos', Authentication(), new OcorrenciaController().getTiposOcorrencia)
 routes.get('/ocorrencia/:id', Authentication(), new OcorrenciaController().findOne)
 routes.post('/ocorrencia', Authentication(), new OcorrenciaController().store)
 routes.put('/ocorrencia/:id', Authentication(), new OcorrenciaController().update)
 routes.delete('/ocorrencia/:id', Authentication(), new OcorrenciaController().delete)
+
+//Comunicantes
+routes.get('/comunicante/', Authentication(), new ComunicanteController().findAll)
+routes.get('/comunicante/:id', Authentication(), new ComunicanteController().findOne)
+routes.post('/comunicante', Authentication(), new ComunicanteController().store)
+routes.put('/comunicante/:id', Authentication(), new ComunicanteController().update)
+routes.delete('/comunicante/:id', Authentication(), new ComunicanteController().delete)
 
 export default routes;

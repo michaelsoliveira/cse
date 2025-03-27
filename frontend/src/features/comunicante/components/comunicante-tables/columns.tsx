@@ -2,12 +2,13 @@
 // import { Product } from '@/constants/data';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { DiretorType } from 'types';
+import { ComunicanteType } from 'types';
 
-export const columns: ColumnDef<DiretorType>[] = [
+export const columns: ColumnDef<ComunicanteType>[] = [
   {
-    accessorKey: 'pessoa.pessoaFisica.nome',
-    header: 'Nome'
+    // accessorKey: 'pessoa.pessoaFisica.nome',
+    header: 'Nome',
+    cell: ({ row }) => row.original.pessoa.tipo === 'F' ? row.original.pessoa.pessoaFisica?.nome : row.original.pessoa.pessoaJuridica?.nome_fantasia
   },
   {
     accessorKey: 'pessoa.email',

@@ -1,4 +1,5 @@
 import { Icons } from '@/components/icons';
+import { any, literal } from 'zod';
 
 export interface EnderecoType {
   id: string;
@@ -82,6 +83,14 @@ export interface DiretorType {
   nome: string;
   rg?: string;
   cpf?: string;
+  telefone?: string;
+  email?: string;
+  pessoa: PessoaType;
+}
+
+export interface ComunicanteType {
+  id: string;
+  pessoa_id: string;
   telefone?: string;
   email?: string;
   pessoa: PessoaType;

@@ -126,7 +126,22 @@ class OcorrenciaService {
                         comunicante: {
                             select: {
                                 id: true,
-                                nome: true
+                                pessoa: {
+                                    select: {
+                                        id: true,
+                                        tipo: true,
+                                        pessoaJuridica: {
+                                            select: {
+                                                nome_fantasia: true
+                                            }
+                                        },
+                                        pessoaFisica: {
+                                            select: {
+                                                nome: true
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         },
                         anexos: true,
