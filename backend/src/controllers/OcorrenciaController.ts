@@ -59,6 +59,23 @@ export class OcorrenciaController {
         }
     }
 
+    async getLastOcorrencias(request: Request, response: Response) {
+        const { limit } = request.query as any
+        
+        try {
+            const ocorrencias = await ocorrenciaService.getLastOcorrencias(parseInt(limit))
+            return response.json({
+                error: false,
+                ocorrencias
+            })
+        } catch (e) {
+            return response.json({
+                error: true,
+                message: e.message
+            })
+        }
+    }
+
     async findAll(request: Request, response: Response) {
         try {
             const { 

@@ -22,12 +22,6 @@ export const navItems: NavItem[] = [
     items: [] // Empty array as there are no child items for Dashboard
   },
   {
-    title: 'Comunicante',
-    url: '/dashboard/comunicante',
-    icon: 'product',
-    isActive: false,
-  },
-  {
     title: 'Profile',
     url: '/dashboard/profile',
     icon: 'userPen',
@@ -57,6 +51,12 @@ export const navItems: NavItem[] = [
     title: 'Ocorrência',
     url: '/dashboard/ocorrencia',
     icon: 'ellipsis'
+  },
+  {
+    title: 'Comunicante',
+    url: '/dashboard/comunicante',
+    icon: 'product',
+    isActive: false,
   },
   // {
   //   title: 'Kanban',

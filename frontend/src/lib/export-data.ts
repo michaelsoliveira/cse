@@ -3,7 +3,7 @@
 exports.__esModule = true;
 exports.exportToCSV = void 0;
 var papaparse_1 = require("papaparse");
-function convertToCSV(data, config) {
+function convertToCSV(data: any, config: any) {
     if (data.length === 0) {
         throw new Error('Data array is empty');
     }
@@ -12,17 +12,17 @@ function convertToCSV(data, config) {
     // Convert data array to array of arrays
     var dataArray = [];
     dataArray.push(columns);
-    data.forEach(function (obj) {
+    data.forEach(function (obj: any) {
         var values = columns.map(function (col) { return obj[col]; });
         dataArray.push(values);
     });
     return papaparse_1["default"].unparse(dataArray, config);
 }
-function convertToISO88591(text) {
+function convertToISO88591(text: any) {
     var encoder = new TextEncoder();
     return encoder.encode(text);
 }
-function exportToCSV(data, filename, config) {
+function exportToCSV(data: any, filename: any, config: any) {
     var csvData = convertToCSV(data, config);
     //var link;
     var encoding = (config === null || config === void 0 ? void 0 : config.encoding) ? config === null || config === void 0 ? void 0 : config.encoding : 'utf-8';

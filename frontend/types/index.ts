@@ -22,6 +22,8 @@ export interface OcorrenciaType {
   unidade_id: string;
   tipo_id: string;
   anexos: any;
+  tipo_ocorrencia: TipoOcorrenciaType;
+  unidade_escolar: UnidadeEscolarType;
 }
 
 export interface TipoOcorrenciaType {

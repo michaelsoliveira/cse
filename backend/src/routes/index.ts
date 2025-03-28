@@ -98,6 +98,7 @@ routes.delete('/diretor/:id', Authentication(), new DiretorController().delete)
 //Ocorrencias
 routes.get('/ocorrencia/', Authentication(), new OcorrenciaController().findAll)
 routes.get('/ocorrencia/get-tipos', Authentication(), new OcorrenciaController().getTiposOcorrencia)
+routes.get('/ocorrencia/get-lastest', Authentication(), new OcorrenciaController().getLastOcorrencias)
 routes.get('/ocorrencia/:id', Authentication(), new OcorrenciaController().findOne)
 routes.post('/ocorrencia', Authentication(), new OcorrenciaController().store)
 routes.put('/ocorrencia/:id', Authentication(), new OcorrenciaController().update)

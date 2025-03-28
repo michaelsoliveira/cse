@@ -229,6 +229,7 @@ class ComunicanteService {
         const [comunicantes, total] = await prismaClient.$transaction([
             prismaClient.comunicante.findMany({
                 select: {
+                    id: true,
                     pessoa: {
                         select: {
                             id: true,
@@ -287,13 +288,12 @@ class ComunicanteService {
 
     async findById(id: string) : Promise<any> {
         const comunicante = await prismaClient.comunicante.findUnique({ 
-            include: {
+            select: {
+                id: true,
                 pessoa: {
                     select: {
                         email: true,
-                        telefone: true
-                    },
-                    include: {
+                        telefone: true,
                         endereco: true,
                         pessoaFisica: {
                             select: {

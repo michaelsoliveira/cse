@@ -1,4 +1,4 @@
-import { RecentOcorrenciasSkeleton } from '@/features/overview/components/recent-sales-skeleton';
+import { RecentOcorrenciasSkeleton } from '@/features/overview/components/recent-ocorrencia-skeleton';
 import React from 'react';
 
 export default function Loading() {

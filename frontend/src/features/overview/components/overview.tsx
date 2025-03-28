@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
-import { RecentSales } from './recent-sales';
+import { RecentSales } from './recent-ocorrencia';
 
 export default function OverViewPage() {
   return (

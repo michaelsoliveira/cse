@@ -166,6 +166,42 @@ class OcorrenciaService {
         }
     }
 
+    async getLastOcorrencias(limit: number) {
+
+        const ocorrencias = await prismaClient.ocorrencia.findMany({
+            select: {
+                id: true,
+                data: true,
+                created_at: true,
+                tipo_ocorrencia: {
+                    select: {
+                        nome: true
+                    }
+                },
+                unidade_escolar: {
+                    select: {
+                        pessoa: {
+                            select: {
+                                id: true,
+                                pessoaJuridica: {
+                                    select: {
+                                        nome_fantasia: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                created_at: 'desc'
+            },
+            take: limit
+        })
+
+        return ocorrencias
+    }
+
     async deleteOcorrencias(ocorrencias: string[]): Promise<any> {
           
         await prismaClient.ocorrencia.deleteMany({
