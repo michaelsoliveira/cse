@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
-import { RecentSales } from './recent-ocorrencia';
+import { RecentOcorrencia } from './recent-ocorrencia';
 
 export default function OverViewPage() {
   return (
@@ -148,7 +148,7 @@ export default function OverViewPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <RecentSales />
+                  <RecentOcorrencia />
                 </CardContent>
               </Card>
               <div className='col-span-4'>
