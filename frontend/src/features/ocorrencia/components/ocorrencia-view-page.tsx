@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth';
 import { notFound } from 'next/navigation';
 import OcorrenciaForm from './ocorrencia-form';
 import { OcorrenciaType } from 'types';
-import { fetchWithAuth } from '@/lib/utils';
+import { fetchAPI } from '@/lib/utils';
 
 type TOcorrenciaViewPageProps = {
   ocorrenciaId: string;
@@ -16,8 +16,7 @@ export default async function OcorrenciaViewPage({
   const session = await auth();
 
   if (session && ocorrenciaId !== 'new') {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/ocorrencia/${ocorrenciaId}`
-    const data = await fetchWithAuth(url, session?.accessToken!)
+    const data = await fetchAPI(`/ocorrencia/${ocorrenciaId}`)
     ocorrencia = data as OcorrenciaType;
     
     if (!ocorrencia) {

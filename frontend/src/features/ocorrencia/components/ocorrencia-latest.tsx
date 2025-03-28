@@ -9,12 +9,6 @@ import { useCallback } from "react";
 
 import moment from "moment";
 
-// const fetchOccurrences = async (limit: number) => {
-//     const session = await auth();
-//     const url = `${process.env.NEXT_PUBLIC_API_URL}/ocorrencia?perPage=${limit}&orderBy=data&order=asc`;
-//     return await fetchWithAuth(url, session?.accessToken!);
-//   };
-
 export default function OcorrenciaLatest({ limit = 4 }) {
     const { client } = useAuthContext()
 
@@ -43,7 +37,10 @@ export default function OcorrenciaLatest({ limit = 4 }) {
                 {data.map((ocorrencia: OcorrenciaType) => (
                     // <pre>{JSON.stringify(ocorrencia, null, 2)}</pre>
                 <li key={ocorrencia.id} className="p-2 border rounded-lg shadow-sm">
-                    <p className="text-sm text-gray-600">{moment(ocorrencia?.data).format('DD/MM/yyyy')}</p>
+                    <div className="flex flex-row items-center justify-between">
+                        <p className="text-sm text-gray-600">{moment(ocorrencia?.data).format('DD/MM/yyyy')}</p>
+                        <p className="text-sm text-gray-600">{moment(ocorrencia?.hora).format('HH:mm')}</p>
+                    </div>
                     <p className="font-medium">{ocorrencia?.unidade_escolar?.pessoa?.pessoaJuridica?.nome_fantasia}</p>
                     <p className="text-sm text-gray-600">{ocorrencia?.tipo_ocorrencia?.nome}</p>
                 </li>

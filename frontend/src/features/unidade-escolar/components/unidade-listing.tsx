@@ -1,8 +1,7 @@
 import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as UnidadeTable } from '@/components/ui/table/data-table';
 import { columns } from './unidade-tables/columns';
-import { auth } from '@/lib/auth';
-import { fetchWithAuth } from '@/lib/utils';
+import { fetchAPI } from '@/lib/utils';
 
 type UnidadeListingPage = object;
 
@@ -15,10 +14,9 @@ export default async function UnidadeListingPage({}: UnidadeListingPage) {
   const orderBy = searchParamsCache.get('orderBy') || 'pessoa.pessoaJuridica.nome_fantasia'
   const order = searchParamsCache.get('orderBy') || 'asc'
 
-  const session = await auth();
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/unidade?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
+  const url = `/unidade?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
   const urlWithZonas = zonas ? `${url}&zonas=${zonas}` : url
-  const data = await fetchWithAuth(urlWithZonas, session?.accessToken!)
+  const data = await fetchAPI(urlWithZonas)
   
   const { unidades, error, count } = data;
   

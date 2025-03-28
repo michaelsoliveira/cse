@@ -34,7 +34,7 @@ import {
   useForm, 
   useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
-import { OcorrenciaType } from 'types';
+import { ComunicanteType, OcorrenciaType } from 'types';
 import { OcorrenciaFormValues, ocorrenciaSchema } from '../utils/form-schema';
 import { Textarea } from '@/components/ui/textarea';
 import { InputMasked } from '@/components/input-hora';
@@ -56,12 +56,13 @@ export default function OcorrenciaForm({
   const [loading, setLoading] = useState<boolean>(false)
   const [unidades, setUnidades] = useState([])
   const [tiposOcorrencia, setTiposOcorrencia] = useState([])
+  const [comunicantes, setComunicantes] = useState<ComunicanteType[]>([])
 
   const defaultValues = {
     unidade_id: initialData?.unidade_id || '',
     tipo_id: initialData?.tipo_id || '',
     data: initialData?.data && moment(initialData?.data).format('YYYY-MM-DD') || '',
-    hora: initialData?.hora && moment(initialData?.hora).format('hh:mm') || '',
+    hora: initialData?.hora && moment(initialData?.hora).format('HH:mm') || '',
     descricao: initialData?.descricao || '',
     classificacao: initialData?.classificacao || '',
     comunicante_id: initialData?.comunicante_id || '',
@@ -77,8 +78,6 @@ export default function OcorrenciaForm({
 
   const {
     control,
-    setValue,
-    formState: { errors }
   } = form
 
   // const fullErrors: FieldErrors<Extract<DiretorFormValues, { hasDiretorData: true}>> = errors
@@ -101,6 +100,13 @@ export default function OcorrenciaForm({
       }
   })
 
+  const optionsComunicantes : OptionType[] = comunicantes?.map((comunicante: any) => {
+    return {
+        label: comunicante?.nome,
+        value: comunicante?.id
+    }
+})
+
   function getSelectUnidade(id: string) {
     return optionsUnidades.find((option: any) => option.value === id)
   }
@@ -108,6 +114,7 @@ export default function OcorrenciaForm({
   const hasAnexoData = useWatch({ control, name: 'hasAnexoData' });
 
   async function onSubmit(data: OcorrenciaFormValues) {
+    console.log(data)
     try {
       const output = await form.trigger(fields as FieldName[], {
         shouldFocus: true
@@ -136,9 +143,11 @@ export default function OcorrenciaForm({
 
   const loadData = useCallback(async () => {
     if (typeof session !== typeof undefined) {
-      const { data: { count, unidades } } = await client.get('/unidade?orderBy=pessoa.pessoaJuridica.nome_fantasia&order=asc')
+      const { data: { unidades } } = await client.get('/unidade?orderBy=pessoa.pessoaJuridica.nome_fantasia&order=asc')
+      const { data: { comunicantes } } = await client.get('/comunicante/get-list')
       const { data: tipos } = await client.get('/ocorrencia/get-tipos')
       setUnidades(unidades);
+      setComunicantes(comunicantes)
       setTiposOcorrencia(tipos);
     }
   }, [session, client])
@@ -294,9 +303,9 @@ export default function OcorrenciaForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className='overflow-y-auto max-h-[20rem]'>
-                      {optionsTiposOcorrencia?.map((tipo: any) => (
-                        <SelectItem key={tipo.value} value={tipo.value.toString()}>
-                          {tipo.label}
+                      {optionsComunicantes?.map((comunicante: any) => (
+                        <SelectItem key={comunicante.value} value={comunicante.value.toString()}>
+                          {comunicante.label}
                         </SelectItem>
                       ))}
                     </SelectContent>

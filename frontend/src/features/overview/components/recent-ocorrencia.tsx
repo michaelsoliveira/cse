@@ -9,10 +9,10 @@ import OcorrenciaLatest from '@/features/ocorrencia/components/ocorrencia-latest
 
 export function RecentOcorrencia() {
   return (
-    <Card>
+    <Card className='h-full'>
       <CardHeader>
         <CardTitle>Últimas Ocorrências</CardTitle>
-        <CardDescription>As últimas 4 (quatro) ocorrências</CardDescription>
+        <CardDescription>As últimas ocorrências...</CardDescription>
       </CardHeader>
       <CardContent>
         <div className='space-y-8'>

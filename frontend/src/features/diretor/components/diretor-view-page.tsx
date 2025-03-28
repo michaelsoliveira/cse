@@ -1,8 +1,7 @@
-import { auth } from '@/lib/auth';
 import { notFound } from 'next/navigation';
 import DiretorForm from './diretor-form';
 import { DiretorType } from 'types';
-import { fetchWithAuth } from '@/lib/utils';
+import { fetchAPI } from '@/lib/utils';
 
 type TDiretorViewPageProps = {
   diretorId: string;
@@ -13,11 +12,9 @@ export default async function DiretorViewPage({
 }: TDiretorViewPageProps) {
   let diretor = null;
   let pageTitle = 'Cadastrar Diretor';
-  const session = await auth();
 
-  if (session && diretorId !== 'new') {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/diretor/${diretorId}`
-    const data = await fetchWithAuth(url, session?.accessToken!)
+  if (diretorId !== 'new') {
+    const data = await fetchAPI(`/diretor/${diretorId}`)
     diretor = data as DiretorType;
     
     if (!diretor) {

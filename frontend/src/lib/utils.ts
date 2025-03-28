@@ -1,17 +1,20 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { auth } from './auth';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const fetchWithAuth = async (url: string, token: string) => {
-  const data = await fetch(url, {
+export const fetchAPI = async (route: string) => {
+  const session = await auth();
+  const url = route.startsWith('/') ? route : '/' + route;
+  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
       method: "GET",
       headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${session?.accessToken!}`
       }
   }).then((data) => data.json())
 

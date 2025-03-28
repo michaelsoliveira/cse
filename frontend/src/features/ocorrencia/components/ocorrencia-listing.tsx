@@ -2,9 +2,7 @@ import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as OcorrenciaTable } from '@/components/ui/table/data-table';
 import { columns } from './ocorrencia-tables/columns';
 import { auth } from '@/lib/auth';
-import { fetchWithAuth } from '@/lib/utils';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
-import OcorrenciaPdf from './ocorrencia-pdf';
+import { fetchAPI } from '@/lib/utils';
 
 type Ocorrencia = {
   id: string
@@ -17,18 +15,6 @@ type Ocorrencia = {
   user: { nome: string }
 }
 
-type OcorrenciaResponse = {
-  data: Ocorrencia[]
-  total: number
-}
-
-const fetchOcorrencias = async (params: URLSearchParams) => {
-  const query = new URLSearchParams(params).toString();
-  const session = await auth();
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/ocorrencia?${query}`;
-  return await fetchWithAuth(url, session?.accessToken!);
-}
-
 export default async function OcorrenciaListingPage() {
   const page = searchParamsCache.get('page') || 1;
   const pageLimit = searchParamsCache.get('limit') || 10;
@@ -38,15 +24,8 @@ export default async function OcorrenciaListingPage() {
   const dataFim = searchParamsCache.get('dataFim') || ''
   const classificacao = searchParamsCache.get('classificacao_ocorrencia') || ''
   const tipo_ocorrencia = searchParamsCache.get('tipo_ocorrencia') || ''
-
-  const session = await auth();
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/ocorrencia?dataInicio=${dataInicio}&dataFim=${dataFim}&classificacao=${classificacao}&tipo_ocorrencia=${tipo_ocorrencia}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
-  const data = await fetchWithAuth(url, session?.accessToken!);
   
-  // const { data, isLoading, isError } = useQuery<Ocorrencia[]>({
-  //   queryKey: ['ocorrencias', params.toString()],
-  //   queryFn: () => fetchOcorrencias(params),
-  // })
+  const data = await fetchAPI(`/ocorrencia?dataInicio=${dataInicio}&dataFim=${dataFim}&classificacao=${classificacao}&tipo_ocorrencia=${tipo_ocorrencia}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`);
   
   const { ocorrencias, error, count } = data;
   

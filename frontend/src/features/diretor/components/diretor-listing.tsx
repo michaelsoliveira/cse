@@ -2,7 +2,7 @@ import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as DiretorTable } from '@/components/ui/table/data-table';
 import { columns } from './diretor-tables/columns';
 import { auth } from '@/lib/auth';
-import { fetchWithAuth } from '@/lib/utils';
+import { fetchAPI } from '@/lib/utils';
 
 type UnidadeListingPage = object;
 
@@ -14,9 +14,7 @@ export default async function UnidadeListingPage({}: UnidadeListingPage) {
   const orderBy = searchParamsCache.get('orderBy') || 'pessoa.pessoaFisica.nome'
   const order = searchParamsCache.get('orderBy') || 'asc'
 
-  const session = await auth();
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/diretor?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
-  const data = await fetchWithAuth(url, session?.accessToken!)
+  const data = await fetchAPI(`/diretor?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`)
   
   const { diretores, error, count } = data;
   
