@@ -1,4 +1,4 @@
-import { Diretor, Prisma, TipoPessoa } from "@prisma/client";
+import { Comunicante, Diretor, Prisma, TipoPessoa } from "@prisma/client";
 import { prismaClient } from "../database/prismaClient";
 
 // export interface DiretorType {
@@ -284,6 +284,32 @@ class ComunicanteService {
             }
         })
         
+    }
+
+    async getListNames(){
+        return await prismaClient.comunicante.findMany({
+            select: {
+              id: true,
+              pessoa: {
+                select: {
+                  tipo: true,
+                  pessoaFisica: {
+                    select: { nome: true }
+                  },
+                  pessoaJuridica: {
+                    select: { nome_fantasia: true }
+                  }
+                }
+              }
+            }
+          }).then((comunicantes: any) =>
+            comunicantes.map((comunicante: any) => ({
+              id: comunicante.id,
+              nome: comunicante.pessoa.tipo === 'F' 
+                ? comunicante.pessoa.pessoaFisica?.nome 
+                : comunicante.pessoa.pessoaJuridica?.nome_fantasia
+            }))
+          );
     }
 
     async findById(id: string) : Promise<any> {

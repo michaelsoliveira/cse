@@ -82,7 +82,7 @@ export class ComunicanteController {
         }
     }
 
-    async deleteComunicantees(request: Request, response: Response) {
+    async deleteComunicantes(request: Request, response: Response) {
         const { ids } = request.body
         
         await comunicanteService.deleteComunicantes(ids)
@@ -102,6 +102,22 @@ export class ComunicanteController {
             return response.json(comunicante)
         } catch(error: any) {
             return response.json(error.message)
+        }
+    }
+
+    async getListNames(request: Request, response: Response) {
+        try {
+            const comunicantes = await comunicanteService.getListNames()
+
+            return response.json({
+                error: false,
+                comunicantes
+            })
+        } catch (error) {
+            return response.json({
+                error: true,
+                message: error.message
+            })
         }
     }
 }

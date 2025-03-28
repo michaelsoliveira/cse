@@ -10,7 +10,7 @@ class OcorrenciaService {
                 data: data?.data ? new Date(data?.data) : undefined,
                 hora: data?.hora ? new Date(`1970-01-01T${data?.hora}`) : undefined,
                 user_id: data?.user_id,
-                // comunicante_id: data?.comunicante_id,
+                comunicante_id: data?.comunicante_id,
                 tipo_id: data?.tipo_id,
                 descricao: data?.descricao
             }
@@ -172,6 +172,7 @@ class OcorrenciaService {
             select: {
                 id: true,
                 data: true,
+                hora: true,
                 created_at: true,
                 tipo_ocorrencia: {
                     select: {

@@ -1,7 +1,7 @@
 import { prismaClient } from "../database/prismaClient";
 
 class ViewService {
-    async getDashboardTotais() 
+    async getDashboardTotals() 
     {
         try {
             const total = await prismaClient.totaisDashboard.findUnique({
