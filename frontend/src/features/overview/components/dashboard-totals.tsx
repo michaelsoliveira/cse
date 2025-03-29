@@ -3,7 +3,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthContext } from "@/context/AuthContext";
-import { fetchAPI } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { School, Calendar, AlertCircle } from "lucide-react";
 

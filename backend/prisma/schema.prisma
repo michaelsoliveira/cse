@@ -40,8 +40,19 @@ view OcorrenciasTiposTotais {
   @@map("ocorrencias_tipos_totais")
 }
 
+view OcorrenciasAnual {
+  sequencia String @id
+  mes   Int
+  ano   Int
+  total Int
+
+  @@map("ocorrencias_anual")
+}
+
 view OcorrenciasMes {
-  mes   String  @id
+  sequencia   Int @id
+  mes         Int
+  ano         Int
   total_ocorrencias Int
 
   @@map("ocorrencias_mes")

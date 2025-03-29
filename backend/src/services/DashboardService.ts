@@ -14,7 +14,7 @@ class ViewService {
         }
     }
 
-    async getOcorrenciasTiposTotais() 
+    async getOcorrenciaTiposTotais() 
     {
         try {
             const total = await prismaClient.ocorrenciasTiposTotais.findUnique({
@@ -24,6 +24,18 @@ class ViewService {
             return total
         } catch (error) {
             throw new Error("Erro ao buscar ocorrencias tipos totais do dashboard:", error);
+        }
+    }
+
+    async getOcorrenciaAnual() 
+    {
+        try {
+            const ocorrencias = await prismaClient.ocorrenciasAnual.findMany();
+    
+            return ocorrencias
+        } catch (error) {
+            console.log(JSON.stringify(error, null, 2))
+            throw new Error("Erro ao buscar ocorrencias anual:", error);
         }
     }
 }

@@ -6,7 +6,6 @@ import { fetchAPI } from '@/lib/utils';
 type UnidadeListingPage = object;
 
 export default async function UnidadeListingPage({}: UnidadeListingPage) {
-  // Showcasing the use of search params cache in nested RSCs
   const page = searchParamsCache.get('page') || 1;
   const search = searchParamsCache.get('q') || '';
   const pageLimit = searchParamsCache.get('limit') || 10;

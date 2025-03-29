@@ -16,12 +16,15 @@ CREATE OR REPLACE VIEW "ocorrencias_tipo" AS
     GROUP BY toco.id, toco.nome
     ORDER BY total DESC;
 
-CREATE OR REPLACE  VIEW "ocorrencias_mes" AS
-    SELECT TO_CHAR(data, '%m-%Y') AS mes,
+CREATE OR REPLACE VIEW "ocorrencias_mes" AS
+    SELECT 
+        ROW_NUMBER() OVER (ORDER BY EXTRACT(MONTH FROM data)) AS sequencia,
+        EXTRACT(MONTH FROM data) AS mes,
+        EXTRACT(YEAR FROM data) AS ano,
         COUNT(*) AS total_ocorrencias
     FROM ocorrencia
-    GROUP BY mes
-    ORDER BY mes;
+    GROUP BY ano, mes
+    ORDER BY ano, mes;
 
 CREATE OR REPLACE VIEW "ocorrencias_envolvidos" AS
     SELECT o.id,

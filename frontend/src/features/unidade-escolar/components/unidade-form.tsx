@@ -59,7 +59,7 @@ export default function UnidadeForm({
 
   const defaultValues = {
     nome: initialData?.pessoa?.pessoaJuridica?.nome_fantasia || '',
-    inep: initialData?.inep || undefined,
+    inep: initialData?.inep || '',
     zona: initialData?.zona || 'urbana',
     telefone: initialData?.pessoa?.telefone || '',
     email: initialData?.pessoa?.email || '',
@@ -154,7 +154,7 @@ export default function UnidadeForm({
   })
 
   const selecMunicipio: MunicipioType | undefined = municipios.find((municipio: MunicipioType) => municipio.id === formData.endereco.municipio_id)
-  const selecEstado: EstadoType | undefined = estados.find((estado: EstadoType) => estado.id === formData.endereco.estado_id)
+  const selecEstado: EstadoType | undefined = estados.find((estado: EstadoType) => estado.id === Number(formData.endereco.estado_id))
 // function getSelectedEstado(estado_id: string | null) {
 //   return optionsEstados?.find((option) => option.value === estado_id)
 // }
@@ -546,7 +546,6 @@ export default function UnidadeForm({
                         options={optionsMunicipios} 
                         field={getSelectedMunicipio(field.value)} 
                         placeholder="Selecione um Município..."
-                        selectStyle="w-[450px]"
                       />
                       <FormMessage />
                     </FormItem>
@@ -595,7 +594,6 @@ export default function UnidadeForm({
                               options={optionsDiretores} 
                               field={getSelectedDiretor(field.value)} 
                               placeholder="Selecione um Diretor..."
-                              selectStyle="w-[450px]"
                             />
                             <FormMessage />
                           </FormItem>

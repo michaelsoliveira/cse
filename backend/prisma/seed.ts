@@ -22,137 +22,171 @@ const estados: Prisma.EstadoCreateInput[] = [
   {
     uf: 'AC',
     nome: 'Acre',
-    ddd: 68
+    ibge: 12,
+    ddd: [68]
   },
   {
     uf: 'AL',
     nome: 'Alagoas',
-    ddd: 82
+    ibge: 27,
+    ddd: [82]
   },
   {
     uf: 'AM',
     nome: 'Amazonas',
-    ddd: 92
+    ibge: 13,
+    ddd: [97,92]
   },
   {
     uf: 'AP',
+    ibge: 16,
     nome: 'Amapá',
-    ddd: 96
+    ddd: [96]
   },
   {
     uf: 'BA',
     nome: 'Bahia',
-    ddd: 71
+    ibge: 29,
+    ddd: [77,75,73,74,71]
   },
   {
     uf: 'CE',
     nome: 'Ceará',
-    ddd: 85
+    ibge: 23,
+    ddd: [88,85]
   },
   {
     uf: 'DF',
     nome: 'Distrito Federal',
-    ddd: 61
+    ibge: 53,
+    ddd: [61]
   },
   {
     uf: 'ES',
     nome: 'Espírito Santo',
-    ddd: 27
+    ibge: 32,
+    ddd: [28,27]
   },
   {
     uf: 'GO',
     nome: 'Goiás',
-    ddd: 62
+    ibge: 52,
+    ddd: [62,64,61]
   },
   {
     uf: 'MA',
     nome: 'Maranhão',
-    ddd: 98
+    ibge: 21,
+    ddd: [99,98]
   },
   {
     uf: 'MG',
     nome: 'Minas Gerais',
-    ddd: 31
+    ibge: 31,
+    ddd: [34,37,31,33,35,38,32]
+
   },
   {
     uf: 'MS',
     nome: 'Mato Grosso do Sul',
-    ddd: 67
+    ibge: 50,
+    ddd: [67]
   },
   {
     uf: 'MT',
     nome: 'Mato Grosso',
-    ddd: 65
+    ibge: 51,
+    ddd: [65,66]
   },
   {
     uf: 'PA',
     nome: 'Pará',
-    ddd: 91
+    ibge: 15,
+    ddd: [91,94,93]
   },
   {
     uf: 'PB',
     nome: 'Paraíba',
-    ddd: 83
+    ibge: 25,
+    ddd: [83]
   },
   {
     uf: 'PE',
     nome: 'Pernambuco',
-    ddd: 81
+    ibge: 26,
+    ddd: [81,87]
   },
   {
     uf: 'PI',
     nome: 'Piauí',
-    ddd: 86
+    ibge: 22,
+    ddd: [89,86]
   },
   {
     uf: 'PR',
     nome: 'Paraná',
-    ddd: 41
+    ibge: 41,
+    ddd: [43,41,42,44,45,46]
   },
   {
     uf: 'RJ',
     nome: 'Rio de Janeiro',
-    ddd: 21
+    ibge: 33,
+    ddd: [24,22,21]
   },
   {
     uf: 'RN',
     nome: 'Rio Grande do Norte',
-    ddd: 84
+    ibge: 24,
+    ddd: [84]
   },
   {
     uf: 'RO',
     nome: 'Rondônia',
-    ddd: 69
+    ibge: 11,
+    ddd: [69]
   },
   {
     uf: 'RR',
     nome: 'Roraima',
-    ddd: 95
+    ibge: 14,
+    ddd: [95]
   },
   {
     uf: 'RS',
     nome: 'Rio Grande do Sul',
-    ddd: 51
+    ibge: 43,
+    ddd: [53,54,55,51]
   },
   {
     uf: 'SC',
     nome: 'Santa Catarina',
-    ddd: 47
+    ibge: 42,
+    ddd: [47,48,49]
   },
   {
     uf: 'SE',
     nome: 'Sergipe',
-    ddd: 79
+    ibge: 28,
+    ddd: [79]
   },
   {
     uf: 'SP',
     nome: 'São Paulo',
-    ddd: 11
+    ibge: 35,
+    ddd: [11,12,13,14,15,16,17,18,19]
   },
   {
     uf: 'TO',
     nome: 'Tocantins',
-    ddd: 63
+    ibge: 17,
+    ddd: [63]
+  },
+  {
+    uf: 'EX',
+    nome: 'Exterior',
+    ibge: 99,
+    ddd: []
   },
 ]
 

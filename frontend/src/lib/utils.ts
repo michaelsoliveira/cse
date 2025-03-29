@@ -6,19 +6,20 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const fetchAPI = async (route: string) => {
+export const fetchAPI = async (route: string, method?: string, data?: any) => {
   const session = await auth();
   const url = route.startsWith('/') ? route : '/' + route;
-  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
-      method: "GET",
+  const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+      method: method || "GET",
       headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           "Authorization": `Bearer ${session?.accessToken!}`
-      }
+      },
+      body: JSON.stringify(data)
   }).then((data) => data.json())
 
-  return data
+  return result
 }
 
 // Função para quebrar os rótulos do eixo Y em duas linhas

@@ -7,7 +7,7 @@ export interface EnderecoType {
   logradouro?: string;
   numero?: string;
   municipio_id: number;
-  estado_id: string;
+  estado_id: number;
   complemento?: string;
   bairro?: string;
 }

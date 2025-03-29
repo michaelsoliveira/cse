@@ -31,12 +31,32 @@ CREATE OR REPLACE VIEW "ocorrencias_tipos_totais" AS
     FROM ocorrencia o
     JOIN tipo_ocorrencia t ON o.tipo_id = t.id;
 
+CREATE OR REPLACE VIEW "ocorrencias_anual" AS
+    SELECT 
+        ROW_NUMBER() OVER (ORDER BY ano, mes) AS sequencia,
+        mes,
+        ano,
+        total
+    FROM (
+        SELECT 
+            EXTRACT(MONTH FROM data) AS mes,
+            EXTRACT(YEAR FROM data) AS ano,
+            COUNT(*) AS total
+        FROM ocorrencia
+        WHERE EXTRACT(YEAR FROM data) IN (EXTRACT(YEAR FROM CURRENT_DATE), EXTRACT(YEAR FROM CURRENT_DATE) - 1)
+        GROUP BY ano, mes
+    ) subquery
+    ORDER BY ano, mes;
+
 CREATE OR REPLACE VIEW "ocorrencias_mes" AS
-    SELECT TO_CHAR(data, '%m-%Y') AS mes,
+    SELECT 
+        ROW_NUMBER() OVER (ORDER BY EXTRACT(MONTH FROM data)) AS sequencia,
+        EXTRACT(MONTH FROM data) AS mes,
+        EXTRACT(YEAR FROM data) AS ano,
         COUNT(*) AS total_ocorrencias
     FROM ocorrencia
-    GROUP BY mes
-    ORDER BY mes;
+    GROUP BY ano, mes
+    ORDER BY ano, mes;
 
 CREATE OR REPLACE VIEW "ocorrencias_envolvidos" AS
     SELECT o.id,

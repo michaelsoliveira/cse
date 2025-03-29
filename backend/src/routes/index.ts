@@ -12,7 +12,7 @@ import { UnidadeController } from '../controllers/UnidadeController';
 import { DiretorController } from '../controllers/DiretorController';
 import { OcorrenciaController } from '../controllers/OcorrenciaController';
 import { ComunicanteController } from '../controllers/ComunicanteController';
-import { ViewController } from '../controllers/ViewController';
+import { DashboardControoler } from '../controllers/DashboardController';
 
 const express = require('express')
 const multer = require('multer')
@@ -113,7 +113,8 @@ routes.post('/comunicante', Authentication(), new ComunicanteController().store)
 routes.put('/comunicante/:id', Authentication(), new ComunicanteController().update)
 routes.delete('/comunicante/:id', Authentication(), new ComunicanteController().delete)
 
-routes.get('/dashboard/totals', Authentication(), new ViewController().getDashboardTotals)
-routes.get('/dashboard/ocorrencia-tipos-totais', Authentication(), new ViewController().getOcorrenciasTiposTotais)
+routes.get('/dashboard/totals', Authentication(), new DashboardControoler().getDashboardTotals)
+routes.get('/dashboard/ocorrencia-tipos-totais', Authentication(), new DashboardControoler().getOcorrenciaTiposTotais)
+routes.get('/dashboard/ocorrencia-anual', Authentication(), new DashboardControoler().getOcorrenciaAnual)
 
 export default routes;
