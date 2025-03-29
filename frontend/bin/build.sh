@@ -9,8 +9,5 @@ docker builder prune
 
 echo -e '\n'
 
-docker network create $APP_NAME
-docker volume create $POSTGRES_VOL
-docker volume create $PGADMIN_VOL
-
-docker volume create --driver local --opt type=none --opt device=$(pwd)/backup --opt o=bind $APP_NAME'_backup'
+docker network create $APP_NAME'_network'
+docker volume create $DATA_APP

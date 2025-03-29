@@ -25,14 +25,14 @@ export function useUpdateSearchParams() {
   }
 
   // Função debounced para ser usada quando houver mudança de filtros (apenas em campos com digitação)
-  const debouncedSetParams = (newParams: Record<string, string | undefined | null>, delay: number) => {
-    Object.entries(newParams).forEach(([key, value]) => {
-      const debouncedValue = useDebounce(value || '', delay)
-      if (debouncedValue) {
-        setParams({ [key]: debouncedValue })
-      }
-    })
-  }
+  // const debouncedSetParams = (newParams: Record<string, string | undefined | null>, delay: number) => {
+  //   Object.entries(newParams).forEach(([key, value]) => {
+  //     const debouncedValue = useDebounce(value || '', delay)
+  //     if (debouncedValue) {
+  //       setParams({ [key]: debouncedValue })
+  //     }
+  //   })
+  // }
 
-  return { setParams, debouncedSetParams }
+  return { setParams }
 }

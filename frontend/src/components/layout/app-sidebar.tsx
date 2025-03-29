@@ -142,15 +142,15 @@ export default function AppSidebar() {
                   <Avatar className='h-8 w-8 rounded-lg'>
                     <AvatarImage
                       src={session?.user?.image || ''}
-                      alt={session?.user?.name || ''}
+                      alt={session?.user?.username || ''}
                     />
                     <AvatarFallback className='rounded-lg'>
-                      {session?.user?.name?.slice(0, 2)?.toUpperCase() || 'CN'}
+                      {session?.user?.username?.slice(0, 2)?.toUpperCase() || 'CN'}
                     </AvatarFallback>
                   </Avatar>
                   <div className='grid flex-1 text-left text-sm leading-tight'>
                     <span className='truncate font-semibold'>
-                      {session?.user?.name || ''}
+                      {session?.user?.username || ''}
                     </span>
                     <span className='truncate text-xs'>
                       {session?.user?.email || ''}
@@ -170,16 +170,16 @@ export default function AppSidebar() {
                     <Avatar className='h-8 w-8 rounded-lg'>
                       <AvatarImage
                         src={session?.user?.image || ''}
-                        alt={session?.user?.name || ''}
+                        alt={session?.user?.username || ''}
                       />
                       <AvatarFallback className='rounded-lg'>
-                        {session?.user?.name?.slice(0, 2)?.toUpperCase() ||
+                        {session?.user?.username?.slice(0, 2)?.toUpperCase() ||
                           'CN'}
                       </AvatarFallback>
                     </Avatar>
                     <div className='grid flex-1 text-left text-sm leading-tight'>
                       <span className='truncate font-semibold'>
-                        {session?.user?.name || ''}
+                        {session?.user?.username || ''}
                       </span>
                       <span className='truncate text-xs'>
                         {' '}

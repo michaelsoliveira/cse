@@ -4,12 +4,11 @@ services:
       context: .
       dockerfile: ./docker/${ENVIRONMENT}/app/Dockerfile
       args:
-        VERSION: ${IO_VERSION}
+        VERSION: ${VERSION}
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${PGPORT}/${IO_PROJECT}_${IO_APP}?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${PGPORT}/${DATABASE_NAME}?schema=public
       ENVIRONMENT: ${ENVIRONMENT}
-      STAGE: ${IO_STAGE}
-      POSTGRES_DB: ${IO_PROJECT}_${IO_APP}
+      POSTGRES_DB: ${DATABASE_NAME}
       BASE_URL: ${BASE_URL}
     restart: unless-stopped
     extends:
@@ -53,7 +52,7 @@ services:
       PGUSER: ${POSTGRES_USER}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${IO_PROJECT}_${IO_APP}
+      POSTGRES_DB: ${DATABASE_NAME}
       PGPORT: ${PGPORT}
     restart: unless-stopped
     expose:
@@ -120,8 +119,8 @@ services:
       sh -c  "set -ex &&
         cd /backup &&
         export PGHOST=postgres &&
-        export BACKUP_PGDB=$$(date +'%Y_%m_%d_%H_%M_%S')_${IO_PROJECT}_${IO_APP}_${IO_STAGE}_${IO_VERSION}.dump &&
-        PGPASSWORD=${POSTGRES_PASSWORD} pg_dump --file ""$$BACKUP_PGDB"" -p ${PGPORT} --format=p --encoding=UTF8 --no-owner --no-privileges --clean --if-exists --verbose ""${IO_PROJECT}_${IO_APP}"" &&
+        export BACKUP_PGDB=$$(date +'%Y_%m_%d_%H_%M_%S')_${APP_NAME}_${VERSION}.dump &&
+        PGPASSWORD=${POSTGRES_PASSWORD} pg_dump --file ""$$BACKUP_PGDB"" -p ${PGPORT} --format=p --encoding=UTF8 --no-owner --no-privileges --clean --if-exists --verbose ""${APP_NAME}"" &&
         tar -czf $$BACKUP_PGDB.tar.gz $$BACKUP_PGDB &&
         rm -rf $$BACKUP_PGDB"
     profiles:
@@ -149,9 +148,9 @@ services:
         tar -zxf $$FILE_TO_RESTORE &&
         BACKUP_PGDB=$$FILE_TO_RESTORE &&
         export BACKUP_PGDB=$${BACKUP_PGDB%".tar.gz"} &&
-        PGPASSWORD=${POSTGRES_PASSWORD} dropdb -U ${POSTGRES_USER} -p ${PGPORT} ""${IO_PROJECT}_${IO_APP}"" &&
-        PGPASSWORD=${POSTGRES_PASSWORD} createdb -U ${POSTGRES_USER} -p ${PGPORT} --encoding UTF8 --locale en_US.utf8 ""${IO_PROJECT}_${IO_APP}""  &&
-        PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -p ${PGPORT} -d ""${IO_PROJECT}_${IO_APP}"" < $$BACKUP_PGDB &&
+        PGPASSWORD=${POSTGRES_PASSWORD} dropdb -U ${POSTGRES_USER} -p ${PGPORT} ""${APP_NAME}"" &&
+        PGPASSWORD=${POSTGRES_PASSWORD} createdb -U ${POSTGRES_USER} -p ${PGPORT} --encoding UTF8 --locale en_US.utf8 ""${APP_NAME}""  &&
+        PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -p ${PGPORT} -d ""${APP_NAME}"" < $$BACKUP_PGDB &&
         rm -rf $$BACKUP_PGDB'
     profiles:
       - cli
@@ -173,19 +172,19 @@ services:
     command: >
       sh -c  'set -ex &&
         export PGHOST=postgres &&
-        PGPASSWORD=${POSTGRES_PASSWORD} vacuumdb --analyze ""${IO_PROJECT}_${IO_APP}"" --port=${PGPORT} &&
-        PGPASSWORD=${POSTGRES_PASSWORD} reindexdb ""${IO_PROJECT}_${IO_APP}"" --port=${PGPORT}'
+        PGPASSWORD=${POSTGRES_PASSWORD} vacuumdb --analyze ""${APP_NAME}"" --port=${PGPORT} &&
+        PGPASSWORD=${POSTGRES_PASSWORD} reindexdb ""${APP_NAME}"" --port=${PGPORT}'
     profiles:
       - cli
 
 networks:
   stack:
     external: true
-    name: ${IO_PROJECT}_${IO_APP}_${IO_STAGE}
+    name: ${APP_NAME}
 
 volumes:
   data_backup:
-    name: ${IO_PROJECT}_${IO_APP}_${IO_STAGE}_backup
+    name: ${APP_NAME}_backup
     external: true
 
   data_pgdir:

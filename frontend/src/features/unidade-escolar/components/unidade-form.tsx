@@ -117,7 +117,7 @@ export default function UnidadeForm({
     const responseMunicipios = await client.get(`/estado/get-municipios/${form.getValues('endereco.estado_id')}`)
       const { municipios } = responseMunicipios.data
       setMunicipios(municipios)
-  }, [client, form.getValues('endereco.estado_id')])
+  }, [client, form])
 
   useEffect(() => {
     loadData()

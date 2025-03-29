@@ -8,16 +8,16 @@ import {
   KBarSearch
 } from 'kbar';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import RenderResults from './render-result';
 import useThemeSwitching from './use-theme-switching';
 
 export default function KBar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
-  const navigateTo = (url: string) => {
+  const navigateTo = useCallback((url: string) => {
     router.push(url);
-  };
+  },[router]);
 
   // These action are for the navigation
   const actions = useMemo(
@@ -52,7 +52,7 @@ export default function KBar({ children }: { children: React.ReactNode }) {
         // Return only valid actions (ignoring null base actions for containers)
         return baseAction ? [baseAction, ...childActions] : childActions;
       }),
-    []
+    [navigateTo]
   );
 
   return (

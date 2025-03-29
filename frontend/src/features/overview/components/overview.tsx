@@ -8,7 +8,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AreaGraph } from './area-graph-ocorrencia';
+import { AreaGraphOcorrencia } from './area-graph-ocorrencia';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
 import { RecentOcorrencia } from './recent-ocorrencia';
@@ -152,7 +152,7 @@ export default function OverViewPage() {
                 </CardContent>
               </Card>
               <div className='col-span-4'>
-                <AreaGraph />
+                <AreaGraphOcorrencia />
               </div>
               <div className='col-span-4 md:col-span-3'>
                 <PieGraph />

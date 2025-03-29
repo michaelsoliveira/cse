@@ -45,7 +45,7 @@ export function useOcorrenciaTableFilters() {
     setClassificacao(null)
     setTipoOcorrencia(null)
     setPage(1);
-  }, [setDataInicio, setDataFim, setClassificacao, setPage]);
+  }, [setDataInicio, setDataFim, setClassificacao, setPage, setTipoOcorrencia]);
 
   const isAnyFilterActive = useMemo(() => {
     return !!dataInicio || !!dataFim || !!classificacao || !!tipoOcorrencia;
