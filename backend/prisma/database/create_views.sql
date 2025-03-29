@@ -21,12 +21,12 @@ CREATE OR REPLACE VIEW "ocorrencias_tipos_totais" AS
         1 AS id,
         COUNT(*) FILTER (WHERE t.nome = 'Furto')   AS furto,
         COUNT(*) FILTER (WHERE t.nome = 'Roubo')      AS roubo,
-        COUNT(*) FILTER (WHERE t.nome = 'Vulnerabilidade')  AS vulneravel
+        COUNT(*) FILTER (WHERE t.nome = 'Vulnerabilidade')  AS vulnerabilidade
         COUNT(*) FILTER (WHERE t.nome = 'Intrusão')  AS intrusao
         COUNT(*) FILTER (WHERE t.nome = 'Ameaça')  AS ameaca
         COUNT(*) FILTER (WHERE t.nome = 'Uso de Arma de Fogo')  AS uso_arma
         COUNT(*) FILTER (WHERE t.nome = 'Porte de Arma')  AS porte_arma
-        COUNT(*) FILTER (WHERE t.nome = 'Danos ao Patrimômio')  AS danos_patrimonio
+        COUNT(*) FILTER (WHERE t.nome = 'Danos ao Patrimônio')  AS danos_patrimonio
         COUNT(*) FILTER (WHERE t.nome = 'Ameaça a Escola')  AS ameaca_escola
     FROM ocorrencia o
     JOIN tipo_ocorrencia t ON o.tipo_id = t.id;
@@ -48,19 +48,23 @@ CREATE OR REPLACE VIEW "ocorrencias_envolvidos" AS
     JOIN ocorrencia o ON eo.ocorrencia_id = o.id
     ORDER BY o.id;
 
-CREATE OR REPLACE VIEW "ocorrencias_responsavel" AS
-    SELECT o.id,
+CREATE OR REPLACE VIEW "ocorrencias_comunicante" AS
+    SELECT 
+        o.id,
         pj.nome_fantasia AS escola,
         toco.nome AS tipo,
-        o.data as data_ocorrencia,
-        o.local,
-        rr.nome AS registrado_por
+        o.data AS data_ocorrencia,
+        o.hora,
+        COALESCE(pf.nome, pj_com.nome_fantasia) AS comunicante
     FROM ocorrencia o
     JOIN unidade_escolar ue ON o.unidade_id = ue.id
-	JOIN pessoa p on p.id = ue.pessoa_id
-	JOIN pessoa_juridica pj on pj.pessoa_id = p.id
+    JOIN pessoa p ON p.id = ue.pessoa_id
+    JOIN pessoa_juridica pj ON pj.pessoa_id = p.id
     JOIN tipo_ocorrencia toco ON o.tipo_id = toco.id
-    JOIN responsavel_registro rr ON o.responsavel_id = rr.id
+    JOIN comunicante c ON c.id = o.comunicante_id
+    JOIN pessoa p_com ON p_com.id = c.pessoa_id
+    LEFT JOIN pessoa_fisica pf ON pf.pessoa_id = p_com.id
+    LEFT JOIN pessoa_juridica pj_com ON pj_com.pessoa_id = p_com.id
     ORDER BY o.data DESC;
 
 CREATE OR REPLACE VIEW "totais_dashboard" AS

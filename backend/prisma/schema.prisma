@@ -29,7 +29,7 @@ view OcorrenciasTiposTotais {
   id Int @id
   furto Int
   roubo Int
-  vulneravel Int
+  vulnerabilidade Int
   intrusao Int
   ameaca Int
   uso_arma Int
@@ -56,16 +56,15 @@ view OcorrenciasEnvolvidos {
   @@map("ocorrencias_envolvidos")
 }
 
-view OcorrenciasResponsavel {
+view OcorrenciasComunicante {
   id      String @id
   escola  String
   tipo    String
   data_ocorrencia   DateTime @db.Date
-  hora         String
-  status        String
-  registrado_por  String
+  hora         DateTime @db.Time
+  comunicante  String
 
-  @@map("ocorrencias_responsavel")
+  @@map("ocorrencias_comunicante")
 }
 
 view TotaisDashboard {
@@ -209,7 +208,7 @@ model Comunicante {
   pessoa      Pessoa @relation(fields: [pessoa_id], references: [id])
   ocorrencia  Ocorrencia[]
 
-  @@map("origem_ocorrencia")
+  @@map("comunicante")
 }
 
 model Ocorrencia {

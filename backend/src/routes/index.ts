@@ -114,5 +114,6 @@ routes.put('/comunicante/:id', Authentication(), new ComunicanteController().upd
 routes.delete('/comunicante/:id', Authentication(), new ComunicanteController().delete)
 
 routes.get('/dashboard/totals', Authentication(), new ViewController().getDashboardTotals)
+routes.get('/dashboard/ocorrencia-tipos-totais', Authentication(), new ViewController().getOcorrenciasTiposTotais)
 
 export default routes;

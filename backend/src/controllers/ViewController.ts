@@ -17,4 +17,20 @@ export class ViewController {
             })
         }
     }
+
+    async getOcorrenciasTiposTotais(request: Request, response: Response) {
+        try {
+            const totals = await ViewService.getOcorrenciasTiposTotais();
+
+        return response.status(200).json({
+            error: false,
+            totals
+        });
+        } catch (error) {
+            return response.json({
+                error: true,
+                message: error.message
+            })
+        }
+    }
 }

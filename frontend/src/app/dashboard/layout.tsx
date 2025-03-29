@@ -7,8 +7,8 @@ import { cookies } from 'next/headers';
 import { ReactQueryClientProvider } from '@/components/providers/react-query-client-provider';
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn Dashboard Starter',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'Escola Segura - Coordenadoria de Segurança Escola',
+  description: 'Dashboard Sistema de Gerenciamento do projeto Escolar Segura'
 };
 
 export default async function DashboardLayout({
