@@ -9,7 +9,7 @@ docker builder prune
 
 echo -e '\n'
 
-docker network create $APP_NAME
+docker network create $APP_NAME'_network'
 docker volume create $POSTGRES_VOL
 docker volume create $PGADMIN_VOL
 

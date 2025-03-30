@@ -80,6 +80,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     volumes:
       - data_pgadmin:/var/lib/pgadmin
+      - /prisma/database/municipios.csv:/home/user/municipios.csv
     networks:
       - stack
     profiles:

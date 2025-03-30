@@ -41,7 +41,7 @@ view OcorrenciasTiposTotais {
 }
 
 view OcorrenciasAnual {
-  sequencia String @id
+  sequencia Int @id
   mes   Int
   ano   Int
   total Int

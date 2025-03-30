@@ -1,5 +1,12 @@
 import { prismaClient } from "../database/prismaClient";
 
+type ocorrenciaAnual = {
+    sequencia: number;
+    mes: number;
+    ano: number;
+    total: number;        
+}
+
 class ViewService {
     async getDashboardTotals() 
     {
@@ -30,12 +37,11 @@ class ViewService {
     async getOcorrenciaAnual() 
     {
         try {
-            const ocorrencias = await prismaClient.ocorrenciasAnual.findMany();
-    
+            const ocorrencias = await prismaClient.ocorrenciasAnual.findMany()
+            
             return ocorrencias
         } catch (error) {
-            console.log(JSON.stringify(error, null, 2))
-            throw new Error("Erro ao buscar ocorrencias anual:", error);
+            throw new Error("Erro ao buscar ocorrencias anual:", error?.message);
         }
     }
 }

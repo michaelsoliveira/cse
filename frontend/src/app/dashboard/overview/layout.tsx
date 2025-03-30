@@ -1,6 +1,7 @@
 import PageContainer from '@/components/layout/page-container';
 import DashboardTotals from '@/features/overview/components/dashboard-totals';
 import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
 export default async function OverViewLayout({
@@ -15,6 +16,10 @@ export default async function OverViewLayout({
   area_stats: React.ReactNode;
 }) {
   const session = await auth();
+  if (!session?.user) {
+      return redirect('/');
+  }
+  
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col space-y-2'>
