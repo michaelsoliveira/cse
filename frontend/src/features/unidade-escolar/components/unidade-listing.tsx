@@ -15,19 +15,22 @@ export default async function UnidadeListingPage({}: UnidadeListingPage) {
 
   const url = `/unidade?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`
   const urlWithZonas = zonas ? `${url}&zonas=${zonas}` : url
-  const data = await fetchAPI(urlWithZonas)
+  try {
+    const data = await fetchAPI(urlWithZonas)
   
-  const { unidades, error, count } = data;
+    const { unidades, error, count } = data;
   
-  if (!error){
-    return (
-      <UnidadeTable
-        columns={columns}
-        data={unidades}
-        totalItems={count}
-      />
-    );
+    if (!error){
+      return (
+        <UnidadeTable
+          columns={columns}
+          data={unidades}
+          totalItems={count}
+        />
+      );
+    }
+  } catch(error) {
+    console.log(JSON.stringify(error))
   }
-  
 
 }

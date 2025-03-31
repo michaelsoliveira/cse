@@ -3,6 +3,8 @@ import CredentialProvider from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google'
 import userService from '@/services/user';
+import { CredentialsSchema } from '@/features/auth/utils/form-schema';
+import { InvalidCredentials, UserNotFound } from './auth-errors';
 
 // const GOOGLE_AUTHORIZATION_URL =
 //   'https://accounts.google.com/o/oauth2/v2/auth?' +
@@ -178,6 +180,7 @@ async function refreshAccessToken(token: any) {
 }
   
 const authConfig = {
+  trustHost: true,
   providers: [
     GithubProvider({}),
     GoogleProvider({}),
@@ -190,48 +193,33 @@ const authConfig = {
           type: 'password'
         }
       },
-      async authorize(credentials, req) {
-        try {
-          if (!credentials?.email || !credentials.password) {
-            return null;
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email e senha são obrigatórios.");
+        }
+        const { email, password } = credentials 
+        const { user, error, message } = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+          {
+            cache: 'no-store',
+            method: 'POST',
+            body: JSON.stringify({ email, password }),
+            headers: { 'Content-Type': 'application/json' },
           }
+        ).then((res) => res.json())
+        
+        if (user) {
+          return {
+            error,
+            local: true,
+            ...user
+          } 
+        }
 
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-            {
-              method: 'POST',
-              body: JSON.stringify(credentials),
-              headers: { 'Content-Type': 'application/json' },
-            }
-          );
-
-          const response = await res.json().then((data) => {
-              const { error, message, user } = data
-              if (!error) {
-                return {
-                  error,
-                  local: true,
-                  ...user,
-                }
-              }
-
-              return {
-                error,
-                message,
-                user
-              }
-            })
-            .catch((res) => {
-              return res;
-            });
-            // If no error and we have user data, return it
-            if (res.ok && response) {
-              return response;
-            }
-          return null;
-        } catch (error) {
-          const errorMessage = error;
-          throw new Error(`${errorMessage}&email=${credentials?.email}`);
+        switch(message) {
+          case "invalid_password": throw new InvalidCredentials();
+          case "user_not_found": throw new UserNotFound();
+          default: throw new InvalidCredentials();
         }
       }
     })
@@ -251,6 +239,12 @@ const authConfig = {
     // updateAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
+    async signIn({ user, account, credentials, email }) {
+      if (!user) {
+        return false; // Bloqueia o login
+      }
+      return true; // Permite o login
+    },
     async jwt({ user, token, account }: any) {
       if (user?.local) {
         return {
@@ -267,7 +261,7 @@ const authConfig = {
         };
       }
       if (account) {
-        const dataUser = await findProvider({ ...token, ...account });
+        await findProvider({ ...token, ...account });
         return {
           provider: account.provider,
           accessToken: account.access_token,
@@ -301,11 +295,20 @@ const authConfig = {
 
       return session;
     },
-
+    async redirect({ url, baseUrl }) {
+      // Sempre redireciona para o dashboard após login
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
+    },
   },
   pages: {
-    signIn: '/login' //sigin page
-  }
+    signIn: '/auth/signin',
+    error: '/auth/signin'
+  },
+  secret: process.env.AUTH_SECRET
 } satisfies NextAuthConfig;
 
 export default authConfig;

@@ -17,7 +17,7 @@ export default async function OverViewLayout({
 }) {
   const session = await auth();
   if (!session?.user) {
-      return redirect('/');
+      return redirect('/auth/signin');
   }
   
   return (

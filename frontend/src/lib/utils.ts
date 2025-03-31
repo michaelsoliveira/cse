@@ -7,19 +7,27 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const fetchAPI = async (route: string, method?: string, data?: any) => {
-  const session = await auth();
-  const url = route.startsWith('/') ? route : '/' + route;
-  const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
-      method: method || "GET",
-      headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          "Authorization": `Bearer ${session?.accessToken!}`
-      },
-      body: JSON.stringify(data)
-  }).then((data) => data.json())
-
-  return result
+  try {
+    const session = await auth();
+    const url = route.startsWith('/') ? route : '/' + route;
+    if (session) {
+        const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+          cache: 'no-store',
+          method: method || "GET",
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              "Authorization": `Bearer ${session?.accessToken!}`
+          },
+          body: JSON.stringify(data)
+      }).then((data) => data.json())
+      return result
+    }
+  } catch(error) {
+    console.log("Error fetching Data:", error)
+    return []
+  }
+  
 }
 
 // Função para quebrar os rótulos do eixo Y em duas linhas

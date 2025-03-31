@@ -37,7 +37,7 @@ export class DashboardControoler {
     async getOcorrenciaAnual(request: Request, response: Response) {
         try {
             const ocorrencias = await dashboardService.getOcorrenciaAnual();
-            console.log(ocorrencias)
+            
         return response.status(200).json({
             error: false,
             ocorrencias

@@ -28,7 +28,7 @@ export default async function OcorrenciaListingPage() {
   const data = await fetchAPI(`/ocorrencia?dataInicio=${dataInicio}&dataFim=${dataFim}&classificacao=${classificacao}&tipo_ocorrencia=${tipo_ocorrencia}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`);
   
   const { ocorrencias, error, count } = data;
-  
+
   if (!error){
     return (
     <>
@@ -40,7 +40,6 @@ export default async function OcorrenciaListingPage() {
     </>
     );
   }
-  
 
 }
 

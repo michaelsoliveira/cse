@@ -15,15 +15,12 @@ console.log('Stage: ' + process.env.IO_STAGE)
 
 var whitelist = [
   "http://localhost:3000", 
-  "http://200.129.254.39:49157", 
-  "http://io.cnpgc.embrapa.br:49157", 
-  "https://bomanejo-app.a.cnpgc.embrapa.br", 
-  "https://bomanejo-ml.alpha.agro.rocks", 
-  "http://localhost:8501",
-  "https://bomanejo.online", 
-  "https://bomanejo.online/backend", 
-  "https://bomanejo.online/kc", 
-  "https://bomanejo.online/ml", 
+  "http://172.18.0.2:3000", 
+  "http://frontend-app-1", 
+  "http://frontend-nginx-1",
+  "http://172.18.0.3",
+  "http://cse.seed.ap.br",
+  "http://localhost"
 ]
 var corsOptions = {
   origin: function (origin: any, callback: any) {

@@ -14,19 +14,22 @@ export default async function UnidadeListingPage({}: UnidadeListingPage) {
   const orderBy = searchParamsCache.get('orderBy') || 'pessoa.pessoaFisica.nome'
   const order = searchParamsCache.get('orderBy') || 'asc'
 
-  const data = await fetchAPI(`/comunicante?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`)
+  try {
+    const data = await fetchAPI(`/comunicante?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`)
   
-  const { comunicantes, error, count } = data;
-  
-  if (!error){
-    return (
-      <ComunicanteTable
-        columns={columns}
-        data={comunicantes}
-        totalItems={count}
-      />
-    );
+    const { comunicantes, error, count } = data;
+    
+    if (!error){
+      return (
+        <ComunicanteTable
+          columns={columns}
+          data={comunicantes}
+          totalItems={count}
+        />
+      );
+    }
+  } catch(error) {
+    console.log(JSON.stringify(error))
   }
   
-
 }

@@ -181,7 +181,7 @@ services:
 networks:
   stack:
     external: true
-    name: ${APP_NAME}
+    name: ${APP_NAME}_network
 
 volumes:
   data_backup:

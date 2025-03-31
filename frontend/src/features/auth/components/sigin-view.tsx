@@ -13,20 +13,20 @@ export const metadata: Metadata = {
 export default function SignInViewPage() {
   return (
     <div className='relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
-      <div className='relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex'>
-        <div className='absolute inset-0 bg-zinc-400' />
-        <div className='flex flex-row items-center justify-between mx-24 space-x-2'>
+      <div className='relative hidden h-full flex-col bg-muted p-10 text-black dark:border-r lg:flex'>
+      <div className="absolute z-0 inset-0 h-full w-full items-center px-5 py-24 bg-gradient-to-b from-white via-white via-50% to-[#16A34A]" />
+        <div className='flex flex-col items-center justify-center mx-24 space-x-2'>
           <div className='relative z-20 flex items-center text-lg font-medium'>
             <Image 
-              src="/images/logo_unifap.png" 
-              width="80"
-              height="80"
-              style={{width:'100px', height: "auto" }}
+              src="/images/logo.png" 
+              width="200"
+              height="200"
+              style={{width:'300px', height: "auto" }}
               priority={true}
               alt={'Logo UNIFAP'} 
             />
           </div>
-          <span className='text-lg z-30'>
+          <span className='text-lg text-center z-30 mt-4'>
             SECRETARIA DE ESTADO DA EDUCAÇÃO <br />
             COORDENADORIA DE SEGURANÇA ESCOLAR
           </span>
@@ -55,14 +55,14 @@ export default function SignInViewPage() {
           <p className='px-8 text-center text-xs text-muted-foreground'>
             Ao clicar em entrar, você está de acordo com os nossos {' '}
             <Link
-              href='/terms'
+              href='/docs/terms'
               className='underline underline-offset-4 hover:text-primary'
             >
               Termos de Serviço
             </Link>{' '}
             and{' '}
             <Link
-              href='/privacy'
+              href='/docs/privacy'
               className='underline underline-offset-4 hover:text-primary'
             >
               Política de Privacidade

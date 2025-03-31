@@ -31,6 +31,7 @@ export default function UserAuthForm() {
   const router = useRouter();
   const [register, setRegister] = useState(false);
   const callbackUrl = searchParams.get('callbackUrl');
+  const code = searchParams.get("code");
   const [loading, startTransition] = useTransition();
   const defaultValues = {
     email: '',
@@ -42,29 +43,34 @@ export default function UserAuthForm() {
   });
 
   const onSubmit = async (data: UserFormValue) => {
-    startTransition(() => {
-      if (register) {
-        toast.success(JSON.stringify(data));
-      } else {
-        signIn('credentials', {
+    startTransition(async () => {
+      
+        const response = await signIn("credentials", {
           email: data.email,
           password: data.password,
-          callbackUrl: callbackUrl ?? '/dashboard',
+          // callbackUrl: callbackUrl ?? "/dashboard",
+          // redirectTo: '/dashboard'
           redirect: false
         })
-        .then((res: any) => {
-          if (!res?.error) {
-            toast.success('Login realizado com sucesso');
-            router.push(res?.url)
-          } else {
-            toast.warning('Email ou senha incorreto, por favor, verifique as informações e tente novamente');
+        console.log(JSON.stringify(response))
+        if (response?.error && response?.error === "CredentialsSignin") 
+          {
+            toast.success('Oops, Ocorreu um erro na autenticação', {
+              description: "Por favor, verifique sua senha e tente novamente",
+              action: {
+                label: 'Fechar',
+                onClick: () => true
+              }
+            });
+            return
+          }
+
+          if (!response?.error) {
+            toast.success('Login realizado com sucesso')
+            router.push('/dashboard')
           }
         })
-        .catch((error: unknown) => {
-          console.log(error);
-        });
-      }
-    });
+        
   };
 
   return (
@@ -72,6 +78,7 @@ export default function UserAuthForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
+          // action={credentialsAction}
           className='w-full space-y-2'
         >
           <FormField

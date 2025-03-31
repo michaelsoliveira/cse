@@ -140,7 +140,7 @@
 @layer base {
 }
 
-;:root {
+:root {
   --background: hsl(20 66% 99%);
   --foreground: hsl(12, 5%, 19%);
   --muted: hsl(20 25% 86%);

@@ -6,12 +6,17 @@ services:
       args:
         PORT: ${PORT}
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_API_URL
+      - AUTH_GOOGLE_ID
+      - AUTH_GOOGLE_SECRET
+      - AUTH_SECRET
+      - AUTH_URL=http://localhost:${PORT}
     extends:
       file: ./docker/app.yml
       service: ${ENVIRONMENT}
     networks:
       - stack
+      - backend_cse_network
     ports:
       - ${PORT}:3000
     restart: unless-stopped
@@ -25,6 +30,15 @@ services:
       timeout: 10s
       start_period: 30s
       retries: 4
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'"
+    networks:
+      - stack
 
   nginx:
     build: 
@@ -35,9 +49,11 @@ services:
       - app
     ports:
       - 80:80
+      - 443:443
     restart: always
     networks:
       - stack
+      - backend_cse_network
   
 volumes:
   data_app:
@@ -50,3 +66,5 @@ networks:
   stack:
     external: true
     name: ${APP_NAME}_network
+  backend_cse_network:
+    external: true

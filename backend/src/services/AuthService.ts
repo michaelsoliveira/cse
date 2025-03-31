@@ -39,12 +39,12 @@ class AuthService {
             }
         })
 
-        if (!user) throw new Error("Usuário informado não existe na base de dados")
+        if (!user) throw new Error("user_not_found")
 
         const passwordMatch = await bcrypt.compareSync(password, user?.password)
 
         if (!passwordMatch) {
-            throw new Error("A senha informada está incorreta")
+            throw new Error("invalid_password")
         }
 
         const token = this.createToken(user)

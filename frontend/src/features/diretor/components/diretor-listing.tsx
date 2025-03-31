@@ -13,20 +13,22 @@ export default async function UnidadeListingPage({}: UnidadeListingPage) {
   const pageLimit = searchParamsCache.get('limit') || 10;
   const orderBy = searchParamsCache.get('orderBy') || 'pessoa.pessoaFisica.nome'
   const order = searchParamsCache.get('orderBy') || 'asc'
-
-  const data = await fetchAPI(`/diretor?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`)
+  try {
+    const data = await fetchAPI(`/diretor?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`)
   
-  const { diretores, error, count } = data;
-  
-  if (!error){
-    return (
-      <DiretorTable
-        columns={columns}
-        data={diretores}
-        totalItems={count}
-      />
-    );
+    const { diretores, error, count } = data;
+    
+    if (!error){
+      return (
+        <DiretorTable
+          columns={columns}
+          data={diretores}
+          totalItems={count}
+        />
+      );
+    }
+  } catch (error) {
+    console.log(JSON.stringify(error))
   }
   
-
 }

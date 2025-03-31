@@ -25,7 +25,7 @@ export class AuthController {
             })
 
         } catch (error: any) {
-            return response.status(403).json({
+            return response.json({
                 error: true,
                 message: error.message,
                 user: null

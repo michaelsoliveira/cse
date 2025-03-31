@@ -39,19 +39,15 @@ WORKDIR /app
 
 ENV NEXT_SHARP_PATH=/tmp/node_modules/sharp
 ENV ENVIRONMENT production
-ENV NEXTAUTH_URL ${NEXTAUTH_URL}
-ENV NEXT_PUBLIC_API_URL ${NEXT_PUBLIC_API_URL}
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
-
-COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/standalone/.next/
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static/
 
 # COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 # COPY --from=builder /app/node_modules ./node_modules
