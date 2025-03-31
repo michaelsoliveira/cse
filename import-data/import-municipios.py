@@ -1,8 +1,9 @@
 import os
-from dotenv import load_dotenv
 import pandas as pd
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy import insert, text
+import chardet
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+import psycopg2
 
 load_dotenv()
 
@@ -12,42 +13,40 @@ DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT')
 DB_NAME = os.getenv('DB_NAME')
 
-# Conecte ao seu banco PostgreSQL (ajuste os dados de acesso)
-engine = create_engine(f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
-directory_path = os.getcwd()
-df = pd.read_csv(os.path.join(directory_path, "municipios.csv"), sep=';', header=1)
+# Detectar encoding do arquivo CSV
+csv_path = os.path.join(os.getcwd(), "municipios.csv")
+with open(csv_path, "rb") as f:
+    result = chardet.detect(f.read(100000))  # Analisa os primeiros 100 KB
+    encoding_detected = result["encoding"]
 
-# Carrega os dados
+# Ler CSV com encoding correto
+df = pd.read_csv(csv_path, sep=';', header=1, encoding='utf-8-sig')
 
-df.columns = [
-    "id", "nome", "ibge", "lat_lon", "estado_id"
-]
+# Renomear colunas
+df.columns = ["id", "nome", "estado_id", "ibge", "lat_lon"]
 
-# Lista de valores considerados inválidos
+# Lista de valores inválidos
 valores_invalidos = ["S/B", "s/b", "S/N", "s/n", "null", "NULL", "N/A", "n/a", "-", "--", pd.NA, None]
 
-# Substituir todos os valores inválidos por string vazia
+# Substituir valores inválidos e preencher NaN
 df.replace(valores_invalidos, "", inplace=True)
-
 df.fillna("", inplace=True)
 
-# Função para inserir uma linha
-def inserir_dados(row):
-    with engine.begin() as conn:
-        # 1. Inserir endereço
-        conn.execute(
-            text("""
-            INSERT INTO municipio (id, nome, estado_id, ibge, lat_lon)
-            VALUES (:id, :nome, :estado_id, :ibge, :lat_lon)
-            """),
-            { 
-                "id": row.id,
-                "nome": row.nome, 
-                "estado_id": row.estado_id, 
-                "ibge": row.ibge, 
-                "lat_lon": row.lat_lon
-            }
-        )
+try:
+
+    # Criar conexão com o banco PostgreSQL
+    engine = create_engine(f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+    with engine.connect() as connection:
+        print("Iniciando a importação")
         
-# Aplicar para cada linha
-df.apply(inserir_dados, axis=1)
+        with engine.begin() as conn:
+            conn.execute(
+                text("""
+                INSERT INTO municipio (id, nome, estado_id, ibge, lat_lon)
+                VALUES (:id, :nome, :estado_id, :ibge, :lat_lon)
+                """),
+                df.to_dict(orient="records")
+            )
+
+except Exception as e:
+    print("Erro tentando realizar a conexão com banco de dados: ", e)
