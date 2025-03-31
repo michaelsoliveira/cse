@@ -9,23 +9,24 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+RUN npm install
+# \
+  # if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  # elif [ -f package-lock.json ]; then npm ci; \
+  # elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i; \
+  # else echo "Lockfile not found." && exit 1; \
+  # fi
 
 # 2. Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-# COPY --from=deps /root/.npm /root/.npm
+COPY --from=deps /root/.npm /root/.npm
 COPY . .
 
 # Instalar o pnpm globalmente
 # RUN \
-#   npm install -g pnpm
+  # npm install -g pnpm \
   # npm install @tailwindcss/oxide-linux-x64-musl \
   # npm install lightningcss-linux-x64-gnu
 

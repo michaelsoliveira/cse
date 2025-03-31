@@ -107,6 +107,10 @@
   },
   "overrides": {
     "@types/react": "19.0.1",
-    "@types/react-dom": "19.0.2"
+    "@types/react-dom": "19.0.2",
+    "eslint": "8.48.0"
+  },
+    "resolutions": {
+    "@tailwindcss/oxide": "4.0.17"
   }
 }

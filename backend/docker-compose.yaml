@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: backend
     build:
       context: .
       dockerfile: ./docker/${ENVIRONMENT}/app/Dockerfile

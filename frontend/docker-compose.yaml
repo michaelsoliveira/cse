@@ -1,14 +1,17 @@
 services:
   app:
+    container_name: frontend
     build:
       context: .
       dockerfile: ./docker/${ENVIRONMENT}/app/Dockerfile
       args:
         PORT: ${PORT}
     environment:
-      - NEXT_PUBLIC_API_URL
+      - NEXT_PUBLIC_API_URL=http://localhost/backend
       - AUTH_GOOGLE_ID
       - AUTH_GOOGLE_SECRET
+      - AUTH_GITHUB_ID
+      - AUTH_GITHUB_SECRET
       - AUTH_SECRET
       - AUTH_URL=http://localhost:${PORT}
     extends:
@@ -41,6 +44,7 @@ services:
       - stack
 
   nginx:
+    container_name: nginx
     build: 
       context: ./docker/nginx
     environment:
