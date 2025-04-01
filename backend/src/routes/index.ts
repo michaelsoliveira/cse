@@ -10,6 +10,7 @@ import estadoRoutes from "./estado.routes";
 import ocorrenciaRoutes from "./ocorrencia.routes";
 import permissionRoutes from "./permission.routes";
 import roleRoutes from "./role.routes";
+import tipoOcorrenciaRoutes from "./tipoOcorrencia.routes";
 import unidadeRoutes from "./unidade.routes";
 import usersRoutes from "./users.routes";
 
@@ -33,6 +34,7 @@ export {
     permissionRoutes,
     roleRoutes,
     unidadeRoutes,
+    tipoOcorrenciaRoutes,
     usersRoutes,
     rootRoute
 };

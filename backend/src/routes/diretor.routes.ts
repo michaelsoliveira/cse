@@ -8,7 +8,7 @@ const routes = express.Router()
 routes.get('/', Authentication(), new DiretorController().findAll)
 routes.get('/:id', Authentication(), new DiretorController().findOne)
 routes.get('/search/q', Authentication(), new DiretorController().search)
-routes.post('/diretor', Authentication(), new DiretorController().store)
+routes.post('/', Authentication(), new DiretorController().store)
 routes.put('/:id', Authentication(), new DiretorController().update)
 routes.delete('/:id', Authentication(), new DiretorController().delete)
 

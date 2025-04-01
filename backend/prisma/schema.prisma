@@ -210,7 +210,7 @@ model Diretor {
 
 enum ClassificacaoOcorrencia {
   seguranca_patrimonial
-  seguranca_escolar
+  policiamento_escolar
 }
 
 model Comunicante {

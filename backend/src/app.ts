@@ -12,7 +12,8 @@ import {
     roleRoutes,
     unidadeRoutes,
     usersRoutes,
-    rootRoute
+    rootRoute,
+    tipoOcorrenciaRoutes
   } from "./routes"
 import cors from 'cors'
 import { Server } from 'socket.io'
@@ -49,6 +50,7 @@ app.use(cookieParser())
 app.use(express.json({limit: '50mb'}))
 // app.use(express.urlencoded({limit: '50mb'}));
 app.use(cors(corsOptions))
+app.use('/', rootRoute)
 app.use('/backend', rootRoute)
 app.use('/backend/status', function(request: Request, response: Response) { return response.status(200).json() })
 app.use('/backend/auth', authRoutes)
@@ -60,6 +62,7 @@ app.use('/backend/ocorrencia', ocorrenciaRoutes)
 app.use('/backend/permission', permissionRoutes)
 app.use('/backend/role', roleRoutes)
 app.use('/backend/unidade', unidadeRoutes)
+app.use('/backend/tipo-ocorrencia', tipoOcorrenciaRoutes)
 app.use('/backend/users', usersRoutes)
 
 app.use(errorMiddleware)
