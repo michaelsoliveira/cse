@@ -1,7 +1,19 @@
 require('dotenv').config({ path: `${__dirname}/../.env.io` })
 // import { Request, Response, NextFunction } from "express"
 const express = require('express');
-import routes from "./routes"
+import { 
+    authRoutes,
+    comunicanteRoutes,
+    dashboardRoutes,
+    diretorRoutes,
+    estadoRoutes,
+    ocorrenciaRoutes,
+    permissionRoutes,
+    roleRoutes,
+    unidadeRoutes,
+    usersRoutes,
+    rootRoute
+  } from "./routes"
 import cors from 'cors'
 import { Server } from 'socket.io'
 
@@ -9,6 +21,7 @@ const app = express()
 const cookieParser = require('cookie-parser')
 
 import { errorMiddleware } from "./middleware/error"
+import { Request, Response } from "express";
 
 console.log('Version: ' + process.env.IO_VERSION)
 console.log('Stage: ' + process.env.IO_STAGE)
@@ -36,7 +49,19 @@ app.use(cookieParser())
 app.use(express.json({limit: '50mb'}))
 // app.use(express.urlencoded({limit: '50mb'}));
 app.use(cors(corsOptions))
-app.use(routes)
+app.use('/backend', rootRoute)
+app.use('/backend/status', function(request: Request, response: Response) { return response.status(200).json() })
+app.use('/backend/auth', authRoutes)
+app.use('/backend/comunicante', comunicanteRoutes)
+app.use('/backend/dashboard', dashboardRoutes)
+app.use('/backend/diretor', diretorRoutes)
+app.use('/backend/estado', estadoRoutes)
+app.use('/backend/ocorrencia', ocorrenciaRoutes)
+app.use('/backend/permission', permissionRoutes)
+app.use('/backend/role', roleRoutes)
+app.use('/backend/unidade', unidadeRoutes)
+app.use('/backend/users', usersRoutes)
+
 app.use(errorMiddleware)
 
 const server = app.listen(3333, () => {

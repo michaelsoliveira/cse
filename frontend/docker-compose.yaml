@@ -48,7 +48,7 @@ services:
     build: 
       context: ./docker/nginx
     environment:
-      PORT: ${PORT}
+      - PORT
     links:
       - app
     ports:
