@@ -303,13 +303,13 @@ export default function UnidadeForm({
           </div>
           <Separator />
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <div
                 className={cn(
                   currentStep === 1
                     ? 'w-full md:inline-block'
-                    : 'gap-8 md:grid md:grid-cols-4',
-                    'pt-4'
+                    : 'md:grid md:grid-cols-4',
+                    'gap-2 mt-4'
                 )}
               >
               {currentStep === 0 && (

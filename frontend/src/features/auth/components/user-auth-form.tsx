@@ -52,7 +52,7 @@ export default function UserAuthForm() {
           // redirectTo: '/dashboard'
           redirect: false
         })
-        console.log(JSON.stringify(response))
+        // console.log(JSON.stringify(response))
         if (response?.error && response?.error === "CredentialsSignin") 
           {
             toast.success('Oops, Ocorreu um erro na autenticação', {

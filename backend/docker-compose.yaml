@@ -122,7 +122,7 @@ services:
         cd /backup &&
         export PGHOST=postgres &&
         export BACKUP_PGDB=$$(date +'%Y_%m_%d_%H_%M_%S')_${APP_NAME}_${VERSION}.dump &&
-        PGPASSWORD=${POSTGRES_PASSWORD} pg_dump --file ""$$BACKUP_PGDB"" -p ${PGPORT} --format=p --encoding=UTF8 --no-owner --no-privileges --clean --if-exists --verbose ""${APP_NAME}"" &&
+        PGPASSWORD=${POSTGRES_PASSWORD} pg_dump --file ""$$BACKUP_PGDB"" -p ${PGPORT} --format=p --encoding=UTF8 --no-owner --no-privileges --clean --if-exists --verbose ""${DATABASE_NAME}"" &&
         tar -czf $$BACKUP_PGDB.tar.gz $$BACKUP_PGDB &&
         rm -rf $$BACKUP_PGDB"
     profiles:
@@ -150,9 +150,9 @@ services:
         tar -zxf $$FILE_TO_RESTORE &&
         BACKUP_PGDB=$$FILE_TO_RESTORE &&
         export BACKUP_PGDB=$${BACKUP_PGDB%".tar.gz"} &&
-        PGPASSWORD=${POSTGRES_PASSWORD} dropdb -U ${POSTGRES_USER} -p ${PGPORT} ""${APP_NAME}"" &&
-        PGPASSWORD=${POSTGRES_PASSWORD} createdb -U ${POSTGRES_USER} -p ${PGPORT} --encoding UTF8 --locale en_US.utf8 ""${APP_NAME}""  &&
-        PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -p ${PGPORT} -d ""${APP_NAME}"" < $$BACKUP_PGDB &&
+        PGPASSWORD=${POSTGRES_PASSWORD} dropdb -U ${POSTGRES_USER} -p ${PGPORT} ""${DATABASE_NAME}"" &&
+        PGPASSWORD=${POSTGRES_PASSWORD} createdb -U ${POSTGRES_USER} -p ${PGPORT} --encoding UTF8 --locale en_US.utf8 ""${DATABASE_NAME}""  &&
+        PGPASSWORD=${POSTGRES_PASSWORD} psql -U ${POSTGRES_USER} -p ${PGPORT} -d ""${DATABASE_NAME}"" < $$BACKUP_PGDB &&
         rm -rf $$BACKUP_PGDB'
     profiles:
       - cli
@@ -174,8 +174,8 @@ services:
     command: >
       sh -c  'set -ex &&
         export PGHOST=postgres &&
-        PGPASSWORD=${POSTGRES_PASSWORD} vacuumdb --analyze ""${APP_NAME}"" --port=${PGPORT} &&
-        PGPASSWORD=${POSTGRES_PASSWORD} reindexdb ""${APP_NAME}"" --port=${PGPORT}'
+        PGPASSWORD=${POSTGRES_PASSWORD} vacuumdb --analyze ""${DATABASE_NAME}"" --port=${PGPORT} &&
+        PGPASSWORD=${POSTGRES_PASSWORD} reindexdb ""${DATABASE_NAME}"" --port=${PGPORT}'
     profiles:
       - cli
 

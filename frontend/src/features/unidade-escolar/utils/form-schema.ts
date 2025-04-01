@@ -77,7 +77,7 @@ export const unidadeSchema = z.object({
     nome: z.string()
       .nonempty('O nome da unidade escolar é obrigatório')
       .min(5, {
-        message: 'O campo nome deve conter pelo menos 2 caracteres'
+        message: 'O campo nome deve conter pelo menos 5 caracteres'
     }),
     inep: optionalFieldMin({ field: "inep", type: "number" }),
     zona: z.string(),
