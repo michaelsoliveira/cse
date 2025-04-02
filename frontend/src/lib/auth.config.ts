@@ -13,7 +13,7 @@ import { InvalidCredentials, UserNotFound } from './auth-errors';
 //     response_type: 'code',
 //   });
 
-const API_URL = process.env.ENVIRONMENT === 'development' ? process.env.NEXT_PUBLIC_API_URL : ''
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 async function findProvider(token: any) {
   const { name, email, provider, access_token } = token;
