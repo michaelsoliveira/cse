@@ -57,9 +57,9 @@ services:
       PGPORT: ${PGPORT}
     restart: unless-stopped
     expose:
-      - 5432
+      - ${PGPORT}
     ports:
-      - 5432:5432
+      - ${PGPORT}:${PGPORT}
     volumes:
       - data_pgdir:/var/lib/postgresql/data
       - ./docker/entrypoint:/docker-entrypoint-initdb.d

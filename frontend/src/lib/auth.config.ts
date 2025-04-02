@@ -3,7 +3,6 @@ import CredentialProvider from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google'
 import userService from '@/services/user';
-import { CredentialsSchema } from '@/features/auth/utils/form-schema';
 import { InvalidCredentials, UserNotFound } from './auth-errors';
 
 // const GOOGLE_AUTHORIZATION_URL =
@@ -13,6 +12,8 @@ import { InvalidCredentials, UserNotFound } from './auth-errors';
 //     access_type: 'offline',
 //     response_type: 'code',
 //   });
+
+const API_URL = process.env.ENVIRONMENT === 'development' ? process.env.NEXT_PUBLIC_API_URL : ''
 
 async function findProvider(token: any) {
   const { name, email, provider, access_token } = token;
@@ -101,7 +102,7 @@ async function refreshAccessToken(token: any) {
     case 'local': {
       try {
         const refreshToken = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh?userId=${token.user?.id}`,
+          `${API_URL}/backend/auth/refresh?userId=${token.user?.id}`,
           {
             method: 'post',
             headers: {
@@ -200,7 +201,7 @@ const authConfig = {
         const { email, password } = credentials 
         try {
           const data = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+            `${API_URL}/backend/auth/login`,
             {
               headers: {
                 'Content-Type': 'application/json',
