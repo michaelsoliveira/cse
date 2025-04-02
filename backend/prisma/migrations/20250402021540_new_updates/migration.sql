@@ -1,17 +1,12 @@
 /*
   Warnings:
 
-  - You are about to drop the `origem_ocorrencia` table. If the table is not empty, all the data it contains will be lost.
+  - You are about to drop the column `local` on the `ocorrencia` table. All the data in the column will be lost.
 
 */
--- DropForeignKey
-ALTER TABLE "ocorrencia" DROP CONSTRAINT "ocorrencia_comunicante_id_fkey";
-
--- DropForeignKey
-ALTER TABLE "origem_ocorrencia" DROP CONSTRAINT "origem_ocorrencia_pessoa_id_fkey";
-
--- DropTable
-DROP TABLE "origem_ocorrencia";
+-- AlterTable
+ALTER TABLE "ocorrencia" DROP COLUMN "local",
+ADD COLUMN     "comunicante_id" UUID;
 
 -- CreateTable
 CREATE TABLE "comunicante" (

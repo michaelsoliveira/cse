@@ -11,8 +11,11 @@ export const fetchAPI = async (route: string, method?: string, data?: any) => {
     const session = await auth();
     const url = route.startsWith('/') ? route : '/' + route;
     if (session) {
-        const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`, {
           cache: 'no-store',
+          next: {
+            revalidate: 0
+          },
           method: method || "GET",
           headers: {
               'Content-Type': 'application/json',
@@ -20,8 +23,10 @@ export const fetchAPI = async (route: string, method?: string, data?: any) => {
               "Authorization": `Bearer ${session?.accessToken!}`
           },
           body: JSON.stringify(data)
-      }).then((data) => data.json())
-      return result
+      })
+      .then(response => response.json())
+
+      return response
     }
   } catch(error) {
     console.log("Error fetching Data:", error)

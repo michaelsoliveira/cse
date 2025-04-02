@@ -65,6 +65,7 @@ export function DashboardTiposOcorrencias() {
       { name: "Vulnerabilidade", value: data?.vulnerabilidade },
       { name: "Intrusão", value: data?.intrusao },
       { name: "Ameaça", value: data?.ameaca },
+      { name: "Posse de Arma", value: data?.posse_arma },
       { name: "Uso de Arma de Fogo", value: data?.uso_arma },
       { name: "Porte de Arma", value: data?.porte_arma },
       { name: "Danos ao Patrimônio", value: data?.danos_patrimonio },

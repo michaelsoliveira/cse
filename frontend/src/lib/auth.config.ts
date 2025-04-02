@@ -198,28 +198,40 @@ const authConfig = {
           throw new Error("Email e senha são obrigatórios.");
         }
         const { email, password } = credentials 
-        const { user, error, message } = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-          {
-            cache: 'no-store',
-            method: 'POST',
-            body: JSON.stringify({ email, password }),
-            headers: { 'Content-Type': 'application/json' },
+        try {
+          const data = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              cache: 'no-store',
+              next: {
+                revalidate: 0
+              },
+              method: 'POST',
+              body: JSON.stringify({ email, password }),
+            }
+          ).then(response => response.json())
+          
+          const { user, error, message } = data
+          
+          if (user) {
+            return {
+              error,
+              local: true,
+              ...user
+            } 
           }
-        ).then((res) => res.json())
-        
-        if (user) {
-          return {
-            error,
-            local: true,
-            ...user
-          } 
-        }
-
-        switch(message) {
-          case "invalid_password": throw new InvalidCredentials();
-          case "user_not_found": throw new UserNotFound();
-          default: throw new InvalidCredentials();
+  
+          switch(message) {
+            case "invalid_password": throw new InvalidCredentials();
+            case "user_not_found": throw new UserNotFound();
+            default: throw new InvalidCredentials();
+          }
+        } catch (error) {
+          console.log(error)
         }
       }
     })

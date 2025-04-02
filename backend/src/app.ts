@@ -30,11 +30,13 @@ console.log('Stage: ' + process.env.IO_STAGE)
 var whitelist = [
   "http://localhost:3000", 
   "http://172.18.0.2:3000", 
-  "http://frontend-app-1", 
-  "http://frontend-nginx-1",
+  "http://frontend:3000", 
+  "http://nginx",
   "http://172.18.0.3",
   "http://cse.seed.ap.br",
-  "http://localhost"
+  "http://localhost",
+  "http://host.docker.internal:3000",
+  "http://host.docker.internal"
 ]
 var corsOptions = {
   origin: function (origin: any, callback: any) {

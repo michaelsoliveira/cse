@@ -6,85 +6,7 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [uuid_ossp(map: "uuid-ossp"), postgis()]
-}
-
-view OcorrenciasUnidade {
-  id     String @id
-  escola String
-  total_ocorrencias Int
-
-  @@map("ocorrencias_unidade")
-}
-
-view OcorrenciasTipo {
-  id    String @id
-  tipo_ocorrencia   String
-  total_ocorrencias Int
-
-  @@map("ocorrencias_tipo")
-}
-
-view OcorrenciasTiposTotais {
-  id Int @id
-  furto Int
-  roubo Int
-  vulnerabilidade Int
-  intrusao Int
-  ameaca Int
-  uso_arma Int
-  porte_arma Int
-  danos_patrimonio Int
-  ameaca_escola Int
-
-  @@map("ocorrencias_tipos_totais")
-}
-
-view OcorrenciasAnual {
-  sequencia Int @id
-  mes   Int
-  ano   Int
-  total Int
-
-  @@map("ocorrencias_anual")
-}
-
-view OcorrenciasMes {
-  sequencia   Int @id
-  mes         Int
-  ano         Int
-  total_ocorrencias Int
-
-  @@map("ocorrencias_mes")
-}
-
-view OcorrenciasEnvolvidos {
-  id      String @id
-  nome_envolvido    String
-  tipo_envolvido    String
-  papel             String
-
-  @@map("ocorrencias_envolvidos")
-}
-
-view OcorrenciasComunicante {
-  id      String @id
-  escola  String
-  tipo    String
-  data_ocorrencia   DateTime @db.Date
-  hora         DateTime @db.Time
-  comunicante  String
-
-  @@map("ocorrencias_comunicante")
-}
-
-view TotaisDashboard {
-  id    Int @id
-  total_escolas Int
-  total_ocorrencias Int
-  total_ocorrencias_mes Int
-
-  @@map("totais_dashboard")
+  extensions = [postgis, uuid_ossp(map: "uuid-ossp")]
 }
 
 model Pessoa {
@@ -95,12 +17,12 @@ model Pessoa {
   email           String?          @db.VarChar
   telefone        String?
   endereco_id     String?          @db.Uuid
+  comunicante     Comunicante[]
   diretor         Diretor[]
-  endereco        Endereco?        @relation(fields: [endereco_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  endereco        Endereco?        @relation(fields: [endereco_id], references: [id], onDelete: Cascade)
   pessoaFisica    PessoaFisica?
   pessoaJuridica  PessoaJuridica?
   unidade_escolar UnidadeEscolar[]
-  comunicante     Comunicante[]
 
   @@map("pessoa")
 }
@@ -109,7 +31,7 @@ model PessoaFisica {
   pessoa_id       String    @id @db.Uuid
   created_at      DateTime  @default(now()) @db.Timestamp(6)
   updated_at      DateTime  @default(now()) @db.Timestamp(6)
-  nome            String? 
+  nome            String?
   rg              String?   @db.VarChar(30)
   cpf             String?   @db.VarChar(14)
   data_nascimento DateTime? @db.Date
@@ -128,26 +50,26 @@ model PessoaJuridica {
   inscricao_federal  String?   @db.VarChar(30)
   cnpj               String?   @db.VarChar(14)
   data_constituicao  DateTime?
-  pessoa             Pessoa    @relation(fields: [pessoa_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pessoa             Pessoa    @relation(fields: [pessoa_id], references: [id], onDelete: Cascade)
 
   @@map("pessoa_juridica")
 }
 
 model Endereco {
-  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  cep        String?  @db.VarChar(8)
-  logradouro String?  @db.VarChar
-  numero     String?
-  bairro     String?  @db.VarChar
-  lat_lon    Unsupported("Point")?
-  complemento String?
-  municipio_id  Int?
-  municipio     Municipio?  @relation(fields: [municipio_id], references: [id])
-  estado_id  Int?
-  estado     Estado?  @relation(fields: [estado_id], references: [id])
-  pessoa     Pessoa[]
+  id           String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at   DateTime              @default(now()) @db.Timestamp(6)
+  updated_at   DateTime              @default(now()) @db.Timestamp(6)
+  cep          String?               @db.VarChar(8)
+  logradouro   String?               @db.VarChar
+  numero       String?
+  bairro       String?               @db.VarChar
+  lat_lon      Unsupported("point")?
+  estado_id    Int?
+  municipio_id Int?
+  complemento  String?
+  estado       Estado?               @relation(fields: [estado_id], references: [id])
+  municipio    Municipio?            @relation(fields: [municipio_id], references: [id])
+  pessoa       Pessoa[]
 
   @@map("endereco")
 }
@@ -164,11 +86,6 @@ model Permission {
   @@map("permissions")
 }
 
-enum ZonaUnidade {
-  rural
-  urbana
-}
-
 model UnidadeEscolar {
   id                   String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   created_at           DateTime              @default(now()) @db.Timestamp(6)
@@ -177,11 +94,10 @@ model UnidadeEscolar {
   inep                 Int?
   pessoa_id            String?               @db.Uuid
   diretor_id           String?               @db.Uuid
-  diretor              Diretor?              @relation(fields: [diretor_id], references: [id])
-  // diretor              Diretor[]
   ocorrencia           Ocorrencia[]
   responsavel_registro ResponsavelRegistro[]
-  pessoa               Pessoa?               @relation(fields: [pessoa_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  diretor              Diretor?              @relation(fields: [diretor_id], references: [id])
+  pessoa               Pessoa?               @relation(fields: [pessoa_id], references: [id], onDelete: Cascade)
 
   @@map("unidade_escolar")
 }
@@ -200,48 +116,43 @@ model ResponsavelRegistro {
 }
 
 model Diretor {
-  id         String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  pessoa_id  String?          @db.Uuid
-  pessoa     Pessoa?          @relation(fields: [pessoa_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  unidade    UnidadeEscolar[]
+  id        String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pessoa_id String?          @db.Uuid
+  pessoa    Pessoa?          @relation(fields: [pessoa_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  unidade   UnidadeEscolar[]
 
   @@map("diretor")
 }
 
-enum ClassificacaoOcorrencia {
-  seguranca_patrimonial
-  policiamento_escolar
-}
-
 model Comunicante {
-  id    String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  pessoa_id   String @db.Uuid
-  pessoa      Pessoa @relation(fields: [pessoa_id], references: [id])
-  ocorrencia  Ocorrencia[]
+  id         String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  pessoa_id  String       @db.Uuid
+  pessoa     Pessoa       @relation(fields: [pessoa_id], references: [id])
+  ocorrencia Ocorrencia[]
 
   @@map("comunicante")
 }
 
 model Ocorrencia {
-  id              String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  created_at      DateTime              @default(now()) @db.Timestamp(6)
-  updated_at      DateTime              @default(now()) @db.Timestamp(6)
-  data            DateTime?             @db.Date
-  hora            DateTime?             @db.Time(0)
-  classificacao   ClassificacaoOcorrencia
+  id              String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at      DateTime                @default(now()) @db.Timestamp(6)
+  updated_at      DateTime                @default(now()) @db.Timestamp(6)
+  data            DateTime?               @db.Date
+  hora            DateTime?               @db.Time(0)
   descricao       String?
-  tipo_id         String                @db.Uuid
-  responsavel_id  String?               @db.Uuid
-  user_id         String                @db.Uuid
-  unidade_id      String                @db.Uuid
+  tipo_id         String                  @db.Uuid
+  responsavel_id  String?                 @db.Uuid
+  user_id         String                  @db.Uuid
+  unidade_id      String                  @db.Uuid
+  classificacao   classificacaoocorrencia
+  comunicante_id  String?                 @db.Uuid
   anexos          AnexoOcorrencia[]
   envolvidos      EnvolvidoOcorrencia[]
-  comunicante_id       String? @db.Uuid
-  comunicante          Comunicante?      @relation(fields: [comunicante_id], references: [id])
-  registro_por    ResponsavelRegistro?  @relation(fields: [responsavel_id], references: [id])
-  tipo_ocorrencia TipoOcorrencia        @relation(fields: [tipo_id], references: [id])
-  unidade_escolar UnidadeEscolar        @relation(fields: [unidade_id], references: [id])
-  user            User                  @relation(fields: [user_id], references: [id])
+  comunicante     Comunicante?            @relation(fields: [comunicante_id], references: [id])
+  registro_por    ResponsavelRegistro?    @relation(fields: [responsavel_id], references: [id])
+  tipo_ocorrencia TipoOcorrencia          @relation(fields: [tipo_id], references: [id])
+  unidade_escolar UnidadeEscolar          @relation(fields: [unidade_id], references: [id])
+  user            User                    @relation(fields: [user_id], references: [id])
 
   @@map("ocorrencia")
 }
@@ -398,24 +309,26 @@ model Session {
 }
 
 model Estado {
-  id            Int     @id @default(autoincrement())
-  uf            String
-  nome          String
-  ibge          Int?
-  ddd           Json?
-  municipios    Municipio[]
-  enderecos     Endereco[]
+  uf         String
+  nome       String
+  ibge       Int?
+  id         Int         @id @default(autoincrement())
+  ddd        Json?
+  enderecos  Endereco[]
+  municipios Municipio[]
+
   @@map("estado")
 }
 
 model Municipio {
-  id          Int     @id @default(autoincrement())
-  nome        String
-  ibge        Int?
-  lat_lon     Unsupported("Point")?
-  enderecos   Endereco[]
-  estado_id   Int
-  estado      Estado @relation(fields: [estado_id], references: [id])
+  id        Int                   @id @default(autoincrement())
+  nome      String
+  ibge      Int?
+  lat_lon   Unsupported("point")?
+  estado_id Int
+  enderecos Endereco[]
+  estado    Estado                @relation(fields: [estado_id], references: [id])
+
   @@map("municipio")
 }
 
@@ -427,7 +340,144 @@ model TipoOcorrencia {
   @@map("tipo_ocorrencia")
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+view OcorrenciasTipo {
+  id              String  @id @db.Uuid
+  tipo_ocorrencia String
+  total           BigInt?
+
+  @@map("ocorrencias_tipo")
+}
+
+view OcorrenciasTiposTotais {
+  id               Int    @id
+  furto            BigInt
+  roubo            BigInt
+  vulnerabilidade  BigInt
+  intrusao         BigInt
+  ameaca           BigInt
+  uso_arma         BigInt
+  porte_arma       BigInt
+  danos_patrimonio BigInt
+  ameaca_escola    BigInt
+
+  @@map("ocorrencias_tipos_totais")
+}
+
+view OcorrenciasAnual {
+  sequencia Decimal @id @db.Decimal
+  mes       Decimal @db.Decimal
+  ano       Decimal @db.Decimal
+  total     Decimal @db.Decimal
+
+  @@map("ocorrencias_anual")
+}
+
+view OcorrenciasMes {
+  sequencia         Decimal @id @db.Decimal
+  mes               Decimal @db.Decimal
+  ano               Decimal @db.Decimal
+  total_ocorrencias Decimal @db.Decimal
+
+  @@map("ocorrencias_mes")
+}
+
+view OcorrenciasEnvolvidos {
+  id             String @id @db.Uuid
+  nome_envolvido String
+  tipo_envolvido String
+  papel          String
+
+  @@map("ocorrencias_envolvidos")
+}
+
+view OcorrenciasComunicante {
+  id              String   @id @db.Uuid
+  escola          String   @db.VarChar(100)
+  tipo            String
+  data_ocorrencia DateTime @db.Date
+  comunicante     String
+
+  @@map("ocorrencias_comunicante")
+}
+
+view TotaisDashboard {
+  id                    Int    @id
+  total_escolas         BigInt
+  total_ocorrencias     BigInt
+  total_ocorrencias_mes BigInt
+
+  @@map("totais_dashboard")
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view geography_columns {
+  f_table_catalog    Unsupported("name")?
+  f_table_schema     Unsupported("name")?
+  f_table_name       Unsupported("name")?
+  f_geography_column Unsupported("name")?
+  coord_dimension    Int?
+  srid               Int?
+  type               String?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view geometry_columns {
+  f_table_catalog   String?              @db.VarChar(256)
+  f_table_schema    Unsupported("name")?
+  f_table_name      Unsupported("name")?
+  f_geometry_column Unsupported("name")?
+  coord_dimension   Int?
+  srid              Int?
+  type              String?              @db.VarChar(30)
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view ocorrencias_unidades {
+  id                String? @db.Uuid
+  escola            String? @db.VarChar(100)
+  total_ocorrencias BigInt?
+
+  @@ignore
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view ocorrencias_tipo_dashboard {
+  sequencia Decimal? @db.Decimal
+  tipo      String?
+  total     BigInt?
+
+  @@ignore
+}
+
+enum ZonaUnidade {
+  rural
+  urbana
+}
+
+enum ClassificacaoOcorrencia {
+  seguranca_patrimonial
+  policiamento_escolar
+}
+
 enum TipoPessoa {
   F
   J
+}
+
+enum classificacaoocorrencia {
+  seguranca_patrimonial
+  policiamento_escolar
 }
