@@ -7,13 +7,14 @@ services:
       args:
         PORT: ${PORT}
     environment:
-      - NEXT_PUBLIC_API_URL=http://cse.seed.ap.br
+      - NEXT_PUBLIC_API_URL=http://backend:3333
+      - DOCKER_USE
       - AUTH_GOOGLE_ID
       - AUTH_GOOGLE_SECRET
       - AUTH_GITHUB_ID
       - AUTH_GITHUB_SECRET
       - AUTH_SECRET
-      - AUTH_URL=http://cse.seed.ap.br
+      - AUTH_URL=http://localhost:3000
     extends:
       file: ./docker/app.yml
       service: ${ENVIRONMENT}

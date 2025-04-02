@@ -24,11 +24,11 @@ class ViewService {
     async getOcorrenciaTiposTotais() 
     {
         try {
-            const total = await prismaClient.ocorrenciasTiposTotais.findUnique({
-                where: { id: 1 },
-            });
+            const dados = await prismaClient.$queryRaw`
+                    SELECT * FROM ocorrencias_tipo_dashboard;
+                `;
     
-            return total
+            return dados
         } catch (error) {
             throw new Error("Erro ao buscar ocorrencias tipos totais do dashboard:", error);
         }

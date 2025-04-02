@@ -340,7 +340,6 @@ model TipoOcorrencia {
   @@map("tipo_ocorrencia")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model spatial_ref_sys {
   srid      Int     @id
   auth_name String? @db.VarChar(256)
@@ -357,20 +356,20 @@ view OcorrenciasTipo {
   @@map("ocorrencias_tipo")
 }
 
-view OcorrenciasTiposTotais {
-  id               Int    @id
-  furto            BigInt
-  roubo            BigInt
-  vulnerabilidade  BigInt
-  intrusao         BigInt
-  ameaca           BigInt
-  uso_arma         BigInt
-  porte_arma       BigInt
-  danos_patrimonio BigInt
-  ameaca_escola    BigInt
+// view OcorrenciasTiposTotais {
+//   id               Int    @id
+//   furto            BigInt
+//   roubo            BigInt
+//   vulnerabilidade  BigInt
+//   intrusao         BigInt
+//   ameaca           BigInt
+//   uso_arma         BigInt
+//   porte_arma       BigInt
+//   danos_patrimonio BigInt
+//   ameaca_escola    BigInt
 
-  @@map("ocorrencias_tipos_totais")
-}
+//   @@map("ocorrencias_tipos_totais")
+// }
 
 view OcorrenciasAnual {
   sequencia Decimal @id @db.Decimal

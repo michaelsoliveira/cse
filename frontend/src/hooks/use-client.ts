@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useSession, signOut } from 'next-auth/react';
 import { useMemo } from 'react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
 const useClient = (options?: any) => {
   const { data: session } = useSession();
   
@@ -12,7 +14,7 @@ const useClient = (options?: any) => {
   return useMemo(() => {
     
     const api = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL + '/backend',
+      baseURL: API_URL + '/backend',
         headers: {
             Authorization: token ? `Bearer ${token}` : '',
             ...(options?.headers ? options.headers : {})

@@ -49,14 +49,15 @@ SELECT
 CREATE OR REPLACE VIEW "ocorrencias_tipos_totais" AS
     SELECT
         1 AS id,
-        COUNT(*) FILTER (WHERE t.nome = 'Furto')   AS furto,
-        COUNT(*) FILTER (WHERE t.nome = 'Roubo')      AS roubo,
-        COUNT(*) FILTER (WHERE t.nome = 'Vulnerabilidade')  AS vulnerabilidade,
-        COUNT(*) FILTER (WHERE t.nome = 'Intrusão')  AS intrusao,
-        COUNT(*) FILTER (WHERE t.nome = 'Ameaça')  AS ameaca,
-        COUNT(*) FILTER (WHERE t.nome = 'Uso de Arma de Fogo')  AS uso_arma,
-        COUNT(*) FILTER (WHERE t.nome = 'Porte de Arma')  AS porte_arma,
-        COUNT(*) FILTER (WHERE t.nome = 'Danos ao Patrimônio')  AS danos_patrimonio,
-        COUNT(*) FILTER (WHERE t.nome = 'Ameaça a Escola')  AS ameaca_escola
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Furto'), 0) AS INT)   AS furto,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Roubo'), 0) AS INT)      AS roubo,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Vulnerabilidade'), 0) AS INT)  AS vulnerabilidade,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Intrusão'), 0) AS INT)  AS intrusao,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Ameaça'), 0) AS INT)  AS ameaca,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Uso de Arma de Fogo'), 0) AS INT)  AS uso_arma,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Porte de Arma'), 0) AS INT)  AS porte_arma,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Posse de Arma'), 0) AS INT)  AS posse_arma,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Danos ao Patrimônio'), 0) AS INT)  AS danos_patrimonio,
+        CAST(COALESCE(COUNT(*) FILTER (WHERE t.nome = 'Ameaça a Escola'), 0) AS INT)  AS ameaca_escola
     FROM ocorrencia o
     JOIN tipo_ocorrencia t ON o.tipo_id = t.id;
