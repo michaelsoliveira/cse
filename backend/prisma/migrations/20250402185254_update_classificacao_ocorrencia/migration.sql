@@ -8,5 +8,5 @@
 CREATE TYPE "classificacaoocorrencia" AS ENUM ('seguranca_patrimonial', 'policiamento_escolar');
 
 -- AlterTable
-ALTER TABLE "ocorrencia" DROP COLUMN "classificacao",
+ALTER TABLE "ocorrencia"
 ADD COLUMN     "classificacao" "classificacaoocorrencia" NOT NULL;
