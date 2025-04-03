@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useSession, signOut } from 'next-auth/react';
 import { useMemo } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL_CLIENT
 
 const useClient = (options?: any) => {
   const { data: session } = useSession();
