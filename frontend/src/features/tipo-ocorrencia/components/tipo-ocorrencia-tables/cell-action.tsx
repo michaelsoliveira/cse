@@ -28,7 +28,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true)
-      await client.delete(`/diretor/${data.id}`).then((res: any) => {
+      await client.delete(`/tipo-ocorrencia/${data.id}`).then((res: any) => {
         const { error, message } = res.data;
         if (!error) {
           toast.success(message)
@@ -64,7 +64,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/diretor/${data.id}`)}
+            onClick={() => router.push(`/dashboard/tipo-ocorrencia/${data.id}`)}
           >
             <Edit className='mr-2 h-4 w-4' /> Editar
           </DropdownMenuItem>

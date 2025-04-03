@@ -6,7 +6,7 @@ import { useCallback, useMemo } from 'react';
 
 export const ocorrencias_classificacao = [
   { value: 'seguranca_patrimonial', label: 'Segurança Patrimônial' },
-  { value: 'seguranca_escolar', label: 'Policiamento Escolar' }
+  { value: 'policiamento_escolar', label: 'Policiamento Escolar' }
 ];
 
 export function useOcorrenciaTableFilters() {

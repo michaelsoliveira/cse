@@ -28,9 +28,6 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { 
-  // FieldErrors, 
-  // SubmitHandler, 
-  // useFieldArray, 
   useForm, 
   useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -40,6 +37,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FormDescription } from '@/components/ui/form';
 import UnidadeDetails from './unidade-details';
 import LoadingModal from '@/components/loading-modal';
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function UnidadeForm({
   initialData,
@@ -269,41 +267,51 @@ export default function UnidadeForm({
         </CardHeader>
         <CardContent>
           <div>
-            <ul className='flex gap-4'>
-              {steps.map((step, index) => (
-                <li key={step.name} className='md:flex-1'>
-                  {currentStep > index ? (
-                    <div className='group flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
-                      <span className='text-sm font-medium text-sky-600 transition-colors'>
-                        {step.id}
-                      </span>
-                      <span className='text-sm font-medium'>{step.name}</span>
-                    </div>
-                  ) : currentStep === index ? (
-                    <div
-                      className='flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'
-                      aria-current='step'
-                    >
-                      <span className='text-sm font-medium text-sky-600'>
-                        {step.id}
-                      </span>
-                      <span className='text-sm font-medium'>{step.name}</span>
-                    </div>
-                  ) : (
-                    <div className='group flex h-full w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
-                      <span className='text-sm font-medium text-gray-500 transition-colors'>
-                        {step.id}
-                      </span>
-                      <span className='text-sm font-medium'>{step.name}</span>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
+            
+              <ul className='flex gap-4'>
+                {steps.map((step, index) => (
+                  <li key={step.name} className='md:flex-1'>
+                    {currentStep > index ? (
+                      <div className='group flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
+                        <span className='text-sm font-medium text-sky-600 transition-colors'>
+                          {step.id}
+                        </span>
+                        <span className='text-sm font-medium'>{step.name}</span>
+                      </div>
+                    ) : currentStep === index ? (
+                      <div
+                        className='flex w-full flex-col border-l-4 border-sky-600 py-2 pl-4 md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'
+                        aria-current='step'
+                      >
+                        <span className='text-sm font-medium text-sky-600'>
+                          {step.id}
+                        </span>
+                        <span className='text-sm font-medium'>{step.name}</span>
+                      </div>
+                    ) : (
+                      <div className='group flex h-full w-full flex-col border-l-4 border-gray-200 py-2 pl-4 transition-colors md:border-t-4 md:border-l-0 md:pt-4 md:pb-0 md:pl-0'>
+                        <span className='text-sm font-medium text-gray-500 transition-colors'>
+                          {step.id}
+                        </span>
+                        <span className='text-sm font-medium'>{step.name}</span>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
           </div>
           <Separator />
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -100, opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="w-full"
+              >
               <div
                 className={cn(
                   currentStep === 1
@@ -706,6 +714,8 @@ export default function UnidadeForm({
                   >Salvar</Button>
                 </div>
               )} 
+              </motion.div>
+              </AnimatePresence>
             </form>
           </Form>
           {/* Navigation */}

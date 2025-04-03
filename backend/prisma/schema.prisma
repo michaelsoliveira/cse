@@ -410,9 +410,9 @@ view OcorrenciasComunicante {
 
 view TotaisDashboard {
   id                    Int    @id
-  total_escolas         BigInt
-  total_ocorrencias     BigInt
-  total_ocorrencias_mes BigInt
+  total_escolas         Int
+  total_ocorrencias     Int
+  total_ocorrencias_mes Int
 
   @@map("totais_dashboard")
 }

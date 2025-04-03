@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { auth } from './auth';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL_SERVER
+const API_URL = process.env.USE_DOCKER === "true" ? process.env.NEXT_PUBLIC_API_URL_SERVER : process.env.NEXT_PUBLIC_API_URL_CLIENT
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -13,7 +13,7 @@ export const fetchAPI = async (route: string, method?: string, data?: any) => {
     const session = await auth();
     const url = route.startsWith('/') ? route : '/' + route;
     if (session) {
-        const response = await fetch(`${API_URL}/backend${url}`, {
+        const response = await fetch(`${API_URL}${url}`, {
           cache: 'no-store',
           next: {
             revalidate: 0

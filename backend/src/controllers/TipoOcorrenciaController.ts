@@ -64,7 +64,7 @@ export class TipoOcorrenciaController {
             
             return response.json({
                 error: false,
-                tipoOcorrencias: data,
+                tiposOcorrencia: data,
                 perPage,
                 page,
                 skip,

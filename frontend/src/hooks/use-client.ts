@@ -14,7 +14,7 @@ const useClient = (options?: any) => {
   return useMemo(() => {
     
     const api = axios.create({
-      baseURL: API_URL + '/backend',
+      baseURL: API_URL,
         headers: {
             Authorization: token ? `Bearer ${token}` : '',
             ...(options?.headers ? options.headers : {})

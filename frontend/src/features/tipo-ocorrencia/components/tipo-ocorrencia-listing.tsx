@@ -11,18 +11,18 @@ export default async function UnidadeListingPage({}: UnidadeListingPage) {
   const page = searchParamsCache.get('page') || 1;
   const search = searchParamsCache.get('q') || '';
   const pageLimit = searchParamsCache.get('limit') || 10;
-  const orderBy = searchParamsCache.get('orderBy') || 'pessoa.pessoaFisica.nome'
+  const orderBy = searchParamsCache.get('orderBy') || 'nome'
   const order = searchParamsCache.get('orderBy') || 'asc'
   try {
     const data = await fetchAPI(`/tipo-ocorrencia?search=${search}&page=${page}&limit=${pageLimit}&orderBy=${orderBy}&order=${order}`)
   
-    const { diretores, error, count } = data;
+    const { tiposOcorrencia, error, count } = data;
     
     if (!error){
       return (
         <TipoOcorrenciaTable
           columns={columns}
-          data={diretores}
+          data={tiposOcorrencia}
           totalItems={count}
         />
       );

@@ -4,11 +4,11 @@ import dashboardService from "../services/DashboardService"
 export class DashboardControoler {
     async getDashboardTotals(request: Request, response: Response) {
         try {
-            const totals = await dashboardService.getDashboardTotals();
+            const result: any = await dashboardService.getDashboardTotals();
 
         return response.status(200).json({
             error: false,
-            totals
+            totals: result[0]
         });
         } catch (error) {
             return response.json({

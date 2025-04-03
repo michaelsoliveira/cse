@@ -34,10 +34,10 @@ export default async function Page(props: pageProps) {
         <div className='flex items-start justify-between'>
           <Heading
             title='Tipos Ocorrências'
-            description='Gerenciar Diretores do Sistema'
+            description='Gerenciar Tipos de Ocorrências'
           />
           <Link
-            href='/dashboard/diretor/new'
+            href='/dashboard/tipo-ocorrencia/new'
             className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
             <Plus className='mr-2 h-4 w-4' /> Adicionar

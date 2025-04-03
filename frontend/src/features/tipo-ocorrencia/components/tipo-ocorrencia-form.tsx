@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -103,21 +103,36 @@ const defaultValues = {
                     <FormItem>
                       <FormLabel>Nome</FormLabel>
                       <FormControl>
-                        <Input placeholder='Entre com o nome da unidade escolar' {...field} />
+                        <Input placeholder='Entre com o nome' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-            <Button 
-              type='submit'
-              className="mt-4 w-48"
-            >Salvar</Button>
+              <div className='col-span-2'></div>
             </div>
+            <CardFooter>
+              <div className='flex flex-row items-center justify-between w-full'>
+                <Button
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    router.back();
+                  }} 
+                  variant='outline'
+                  className="mt-4 w-48"
+                >Voltar</Button>
+                <Button 
+                  type='submit'
+                  className="mt-4 w-48"
+                >Salvar</Button>
+              </div>
+          </CardFooter>
           </form>
         </Form>
+        
       </CardContent>
+      
     </Card>
   );
 }

@@ -62,6 +62,8 @@
     "cmdk": "^1.0.4",
     "date-fns": "^4.1.0",
     "eslint": "8.48.0",
+    "framer-motion": "^12.6.3",
+    "html-to-image": "^1.11.13",
     "kbar": "^0.1.0-beta.46",
     "lucide-react": "^0.476.0",
     "match-sorter": "^8.0.0",
@@ -110,7 +112,7 @@
     "@types/react-dom": "19.0.2",
     "eslint": "8.48.0"
   },
-    "resolutions": {
+  "resolutions": {
     "@tailwindcss/oxide": "4.0.17"
   }
 }

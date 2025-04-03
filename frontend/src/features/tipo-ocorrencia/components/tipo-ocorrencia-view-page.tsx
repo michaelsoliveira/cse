@@ -11,10 +11,10 @@ export default async function TipoOcorrenciaPageView({
   tipoOcorrenciaId
 }: TTipoOcorrenciaViewPage) {
   let tipoOcorrencia = null;
-  let pageTitle = 'Cadastrar tipoOcorrencia';
+  let pageTitle = 'Cadastrar Tipo de Ocorrência';
 
   if (tipoOcorrenciaId !== 'new') {
-    const data = await fetchAPI(`/tipoOcorrencia/${tipoOcorrenciaId}`)
+    const data = await fetchAPI(`/tipo-ocorrencia/${tipoOcorrenciaId}`)
     tipoOcorrencia = data as TipoOcorrenciaType;
     
     if (!tipoOcorrencia) {
