@@ -53,6 +53,10 @@ export const navItems: NavItem[] = [
     icon: 'ellipsis'
   },
   {
+    title: 'Tipo Ocorrência',
+    url: '/dashboard/tipo-ocorrencia'
+  },
+  {
     title: 'Comunicante',
     url: '/dashboard/comunicante',
     icon: 'userPen',

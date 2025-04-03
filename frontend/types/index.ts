@@ -79,6 +79,11 @@ export interface PessoaJuridicaType {
   pessoa_id: string;
 }
 
+export interface TipoOcorrenciaType {
+  id: string;
+  nome: string;
+}
+
 export interface DiretorType {
   id: string;
   pessoa_id: string;
