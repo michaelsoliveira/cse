@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { formatLabel } from "@/lib/utils";
-import { BarGraphSkeleton } from "./bar-graph-skeleton";
 import { useCallback, useEffect, useState } from "react";
 import { useAuthContext } from "@/context/AuthContext";
 import { AlertCircle } from "lucide-react";

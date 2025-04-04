@@ -271,7 +271,7 @@ const authConfig = {
           accessToken: user.access_token,
           accessTokenExpires: Date.now() + user.expires_in * 1000,
           refreshToken: user.refresh_token,
-        };
+        }
       }
       if (account) {
         await findProvider({ ...token, ...account });
