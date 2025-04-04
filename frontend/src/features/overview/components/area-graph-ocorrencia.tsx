@@ -58,6 +58,7 @@ export function AreaGraphOcorrencia() {
       if (!ctx) return
       // Fundo branco antes de desenhar o gráfico
       ctx.fillStyle = "#FFFFFF";
+      ctx.font = "bold 12px Arial"
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
        // Desenhar título
