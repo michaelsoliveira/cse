@@ -22,27 +22,35 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthContext } from '@/context/AuthContext';
 import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
+import { drawRoundedRect } from '@/lib/utils';
 
 export function AreaGraphOcorrencia() {
-  const chartRef = useRef<HTMLDivElement>(null);
+  const chartCompRef = useRef<HTMLDivElement>(null);
+  const chartOcTipoRef = useRef<HTMLDivElement>(null);
   const { client } = useAuthContext()
   const { data, isLoading, isError } = useQuery({
     queryKey: ["ocorrencias-anual"],
     queryFn: async () => {
       const response = await client.get('/dashboard/ocorrencia-anual')
-      const { ocorrencias, error } = response.data
+      const { ocorrencias, error } = await response.data
       return ocorrencias
     },
-    staleTime: 1000 * 60 * 10, // 10 minutos de cache
+    refetchOnWindowFocus: true,
+    refetchInterval: 60,
+    staleTime: 60
   });
 
-  const downloadChart = () => {
-    if (chartRef.current === null) return;
+  const downloadChart = (chartRef: any) => {
+    if (chartRef?.current === null) return;
 
-    const svgElement = chartRef.current.querySelector("svg");
+    const svgElement = chartRef?.current.querySelector("svg");
 
     if (!svgElement) return;
-
+    const texts = svgElement.querySelectorAll("text");
+    texts.forEach((text: any) => {
+      text.setAttribute("font-family", "Arial");
+      text.setAttribute("font-size", "12px");
+    });
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svgElement);
     const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
@@ -51,31 +59,32 @@ export function AreaGraphOcorrencia() {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement("canvas");
-      const headerHeight = 80; // Altura reservada para o título e descrição
-      canvas.width = svgElement.clientWidth + 30;
+      const headerHeight = 80;
+      canvas.width = svgElement.clientWidth + 20;
       canvas.height = svgElement.clientHeight + 80;
       const ctx = canvas.getContext("2d");
       if (!ctx) return
-      // Fundo branco antes de desenhar o gráfico
-      ctx.fillStyle = "#FFFFFF";
+
       ctx.font = "bold 12px Arial"
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#FFFFFF";
+      // ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drawRoundedRect({ctx, x: 0, y: 0, width: canvas.width, height: canvas.height, radius: 10});
 
        // Desenhar título
        ctx.fillStyle = "#000000";
        ctx.font = "bold 16px Arial";
-       ctx.fillText(`Comparação de Ocorrências (${anoAtual} x ${anoAnterior})`, 20, 30);
+       ctx.fillText(`Comparação de Ocorrências (${anoAnterior} x ${anoAtual})`, 20, 30);
  
        // Desenhar descrição
        ctx.font = "12px Arial";
-       ctx.fillText("Exibe a relação de ocorrências do ano atual com o ano anterior", 20, 50);
+       ctx.fillText("Exibe a relação de ocorrências do ano anterior com o ano atual", 20, 50);
 
       ctx.drawImage(img, 0, headerHeight);
 
       // Criar link para download
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
-      link.download = "grafico.png";
+      link.download = "grafico_comparativo.png";
       link.click();
 
       URL.revokeObjectURL(url);
@@ -83,7 +92,7 @@ export function AreaGraphOcorrencia() {
 
     img.src = url;
 
-    // toPng(chartRef.current)
+    // toPng(chartRef?.current)
     // .then((dataUrl) => {
     //   const link = document.createElement('a');
     //   link.href = dataUrl;
@@ -129,10 +138,10 @@ const chartConfig = {
     <Card>
       <div className='relative inline-block w-full'>
         <div
-          ref={chartRef}
+          ref={chartCompRef}
         >
       <CardHeader>
-        <CardTitle>Comparação de Ocorrências ({anoAtual} x {anoAnterior})</CardTitle>
+        <CardTitle>Comparação de Ocorrências ({anoAnterior} x {anoAtual})</CardTitle>
         <CardDescription>
           Exibe a relação de ocorrências do ano atual com o ano anterior
         </CardDescription>
@@ -172,7 +181,7 @@ const chartConfig = {
           </CardContent>
         </div>
         <Button
-          onClick={downloadChart}
+          onClick={() => downloadChart(chartCompRef)}
           className='absolute top-2 right-2 cursor-pointer'
           variant='outline'
         >

@@ -7,6 +7,12 @@ type ocorrenciaAnual = {
     total: number;        
 }
 
+type OcorrenciasUnidadesType = {
+    id: string;
+    escola?: string;
+    total_ocorrencias?: number;       
+}
+
 class ViewService {
     async getDashboardTotals() 
     {
@@ -38,6 +44,18 @@ class ViewService {
     {
         try {
             const ocorrencias = await prismaClient.ocorrenciasAnual.findMany()
+            
+            return ocorrencias
+        } catch (error) {
+            throw new Error("Erro ao buscar ocorrencias anual:", error?.message);
+        }
+    }
+
+    async getOcorrenciasUnidades(limit: number){
+        try {
+            const ocorrencias = await prismaClient.ocorrenciasUnidades.findMany({
+                take: limit
+            })
             
             return ocorrencias
         } catch (error) {

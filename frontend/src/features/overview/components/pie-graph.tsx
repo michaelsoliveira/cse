@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { TrendingUp } from 'lucide-react';
-import { Label, Pie, PieChart } from 'recharts';
+import { Cell, Label, Legend, Pie, PieChart, Tooltip } from 'recharts';
 
 import {
   Card,
@@ -18,50 +18,55 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
-const chartData = [
-  { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-  { browser: 'firefox', visitors: 287, fill: 'var(--color-firefox)' },
-  { browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-  { browser: 'other', visitors: 190, fill: 'var(--color-other)' }
-];
-
-const chartConfig = {
-  visitors: {
-    label: 'Visitors'
-  },
-  chrome: {
-    label: 'Chrome',
-    color: 'var(--chart-1)'
-  },
-  safari: {
-    label: 'Safari',
-    color: 'var(--chart-2)'
-  },
-  firefox: {
-    label: 'Firefox',
-    color: 'var(--chart-3)'
-  },
-  edge: {
-    label: 'Edge',
-    color: 'var(--chart-4)'
-  },
-  other: {
-    label: 'Other',
-    color: 'var(--chart-5)'
-  }
-} satisfies ChartConfig;
+import { useAuthContext } from '@/context/AuthContext';
+import { useQuery } from '@tanstack/react-query';
 
 export function PieGraph() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
+  const { client } = useAuthContext()
+  
+  const fetchData = React.useCallback(async () => {
+      const { data: { ocorrencias, error } } = await client.get(`/dashboard/ocorrencias-unidades`)
+      return ocorrencias
+  }, [client])
+
+  const { data, isLoading, error } = useQuery({
+      queryKey: ["ocorrencias-unidades"],
+      queryFn: () => fetchData(),
+      staleTime: 60000,
+      refetchInterval: 1000 * 60,
+      refetchOnWindowFocus: true
+  });
+
+  const colors = [
+    "#8884d8", "#8dd1e1", "#82ca9d", "#ffc658",
+    "#ff8042", "#d0ed57", "#a4de6c", "#d88884",
+    "#84d8b0", "#c884d8"
+  ];
+  
+  // Exemplo com 10 escolas
+  const chartData = data?.map((oc: any) => {
+    return {
+      escola: oc.escola,
+      total: oc.total
+    }
+  });
+
+  const chartConfig = chartData?.map((d: any, idx: number) => {
+    return {
+      [d.escola]: {
+        label: d.escola,
+        color: colors[idx]
+      }
+    }
+  }) satisfies ChartConfig;
+
+  console.log(chartConfig)
 
   return (
     <Card className='flex flex-col'>
       <CardHeader className='items-center pb-0'>
-        <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Mais Ocorrências</CardTitle>
+        <CardDescription>Unidades escolares com mais ocorrências</CardDescription>
       </CardHeader>
       <CardContent className='flex-1 pb-0'>
         <ChartContainer
@@ -69,14 +74,31 @@ export function PieGraph() {
           className='mx-auto aspect-square max-h-[360px]'
         >
           <PieChart>
+            <Pie
+              data={chartData}
+              dataKey="total"
+              nameKey="escola"
+              cx="50%"
+              cy="50%"
+              outerRadius={110}
+              label
+            >
+              {chartData.map((entry: any, index: number) => (
+                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend verticalAlign="bottom" height={40} />
+          </PieChart>
+          {/* <PieChart>
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
               data={chartData}
-              dataKey='visitors'
-              nameKey='browser'
+              dataKey='total'
+              nameKey='escola'
               innerRadius={60}
               strokeWidth={5}
             >
@@ -110,7 +132,7 @@ export function PieGraph() {
                 }}
               />
             </Pie>
-          </PieChart>
+          </PieChart> */}
         </ChartContainer>
       </CardContent>
       <CardFooter className='flex-col gap-2 text-sm'>

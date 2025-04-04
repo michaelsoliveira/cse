@@ -444,12 +444,12 @@ view geometry_columns {
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view ocorrencias_unidades {
-  id                String? @db.Uuid
+view ocorrenciasUnidades {
+  id                String @id @db.Uuid
   escola            String? @db.VarChar(100)
-  total_ocorrencias BigInt?
+  total_ocorrencias Int?
 
-  @@ignore
+  @@map("ocorrencias_unidades")
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
