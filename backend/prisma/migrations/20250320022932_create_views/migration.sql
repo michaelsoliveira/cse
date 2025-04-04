@@ -36,29 +36,30 @@ CREATE OR REPLACE VIEW "ocorrencias_envolvidos" AS
     JOIN ocorrencia o ON eo.ocorrencia_id = o.id
     ORDER BY o.id;
 
+DROP VIEW IF EXISTS totais_dashboard;
 CREATE OR REPLACE VIEW "totais_dashboard" AS
 SELECT
     1 AS id,
-  (SELECT CAST(COALESCE(COUNT(*), 0) AS NUMERIC) FROM unidade_escolar) AS total_escolas,
-  (SELECT CAST(COALESCE(COUNT(*), 0) AS NUMERIC) FROM ocorrencia) AS total_ocorrencias,
+  (SELECT COALESCE(COUNT(*), 0)::numeric FROM unidade_escolar) AS total_escolas,
+  (SELECT COALESCE(COUNT(*), 0)::numeric FROM ocorrencia) AS total_ocorrencias,
   (SELECT COUNT(*) 
    FROM ocorrencia
    WHERE DATE_TRUNC('month', data) = DATE_TRUNC('month', CURRENT_DATE)
-  ) AS total_ocorrencias_mes;
+  )::numeric AS total_ocorrencias_mes;
 
-DROP VIEW ocorrencias_tipos_totais;
-CREATE VIEW "ocorrencias_tipos_totais" AS
-    SELECT
-        1 AS id,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Furto'), 0)::numeric   AS furto,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Roubo'), 0)::numeric AS roubo,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Vulnerabilidade'), 0)::numeric  AS vulnerabilidade,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Intrusão'), 0)::numeric  AS intrusao,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Ameaça'), 0)::numeric  AS ameaca,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Uso de Arma de Fogo'), 0)::numeric  AS uso_arma,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Porte de Arma'), 0)::numeric  AS porte_arma,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Posse de Arma'), 0)::numeric  AS posse_arma,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Danos ao Patrimônio'), 0)::numeric  AS danos_patrimonio,
-        COALESCE(count(o.id) FILTER (WHERE t.nome = 'Ameaça a Escola'), 0)::numeric  AS ameaca_escola
-    FROM ocorrencia o
-    JOIN tipo_ocorrencia t ON o.tipo_id = t.id;
+-- DROP VIEW IF EXISTS ocorrencias_tipos_totais;
+-- CREATE VIEW "ocorrencias_tipos_totais" AS
+--     SELECT
+--         1 AS id,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Furto'), 0)::numeric   AS furto,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Roubo'), 0)::numeric AS roubo,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Vulnerabilidade'), 0)::numeric  AS vulnerabilidade,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Intrusão'), 0)::numeric  AS intrusao,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Ameaça'), 0)::numeric  AS ameaca,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Uso de Arma de Fogo'), 0)::numeric  AS uso_arma,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Porte de Arma'), 0)::numeric  AS porte_arma,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Posse de Arma'), 0)::numeric  AS posse_arma,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Danos ao Patrimônio'), 0)::numeric  AS danos_patrimonio,
+--         COALESCE(count(o.id) FILTER (WHERE t.nome = 'Ameaça a Escola'), 0)::numeric  AS ameaca_escola
+--     FROM ocorrencia o
+--     JOIN tipo_ocorrencia t ON o.tipo_id = t.id;

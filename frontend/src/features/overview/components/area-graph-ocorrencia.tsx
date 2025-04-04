@@ -39,16 +39,59 @@ export function AreaGraphOcorrencia() {
   const downloadChart = () => {
     if (chartRef.current === null) return;
 
-    toPng(chartRef.current)
-    .then((dataUrl) => {
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = 'area-graph-ocorrencia.png';
+    const svgElement = chartRef.current.querySelector("svg");
+
+    if (!svgElement) return;
+
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svgElement);
+    const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const headerHeight = 80; // Altura reservada para o título e descrição
+      canvas.width = svgElement.clientWidth + 30;
+      canvas.height = svgElement.clientHeight + 80;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return
+      // Fundo branco antes de desenhar o gráfico
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+       // Desenhar título
+       ctx.fillStyle = "#000000";
+       ctx.font = "bold 16px Arial";
+       ctx.fillText(`Comparação de Ocorrências (${anoAtual} x ${anoAnterior})`, 20, 30);
+ 
+       // Desenhar descrição
+       ctx.font = "12px Arial";
+       ctx.fillText("Exibe a relação de ocorrências do ano atual com o ano anterior", 20, 50);
+
+      ctx.drawImage(img, 0, headerHeight);
+
+      // Criar link para download
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "grafico.png";
       link.click();
-    })
-    .catch((error) => {
-      console.log('Erro ao capturar o gráfico', error)
-    })
+
+      URL.revokeObjectURL(url);
+    };
+
+    img.src = url;
+
+    // toPng(chartRef.current)
+    // .then((dataUrl) => {
+    //   const link = document.createElement('a');
+    //   link.href = dataUrl;
+    //   link.download = 'area-graph-ocorrencia.png';
+    //   link.click();
+    // })
+    // .catch((error) => {
+    //   console.log('Erro ao capturar o gráfico', error)
+    // })
   }
 
   if (isLoading) return <p>Carregando...</p>;
@@ -83,6 +126,10 @@ const chartConfig = {
 
   return (
     <Card>
+      <div className='relative inline-block w-full'>
+        <div
+          ref={chartRef}
+        >
       <CardHeader>
         <CardTitle>Comparação de Ocorrências ({anoAtual} x {anoAnterior})</CardTitle>
         <CardDescription>
@@ -90,17 +137,17 @@ const chartConfig = {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className='relative inline-block w-full'>
-          <div
-            ref={chartRef}
-            className='bg-white p-4 rounded-md shadow-md'
-          >
+        
             <ChartContainer
               config={chartConfig}
               className='aspect-auto h-[310px] w-full'
             >
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={dadosProcessados} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <ResponsiveContainer>
+              <AreaChart 
+                data={dadosProcessados} 
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                style={{ background: 'transparent' }}
+              >
                 <defs>
                   <linearGradient id="colorAnterior" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
@@ -121,16 +168,17 @@ const chartConfig = {
               </AreaChart>
               </ResponsiveContainer>
             </ChartContainer>
-          </div>
-          <Button
-            onClick={downloadChart}
-            className='absolute top-2 right-2 cursor-pointer'
-            variant='outline'
-          >
-            <DownloadIcon className='h-4 w-4' />
-          </Button>
+          </CardContent>
         </div>
-      </CardContent>
+        <Button
+          onClick={downloadChart}
+          className='absolute top-2 right-2 cursor-pointer'
+          variant='outline'
+        >
+          <DownloadIcon className='h-4 w-4' />
+        </Button>
+      </div>
+        
       <CardFooter>
         <div className='flex w-full items-start gap-2 text-sm'>
           <div className='grid gap-2'>
