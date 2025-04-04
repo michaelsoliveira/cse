@@ -53,12 +53,14 @@ class ViewService {
 
     async getOcorrenciasUnidades(limit: number){
         try {
-            const ocorrencias = await prismaClient.ocorrenciasUnidades.findMany({
-                take: limit
-            })
+            const ocorrencias = await prismaClient.$queryRaw`
+                SELECT * FROM ocorrencias_unidades
+                LIMIT ${limit}
+            `
             
             return ocorrencias
         } catch (error) {
+            console.log(error)
             throw new Error("Erro ao buscar ocorrencias anual:", error?.message);
         }
     }

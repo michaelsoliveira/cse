@@ -53,11 +53,11 @@ export class DashboardController {
     async getOcorrenciasUnidades(request: Request, response: Response) {
         const { limit }: any = request.query
         try {
-            const ocorrencias = await dashboardService.getOcorrenciasUnidades(limit);
+            const ocorrencias: any = await dashboardService.getOcorrenciasUnidades(Number(limit));
             
         return response.status(200).json({
             error: false,
-            ocorrencias: ocorrencias.map((ocorrencia: any) => {
+            ocorrencias: ocorrencias?.map((ocorrencia: any) => {
                 return {
                     id: ocorrencia.id,
                     escola: ocorrencia.escola,
