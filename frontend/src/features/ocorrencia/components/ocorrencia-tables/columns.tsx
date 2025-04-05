@@ -9,12 +9,12 @@ export const columns: ColumnDef<OcorrenciaType>[] = [
   {
     accessorKey: 'data',
     header: 'Data da Ocorrência',
-    cell: ({ row }) => <>{ moment(row.original.data).format('DD/MM/yyyy') }</>
+    cell: ({ row }) => <>{ moment(row.original.data).utcOffset('+03:00').format('DD/MM/yyy') }</>
   },
   {
     accessorKey: 'hora',
     header: 'Hora',
-    cell: ({ row }) => <>{ moment(row.original.hora).utcOffset('-0300').format('HH:mm') }</>
+    cell: ({ row }) => <>{ moment(row.original.hora).utcOffset('-03:00').format('HH:mm') }</>
   },
   {
     accessorKey: 'unidade_escolar.pessoa.pessoaJuridica.nome_fantasia',

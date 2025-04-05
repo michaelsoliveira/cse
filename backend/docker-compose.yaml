@@ -127,6 +127,23 @@ services:
         rm -rf $$BACKUP_PGDB"
     profiles:
       - cli
+    
+  pg_backup:
+    image: postgres:17
+    container_name: pg_backup
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    entrypoint: >
+      sh -c "
+      pg_dump -h postgres -p ${PGPORT} -U ${POSTGRES_USER} -d ${DATABASE_NAME} -f /backup/backup.sql &&
+      echo 'Backup concluído com sucesso.'
+      "
+    volumes:
+      - ./backup:/backup
+    networks:
+      - stack
+    restart: "no"
 
   restore:
     image: postgres

@@ -3,6 +3,7 @@ import { prismaClient } from "../database/prismaClient";
 
 class OcorrenciaService {
     async create(data: any): Promise<Ocorrencia> {
+        console.log(data)
         const ocorrencia = await prismaClient.ocorrencia.create({
             data: {
                 unidade_id: data?.unidade_id,

@@ -144,7 +144,7 @@ model Ocorrencia {
   responsavel_id  String?                 @db.Uuid
   user_id         String                  @db.Uuid
   unidade_id      String                  @db.Uuid
-  classificacao   classificacaoocorrencia
+  classificacao   ClassificacaoOcorrencia
   comunicante_id  String?                 @db.Uuid
   anexos          AnexoOcorrencia[]
   envolvidos      EnvolvidoOcorrencia[]
@@ -155,6 +155,14 @@ model Ocorrencia {
   user            User                    @relation(fields: [user_id], references: [id])
 
   @@map("ocorrencia")
+}
+
+model Parametro {
+  id          String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  nome        String?
+  valor       String?
+
+  @@map("parametro")  
 }
 
 model Envolvido {
@@ -469,14 +477,11 @@ enum ZonaUnidade {
 enum ClassificacaoOcorrencia {
   seguranca_patrimonial
   policiamento_escolar
+
+  @@map("classificacao_ocorrencia")
 }
 
 enum TipoPessoa {
   F
   J
-}
-
-enum classificacaoocorrencia {
-  seguranca_patrimonial
-  policiamento_escolar
 }

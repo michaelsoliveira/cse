@@ -1,5 +1,5 @@
-import { PieGraph } from '@/features/overview/components/pie-graph';
+import { PieGraphOcorrencia } from '@/features/overview/components/pie-graph-ocorrencia';
 
 export default async function Stats() {
-  return <PieGraph />;
+  return <PieGraphOcorrencia />;
 }
