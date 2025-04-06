@@ -71,23 +71,15 @@ class EstadoService {
     async getAll(query?: any): Promise<any> {
         const { perPage, page, search, orderBy, order } = query
         const skip = (page - 1) * perPage
-        let orderByTerm = {}
         const where = search
             // ? {OR: [{nome: {contains: search}}, {email: {contains: search}}]}
             ? {OR: [{mode: Prisma.QueryMode.insensitive, nome: {contains: search}}, {mode: Prisma.QueryMode.insensitive, uf: {contains: search}}]}
             : {};
         
-        const orderByElement = orderBy ? orderBy.split('.') : {}
-        
-        if (orderByElement.length == 2) {
-            orderByTerm = {
-                [orderByElement[1]]: order
-            }
-        } else {
-            orderByTerm = {
-                [orderByElement]: order
-            }
-        }
+        const orderByElement: Array<string> = orderBy ? orderBy?.split('.') : {}
+        const orderByTerm = orderByElement?.length > 0 
+            ? orderByElement?.reverse().reduce((acc, key) => ({ [key]: acc }), order) 
+            : {}
         
         const [estados, total] = await prismaClient.$transaction([
             prismaClient.estado.findMany({
@@ -116,8 +108,7 @@ class EstadoService {
             where: {
                 id: { in: estados}
             }
-        })
-        
+        })   
     }
 
     async search(text: any) {

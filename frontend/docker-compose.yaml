@@ -9,6 +9,7 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL_CLIENT
       - NEXT_PUBLIC_API_URL_SERVER
+      - USE_DOCKER
       - AUTH_GOOGLE_ID
       - AUTH_GOOGLE_SECRET
       - AUTH_GITHUB_ID

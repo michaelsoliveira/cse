@@ -1,5 +1,8 @@
 export const CellDate = ({ data }: { data: any }) => {
-    const date = new Date(data)
-    return new Intl.DateTimeFormat('pt-BR').format(date);
-
-}
+      return new Intl.DateTimeFormat('pt-BR', {
+        timeZone: 'UTC',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }).format(new Date(data));
+    }

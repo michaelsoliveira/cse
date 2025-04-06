@@ -230,6 +230,13 @@ async function main() {
         },
     })
 
+    await prisma.parametro.create({
+      data: {
+        nome: 'ano_ativo',
+        valor: new Date().getFullYear().toString()
+      }
+    })
+
     const tiposOcorrencia: Prisma.TipoOcorrenciaCreateInput[] = [
       { nome: "Roubo" },
       { nome: "Furto" },
@@ -237,6 +244,7 @@ async function main() {
       { nome: "Intrusão" },
       { nome: "Ameaça" },
       { nome: "Uso de Arma de Fogo" },
+      { nome: "Posse de Arma" },
       { nome: "Porte de Arma" },
       { nome: "Danos ao Patrimônio" },
       { nome: "Ameaça a Escola" }

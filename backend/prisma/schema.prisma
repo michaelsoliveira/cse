@@ -148,6 +148,7 @@ model Ocorrencia {
   comunicante_id  String?                 @db.Uuid
   anexos          AnexoOcorrencia[]
   envolvidos      EnvolvidoOcorrencia[]
+  acionamento     AcionamentoOcorrencia?  
   comunicante     Comunicante?            @relation(fields: [comunicante_id], references: [id])
   registro_por    ResponsavelRegistro?    @relation(fields: [responsavel_id], references: [id])
   tipo_ocorrencia TipoOcorrencia          @relation(fields: [tipo_id], references: [id])
@@ -452,7 +453,7 @@ view geometry_columns {
 }
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-view ocorrenciasUnidades {
+view OcorrenciasUnidades {
   id                String @id @db.Uuid
   escola            String? @db.VarChar(100)
   total_ocorrencias Int?
@@ -469,9 +470,18 @@ view ocorrencias_tipo_dashboard {
   @@ignore
 }
 
+enum AcionamentoOcorrencia {
+  botao_alerta
+  numero_190
+  monitoramento
+  @@map("acionamento_ocorrencia")
+}
+
 enum ZonaUnidade {
   rural
   urbana
+
+  @@map("zona_unidade")
 }
 
 enum ClassificacaoOcorrencia {
@@ -484,4 +494,6 @@ enum ClassificacaoOcorrencia {
 enum TipoPessoa {
   F
   J
+
+  @@map("tipo_pessoa")
 }

@@ -38,7 +38,7 @@ import { ComunicanteType, OcorrenciaType } from 'types';
 import { OcorrenciaFormValues, ocorrenciaSchema } from '../utils/form-schema';
 import { Textarea } from '@/components/ui/textarea';
 import { InputMasked } from '@/components/input-hora';
-import { ocorrencias_classificacao } from './ocorrencia-tables/use-ocorrencia-table-filters';
+import { ocorrencias_classificacao, ocorrencias_acionamento } from './ocorrencia-tables/use-ocorrencia-table-filters';
 import moment from 'moment';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FileUploader } from '@/components/file-uploader';
@@ -65,6 +65,7 @@ export default function OcorrenciaForm({
     hora: initialData?.hora && moment(initialData?.hora).format('HH:mm') || '',
     descricao: initialData?.descricao || '',
     classificacao: initialData?.classificacao || '',
+    acionamento: initialData?.acionamento || '',
     comunicante_id: initialData?.comunicante_id || '',
     anexos: initialData?.anexos || [],
     hasAnexoData: false
@@ -236,14 +237,14 @@ export default function OcorrenciaForm({
                   <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          placeholder='Selecione um Tipo'
+                          placeholder='Selecione a Classificação'
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className='overflow-y-auto max-h-[20rem]'>
-                      {ocorrencias_classificacao?.map((tipo: any) => (
-                        <SelectItem key={tipo.value} value={tipo.value.toString()}>
-                          {tipo.label}
+                      {ocorrencias_classificacao?.map((classificacao: any) => (
+                        <SelectItem key={classificacao.value} value={classificacao.value.toString()}>
+                          {classificacao.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -313,7 +314,38 @@ export default function OcorrenciaForm({
                   <FormMessage />
                 </FormItem>
               )}
-            />            
+            />
+            <FormField
+              control={form.control}
+              name='acionamento'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Acionamento</FormLabel>
+                  <Select
+                    disabled={loading}
+                    onValueChange={(value) => field.onChange(value) }
+                    value={String(field.value)}
+                    defaultValue={String(field.value)}
+                  >
+                  <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder='Selecione o Acionamento'
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className='overflow-y-auto max-h-[20rem]'>
+                      {ocorrencias_acionamento?.map((acionamento: any) => (
+                        <SelectItem key={acionamento.value} value={acionamento.value.toString()}>
+                          {acionamento.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />             
             <div className='col-span-4'>
             <FormField
               control={form.control}

@@ -52,7 +52,7 @@ SELECT
    FROM ocorrencia o
    JOIN parametro par ON par.nome = 'ano_ativo'
 WHERE EXTRACT(YEAR FROM o.data) = CAST(par.valor AS INTEGER)
-   AND DATE_TRUNC('month', o.data) = DATE_TRUNC('month', TO_DATE(par.valor, 'YYYY'))
+   AND DATE_TRUNC('month', o.data) = DATE_TRUNC('month', now())
   )::numeric AS total_ocorrencias_mes;
   
 DROP VIEW IF EXISTS ocorrencias_tipo_dashboard;

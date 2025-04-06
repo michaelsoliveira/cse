@@ -3,7 +3,7 @@ import { prismaClient } from "../database/prismaClient";
 
 class OcorrenciaService {
     async create(data: any): Promise<Ocorrencia> {
-        console.log(data)
+        
         const ocorrencia = await prismaClient.ocorrencia.create({
             data: {
                 unidade_id: data?.unidade_id,
@@ -11,6 +11,7 @@ class OcorrenciaService {
                 data: data?.data ? new Date(data?.data) : undefined,
                 hora: data?.hora ? new Date(`1970-01-01T${data?.hora}`) : undefined,
                 user_id: data?.user_id,
+                acionamento: data?.acionamento,
                 comunicante_id: data?.comunicante_id,
                 tipo_id: data?.tipo_id,
                 descricao: data?.descricao
@@ -31,6 +32,7 @@ class OcorrenciaService {
                 classificacao: data?.classificacao,
                 data: data?.data ? new Date(data?.data) : undefined,
                 hora: data?.hora ? new Date(`1970-01-01T${data?.hora}`) : undefined,
+                acionamento: data?.acionamento,
                 comunicante_id: data?.comunicante_id,
                 tipo_id: data?.tipo_id,
                 descricao: data?.descricao
@@ -65,7 +67,7 @@ class OcorrenciaService {
 
         let filters: any = {}
 
-        const skip = (page - 1) * perPage
+        const skip = (page - 1) * perPage || undefined
 
         const limit = perPage ? parseInt(perPage) : undefined
         
@@ -105,12 +107,20 @@ class OcorrenciaService {
 
             if (comunicante_id) {
                 filters.comunicante_id = comunicante_id
-            }    
+            }
             
             const [ocorrencias, total] = await prismaClient.$transaction([
                 prismaClient.ocorrencia.findMany({
-                    include: {
-                        tipo_ocorrencia: true,
+                    select: {
+                        id: true,
+                        data: true,
+                        hora: true,
+                        tipo_ocorrencia: {
+                            select: {
+                                id: true,
+                                nome: true
+                            }
+                        },
                         unidade_escolar: {
                             select:{
                                 pessoa: {
@@ -145,11 +155,13 @@ class OcorrenciaService {
                                 }
                             }
                         },
+                        acionamento: true,
+                        classificacao: true,
                         anexos: true,
                     },
                     where: filters,
-                    take: limit,
-                    skip: skip ? skip : 0,
+                    ...(typeof limit !== undefined ? { take: limit } : {}),
+                    ...(typeof skip !== undefined ? { skip } : {}),
                     orderBy: orderByTerm,
                 }),
                 prismaClient.ocorrencia.count({where: filters})

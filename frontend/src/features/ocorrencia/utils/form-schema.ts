@@ -80,6 +80,7 @@ export const ocorrenciaSchema = z.object({
     }),
   descricao: optionalFieldMin({ field: "descricao", min: 5 }),
   classificacao: z.string(),
+  acionamento: z.string(),
   comunicante_id: z.string()
 }).and(anexoDataSchema);
 

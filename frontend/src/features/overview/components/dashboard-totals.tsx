@@ -3,13 +3,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthContext } from "@/context/AuthContext";
+import { useAnoStore } from "@/stores/useAnoStore";
 import { useQuery } from "@tanstack/react-query";
 import { School, Calendar, AlertCircle } from "lucide-react";
 
 export default function DashboardTotals() {
   const { client } = useAuthContext()  
+  const { anoAtivo } = useAnoStore();
   const { data, isLoading, error } = useQuery({
-    queryKey: ["dashboard-totals"],
+    queryKey: ["dashboard-totals", anoAtivo],
     queryFn: async () => {
       const response = await client.get("/dashboard/totals");
       const { totals, error } = response.data

@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useAnoController } from '@/hooks/use-ano-controller';
 
 export function AnoAtivoModal({
   open,
@@ -17,12 +18,17 @@ export function AnoAtivoModal({
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
-  const { anoAtivo, setAnoAtivo, resetAnoAtivo } = useAnoStore();
+  const { anoAtivo } = useAnoStore();
+  const { atualizarAnoAtivo, resetAnoAtivo } = useAnoController()
+
+  const handleChange = async (novoAno: string) => {
+    await atualizarAnoAtivo(novoAno)
+  }
   const [anoTemp, setAnoTemp] = useState(anoAtivo ?? '');
 
   const handleSalvar = () => {
     if (anoTemp.trim() !== '') {
-      setAnoAtivo(anoTemp.trim());
+      handleChange(anoTemp.trim());
       onOpenChange(false);
     }
   };
@@ -39,7 +45,7 @@ export function AnoAtivoModal({
         <DialogHeader>
           <DialogTitle>Alterar Ano Ativo</DialogTitle>
         </DialogHeader>
-
+        <span>Ano ativo: {anoAtivo}</span>
         <div className="space-y-4">
           <Input
             type="text"

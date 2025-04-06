@@ -10,7 +10,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AreaGraphOcorrencia } from './area-graph-ocorrencia';
 import { BarGraph } from './bar-graph';
-import { PieGraph } from './pie-graph-ocorrencias';
+import { PieGraph } from './pie-graph';
 import { RecentOcorrencia } from './recent-ocorrencia';
 
 export default function OverViewPage() {

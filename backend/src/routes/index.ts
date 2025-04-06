@@ -8,6 +8,7 @@ import dashboardRoutes from "./dashboard.routes";
 import diretorRoutes from "./diretor.routes";
 import estadoRoutes from "./estado.routes";
 import ocorrenciaRoutes from "./ocorrencia.routes";
+import parametroRoutes from "./parametro.routes";
 import permissionRoutes from "./permission.routes";
 import roleRoutes from "./role.routes";
 import tipoOcorrenciaRoutes from "./tipoOcorrencia.routes";
@@ -31,6 +32,7 @@ export {
     diretorRoutes,
     estadoRoutes,
     ocorrenciaRoutes,
+    parametroRoutes,
     permissionRoutes,
     roleRoutes,
     unidadeRoutes,

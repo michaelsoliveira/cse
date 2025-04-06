@@ -18,6 +18,7 @@ export interface OcorrenciaType {
   data?: string;
   hora?: string;
   classificacao: string;
+  acionamento: string;
   comunicante_id?: string;
   unidade_id: string;
   tipo_id: string;

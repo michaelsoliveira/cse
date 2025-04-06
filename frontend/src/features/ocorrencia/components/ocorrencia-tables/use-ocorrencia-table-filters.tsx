@@ -9,6 +9,12 @@ export const ocorrencias_classificacao = [
   { value: 'policiamento_escolar', label: 'Policiamento Escolar' }
 ];
 
+export const ocorrencias_acionamento = [
+  { value: 'monitoramento', label: 'Monitoramento' },
+  { value: 'botao_alerta', label: 'Botão de Alerta' },
+  { value: 'numero_190', label: '190' }
+];
+
 export function useOcorrenciaTableFilters() {
   const [dataInicio, setDataInicio] = useQueryState(
     'dataInicio',

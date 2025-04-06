@@ -13,7 +13,8 @@ import {
     unidadeRoutes,
     usersRoutes,
     rootRoute,
-    tipoOcorrenciaRoutes
+    tipoOcorrenciaRoutes,
+    parametroRoutes
   } from "./routes"
 import cors from 'cors'
 import { Server } from 'socket.io'
@@ -60,6 +61,7 @@ app.use('/dashboard', dashboardRoutes)
 app.use('/diretor', diretorRoutes)
 app.use('/estado', estadoRoutes)
 app.use('/ocorrencia', ocorrenciaRoutes)
+app.use('/parametro', parametroRoutes)
 app.use('/permission', permissionRoutes)
 app.use('/role', roleRoutes)
 app.use('/unidade', unidadeRoutes)
