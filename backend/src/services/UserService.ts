@@ -1,7 +1,7 @@
 import * as bcrypt from "bcryptjs"
 import * as nodemailer from 'nodemailer'
 import { prismaClient } from "../database/prismaClient"
-import { Prisma, User, User as UserPrisma } from "@prisma/client"
+import { Prisma, Role, User, User as UserPrisma } from "@prisma/client"
 export interface UserRequest {
     username: string,
     email: string,
@@ -55,85 +55,26 @@ class UserService {
             id_provider: data?.id_provider ? data?.id_provider : ''
         }
 
-        // if (!data?.id_projeto) {
-        //     const user = await prismaClient.user.create({
-        //         data: {
-        //             ...dataRequest,
-        //             users_roles: {
-        //                 create: {
-        //                     role_id: roleAdmin ? roleAdmin?.id : ''
-        //                 }
-        //             }
-        //         }
-        //     })
+        // const userRoles = data.roles?.map((role: any) => {
+        //     return {
+        //         role_id: role.value
+        //     }
+        // })
 
-            // const existsEqModelos = await prismaClient.$queryRaw`
-            //     SELECT eq.id FROM equacao_modelo eq
-            // `
-            // if (!existsEqModelos) {
-            //     const equacoesModelo: Prisma.EquacaoModeloCreateInput[] = [
-            //         {
-            //             nome: 'Schumacher - Hall',
-            //             expressao: 'EXP(a + b * LN(DAP) + c * LN(ALTURA))'
-            //         },
-            //         {
-            //             nome: 'Spurr',
-            //             expressao: 'EXP(a + b * LN(DAP ^ 2 * ALTURA))'
-            //         },
-            //         {
-            //             nome: 'Husch (1963)',
-            //             expressao: 'EXP(a + b * LN(DAP))'
-            //         },
-            //         {
-            //             nome: 'Fator de forma',
-            //             expressao: 'a * (3.141592 * (DAP ^ 2) / 40000 ) * ALTURA'
-            //         },
-            //     ]
-
-            //     for (const eqModelo of equacoesModelo) {
-            //         await prismaClient.equacaoModelo.create({
-            //             data: {
-            //                 ...eqModelo
-            //             },
-            //         })
-            //     }
-            // }
-
-        //     return user
-        // }
-
-        const userRoles = data.roles?.map((role: any) => {
-            return {
-                role_id: role.value
+        const rolesData = roleAdmin ? {
+            users_roles: {
+                createMany: {
+                    data: {
+                        role_id: roleAdmin?.id
+                    }
+                }
             }
-        })
+        } : {}
 
-        const user = data?.option === 0 ? await prismaClient.user.create({
+        const user = await prismaClient.user.create({
             data: {
                 ...dataRequest,
-                users_roles: {
-                    createMany: {
-                        data: userRoles
-                    }
-                }
-            }
-        }) : await prismaClient.user.update({
-            include: {
-                users_roles: true,
-            },
-            where: {
-                id: data?.id_user
-            },
-            data: {
-                users_roles: {
-                    createMany: {
-                        data: userRoles.map((role: any) => {
-                            return {
-                                role_id: role?.role_id
-                            }
-                        })
-                    }
-                }
+                ...rolesData
             }
         })
 

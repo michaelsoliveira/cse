@@ -59,7 +59,7 @@ export function DashboardTiposOcorrencias() {
         queryKey: ["ocorrencia-tipos-totais", anoAtivo],
         queryFn: () => fetchData(),
         // enabled: !!token,
-        staleTime: 60000,
+        staleTime: 1000 * 5,
         refetchInterval: 1000 * 60,
         refetchOnWindowFocus: true
     });

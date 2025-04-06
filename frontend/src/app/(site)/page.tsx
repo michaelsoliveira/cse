@@ -76,7 +76,7 @@ export default function Home() {
 								</Link>
 							</div>
 							<div className="px-4 mx-auto text-center md:max-w-screen-md lg:max-w-screen-lg lg:px-36">
-								<div className="flex flex-wrap justify-center items-center mt-8 text-gray-500 sm:justify-between">
+								<div className="flex flex-col justify-center items-center mt-8 text-gray-500">
 									<a
 										href="https://livepix.gg/brkilian"
 										className="mr-5 mb-5 lg:mb-0 hover:text-gray-800 dark:hover:text-gray-400"
@@ -86,26 +86,6 @@ export default function Home() {
 										<div className="flex items-center space-x-2 text-4xl">
 											{/* <HandCoins className="w-8 h-8 rounded-md dark:text-white/70" /> */}
 											<span>{"SEED"}</span>
-										</div>
-									</a>
-									<a
-										href="https://livepix.gg/brkilian"
-										className="mr-5 mb-5 lg:mb-0 hover:text-gray-800 dark:hover:text-gray-400"
-										target="_blank"
-										rel="noreferrer"
-									>
-										<div className="flex items-center space-x-2 text-4xl">
-											{/* <HandCoins className="w-8 h-8 rounded-md dark:text-white/70" /> */}
-											<span>{"GEA"}</span>
-										</div>
-									</a>
-									<a
-										href="twitch.tv/developerdeck101"
-										className="mr-5 mb-5 lg:mb-0 hover:text-gray-800 dark:hover:text-gray-400"
-									>
-										<div className="flex items-center space-x-2 text-4xl">
-											{/* <Twitch className="w-8 h-8 rounded-md dark:text-white/70" /> */}
-											<span>{"PM"}</span>
 										</div>
 									</a>
 								</div>

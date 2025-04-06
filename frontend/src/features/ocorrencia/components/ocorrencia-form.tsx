@@ -42,6 +42,7 @@ import { ocorrencias_classificacao, ocorrencias_acionamento } from './ocorrencia
 import moment from 'moment';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FileUploader } from '@/components/file-uploader';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function OcorrenciaForm({
   initialData,
@@ -50,6 +51,7 @@ export default function OcorrenciaForm({
   initialData: OcorrenciaType | null;
   pageTitle: string;
 }) {
+  const queryClient = useQueryClient();
   const { client } = useAuthContext();
   const { data: session } = useSession();
   const router = useRouter()
@@ -115,7 +117,6 @@ export default function OcorrenciaForm({
   const hasAnexoData = useWatch({ control, name: 'hasAnexoData' });
 
   async function onSubmit(data: OcorrenciaFormValues) {
-    console.log(data)
     try {
       const output = await form.trigger(fields as FieldName[], {
         shouldFocus: true
@@ -131,6 +132,12 @@ export default function OcorrenciaForm({
       if (!error) {
         setLoading(false)
         toast.success(message)
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["ocorrencia-tipos-totais"] }),
+          queryClient.invalidateQueries({ queryKey: ["ocorrencias-anual"] }),
+          queryClient.invalidateQueries({ queryKey: ["ocorrencias-unidades"] }),
+          queryClient.invalidateQueries({ queryKey: ["ocorrencia-latest"] })
+        ]);
         router.push('/dashboard/ocorrencia')
       } else {
         setLoading(false)

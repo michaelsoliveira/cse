@@ -26,7 +26,8 @@ export function RecentOcorrencia() {
   const { data, isLoading, error, refetch } = useQuery({
       queryKey: ["ocorrencia-latest"],
       queryFn: () => fetchOcorrencia(4),
-      refetchInterval: 60,
+      staleTime: 500 * 5,
+      refetchInterval: 6000 * 10,
       refetchOnWindowFocus: true
   });
   return (

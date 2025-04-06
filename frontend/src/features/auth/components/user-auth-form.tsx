@@ -18,10 +18,12 @@ import { toast } from 'sonner';
 import * as z from 'zod';
 import GithubSignInButton from './github-auth-button';
 import GoogleSignInButton from './google-auth-button';
+import { useAuthContext } from '@/context/AuthContext';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Por favor, informe em email válido' }),
-  password: z.string().min(3, { message: "A senha deve conter no mínimo 3 caracteres" })
+  password: z.string().min(3, { message: "A senha deve conter no mínimo 3 caracteres" }),
+  username: z.string()
 });
 
 type UserFormValue = z.infer<typeof formSchema>;
@@ -31,11 +33,13 @@ export default function UserAuthForm() {
   const router = useRouter();
   const [register, setRegister] = useState(false);
   const callbackUrl = searchParams.get('callbackUrl');
-  const code = searchParams.get("code");
+  const { client } = useAuthContext()
+
   const [loading, startTransition] = useTransition();
   const defaultValues = {
     email: '',
-    password: ''
+    password: '',
+    username: ''
   };
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
@@ -44,34 +48,69 @@ export default function UserAuthForm() {
 
   const onSubmit = async (data: UserFormValue) => {
     startTransition(async () => {
-      
-        const response = await signIn("credentials", {
-          email: data.email,
-          password: data.password,
-          // callbackUrl: callbackUrl ?? "/dashboard",
-          // redirectTo: '/dashboard'
-          redirect: false
-        })
-        // console.log(JSON.stringify(response))
-        if (response?.error && response?.error === "CredentialsSignin") 
-          {
-            toast.success('Oops, Ocorreu um erro na autenticação', {
-              description: "Por favor, verifique sua senha e tente novamente",
-              action: {
-                label: 'Fechar',
-                onClick: () => true
-              }
+        if (!register) {
+          const response = await signIn("credentials", {
+            email: data.email,
+            password: data.password,
+            // callbackUrl: callbackUrl ?? "/dashboard",
+            // redirectTo: '/dashboard'
+            redirect: false
+          })
+          // console.log(JSON.stringify(response))
+          if (response?.error && response?.error === "CredentialsSignin") 
+            {
+              toast.success('Oops, Ocorreu um erro na autenticação', {
+                description: "Por favor, verifique sua senha e tente novamente",
+                action: {
+                  label: 'Fechar',
+                  onClick: () => true
+                }
+              });
+              return
+            }
+  
+            if (!response?.error) {
+              toast.success('Login realizado com sucesso')
+              router.push('/dashboard')
+            }    
+        } else {
+          try {
+            // Cadastra o usuário
+            const registerResponse = await client.post('/users/create', data);
+            const { error, message } = registerResponse.data;
+    
+            if (error) {
+              toast.error('Erro ao cadastrar', {
+                description: message || "Tente novamente",
+              });
+              return;
+            }
+    
+            toast.success('Usuário cadastrado com sucesso');
+    
+            // Faz login automático após cadastro
+            const loginResponse = await signIn("credentials", {
+              email: data.email,
+              password: data.password,
+              redirect: false
             });
-            return
+    
+            if (!loginResponse?.error) {
+              toast.success('Login realizado com sucesso');
+              router.push('/dashboard');
+            } else {
+              toast.error('Cadastro ok, mas erro ao logar');
+            }
+    
+          } catch (err: any) {
+            toast.error('Erro inesperado', {
+              description: err?.message || 'Tente novamente'
+            });
           }
-
-          if (!response?.error) {
-            toast.success('Login realizado com sucesso')
-            router.push('/dashboard')
-          }
-        })
+        }
+      })
         
-  };
+  }
 
   return (
     <>
@@ -81,6 +120,26 @@ export default function UserAuthForm() {
           // action={credentialsAction}
           className='w-full space-y-2'
         >
+          { register && (
+            <FormField
+              control={form.control}
+              name='username'
+              render={({ field }) => (
+                <FormItem className='pb-2'>
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='text'
+                      placeholder='Entre com o nome'
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name='email'
