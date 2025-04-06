@@ -34,7 +34,7 @@ var whitelist = [
   "http://frontend:3000", 
   "http://nginx",
   "http://172.18.0.3",
-  "http://cse.seed.ap.br",
+  "https://cse-seed.vercel.app",
   "http://localhost",
   "http://host.docker.internal:3000",
   "http://host.docker.internal"
