@@ -7,7 +7,7 @@ services:
       - /usr/src/app/node_modules
 
   test:
-    volumes:
+    volumes: []
 
   production:
-    volumes:
+    volumes: []
