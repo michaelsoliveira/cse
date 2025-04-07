@@ -20,7 +20,6 @@ services:
       service: ${ENVIRONMENT}
     networks:
       - stack
-      - backend_cse_network
     ports:
       - ${PORT}:3000
     restart: unless-stopped
@@ -61,7 +60,6 @@ services:
     restart: always
     networks:
       - stack
-      - backend_cse_network
   
 volumes:
   data_app:
@@ -74,5 +72,3 @@ networks:
   stack:
     external: true
     name: ${APP_NAME}_network
-  backend_cse_network:
-    external: true
