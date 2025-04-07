@@ -89,17 +89,17 @@ services:
       - alpha
       - beta
     
-  nginx:
-    build: 
-      context: ./docker/nginx
-    links:
-      - backend
-    ports:
-      - 80:80
-      - 443:443
-    restart: always
-    networks:
-      - stack
+  # nginx:
+  #   build: 
+  #     context: ./docker/nginx
+  #   links:
+  #     - backend
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   restart: always
+  #   networks:
+  #     - stack
   mail:
     build:
       context: .
@@ -210,7 +210,7 @@ services:
 networks:
   stack:
     external: true
-    name: ${APP_NAME}_network
+    name: app_network
 
 volumes:
   data_backup:

@@ -33,33 +33,33 @@ services:
       timeout: 10s
       start_period: 30s
       retries: 4
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./certbot/www:/var/www/certbot
-      - ./certbot/conf:/etc/letsencrypt
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'"
-    networks:
-      - stack
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes:
+  #     - ./certbot/www:/var/www/certbot
+  #     - ./certbot/conf:/etc/letsencrypt
+  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'"
+  #   networks:
+  #     - stack
 
-  nginx:
-    container_name: nginx
-    build: 
-      context: ./docker/nginx
-    environment:
-      - PORT
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    links:
-      - app
-    ports:
-      - 80:80
-      - 443:443
-    restart: always
-    networks:
-      - stack
+  # nginx:
+  #   container_name: nginx
+  #   build: 
+  #     context: ./docker/nginx
+  #   environment:
+  #     - PORT
+  #   volumes:
+  #     - ./certbot/conf:/etc/letsencrypt
+  #     - ./certbot/www:/var/www/certbot
+  #   links:
+  #     - app
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   restart: always
+  #   networks:
+  #     - stack
   
 volumes:
   data_app:
@@ -71,4 +71,4 @@ volumes:
 networks:
   stack:
     external: true
-    name: ${APP_NAME}_network
+    name: app_network
