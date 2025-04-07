@@ -4,7 +4,11 @@ import axios from 'axios';
 import { useSession, signOut } from 'next-auth/react';
 import { useMemo } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL_CLIENT
+const isServer = typeof window === "undefined"
+
+const API_URL = isServer 
+    ? process.env.INTERNAL_API_URL
+    : process.env.NEXT_PUBLIC_API_URL
 
 const useClient = (options?: any) => {
   const { data: session } = useSession();

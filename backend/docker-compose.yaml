@@ -88,7 +88,18 @@ services:
       - development
       - alpha
       - beta
-
+    
+  nginx:
+    build: 
+      context: ./docker/nginx
+    links:
+      - backend
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    networks:
+      - stack
   mail:
     build:
       context: .

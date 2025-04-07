@@ -3,7 +3,9 @@ import { twMerge } from 'tailwind-merge';
 import { auth } from './auth';
 import { toPng } from 'html-to-image';
 
-const API_URL = process.env.USE_DOCKER === "true" ? process.env.NEXT_PUBLIC_API_URL_SERVER : process.env.NEXT_PUBLIC_API_URL_CLIENT
+const isServer = typeof window === "undefined"
+
+const API_URL = isServer ? process.env.INTERNAL_API_URL : process.env.NEXT_PUBLIC_API_URL
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
