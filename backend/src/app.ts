@@ -37,7 +37,15 @@ var whitelist = [
   "https://cse-seed.vercel.app",
   "http://localhost",
   "http://host.docker.internal:3000",
-  "http://host.docker.internal"
+  "http://host.docker.internal",
+  "http://cse.bomanejo.com.br",
+  "https://cse.bomanejo.com.br",
+  "http://bomanejo.com.br",
+  "https://bomanejo.com.br",
+  "http://app.bomanejo.com.br",
+  "https://app.bomanejo.com.br",
+  "http://api.bomanejo.com.br",
+  "https://api.bomanejo.com.br",
 ]
 var corsOptions = {
   origin: function (origin: any, callback: any) {
