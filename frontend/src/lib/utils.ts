@@ -178,7 +178,7 @@ export const formatData = ({ data }: { data: any }) => {
 
 export const formatHora = ({ hora }: { hora: any }) => {
   return new Intl.DateTimeFormat('pt-BR', {
-    timeZone: 'America/Sao_Paulo',
+    timeZone: 'UTCAm',
     hour: '2-digit',
     minute: '2-digit'
   }).format(new Date(hora));

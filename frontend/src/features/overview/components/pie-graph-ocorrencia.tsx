@@ -32,7 +32,7 @@ export function PieGraphOcorrencia() {
   const { data, isLoading, error } = useQuery({
       queryKey: ["ocorrencias-unidades", anoAtivo],
       queryFn: async () => {
-        const { data: { ocorrencias, error }} = await client.get(`/dashboard/ocorrencias-unidades?limit=10`)
+        const { data: { ocorrencias, error }} = await client.get(`/dashboard/ocorrencias-unidades?limit=7`)
         
         return ocorrencias
       },
