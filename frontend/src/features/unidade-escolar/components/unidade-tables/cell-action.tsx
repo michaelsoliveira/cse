@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Product } from '@/constants/data';
 import { useAuthContext } from '@/context/AuthContext';
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { Edit, MoreHorizontal, Trash, Calendar1 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -64,6 +64,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
+          <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/unidade-escolar/${data.id}/avaliacao`)}
+          >
+            <Calendar1 className='mr-2 h-4 w-4' /> Avaliar
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/unidade-escolar/${data.id}`)}
           >
