@@ -23,6 +23,8 @@
   "author": "Michael Oliveira <michaelsoliveira@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.782.0",
+    "@aws-sdk/s3-request-presigner": "^3.782.0",
     "@prisma/client": "^5.8.1",
     "@types/jsonwebtoken": "^9.0.5",
     "axios": "^1.6.7",

@@ -6,6 +6,7 @@ const routes = express.Router()
 
 //Ocorrencias
 routes.get('/', Authentication(), new OcorrenciaController().findAll)
+routes.post("/upload-url", new OcorrenciaController().getUploadUrl);
 routes.get('/get-tipos', Authentication(), new OcorrenciaController().getTiposOcorrencia)
 routes.get('/get-lastest', Authentication(), new OcorrenciaController().getLastOcorrencias)
 routes.get('/:id', Authentication(), new OcorrenciaController().findOne)

@@ -1,5 +1,8 @@
 import { Ocorrencia, TipoOcorrencia } from "@prisma/client";
 import { prismaClient } from "../database/prismaClient";
+import { s3 } from "../utils/s3";
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 class OcorrenciaService {
     async create(data: any): Promise<Ocorrencia> {
@@ -234,6 +237,24 @@ class OcorrenciaService {
         })
 
         return tipos
+    }
+
+    async uploadS3({ filename, contentType }: { filename: string; contentType: string }) {
+        const key = `ocorrencias/${Date.now()}-${filename}`;
+    
+        const command = new PutObjectCommand({
+          Bucket: process.env.AWS_S3_BUCKET,
+          Key: key,
+          ContentType: contentType,
+        });
+    
+        const url = await getSignedUrl(s3, command, { expiresIn: 60 });
+    
+        return {
+          url,        // presigned PUT URL
+          key,
+          publicUrl: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`,
+        };
     }
 
     async findById(id: string) : Promise<any> {

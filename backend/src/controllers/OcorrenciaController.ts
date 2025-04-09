@@ -59,6 +59,17 @@ export class OcorrenciaController {
         }
     }
 
+    async getUploadUrl(request: Request, response: Response) {
+        const { filename, type } = request.body;
+    
+        if (!filename || !type) {
+          return response.status(400).json({ error: "Parâmetros inválidos" });
+        }
+    
+        const uploadData = await ocorrenciaService.uploadS3({ filename, contentType: type });
+        return response.json(uploadData);
+      }
+
     async getLastOcorrencias(request: Request, response: Response) {
         const { limit } = request.query as any
         
