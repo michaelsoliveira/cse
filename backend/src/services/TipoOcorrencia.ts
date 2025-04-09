@@ -23,19 +23,9 @@ class TipoOcorrenciaService {
     }
 
     async update(id: string, data: any): Promise<TipoOcorrencia> {
-        const tipoOcorrenciaExists = await prismaClient.tipoOcorrencia.findFirst({
-            where: {
-                nome: data?.nome
-            }
-        })
-
-        if (tipoOcorrenciaExists) {
-            throw new Error('Já existe um tipo de ocorrência cadastrada com este nome')
-        }
-        
         const tipoOcorrencia = await prismaClient.tipoOcorrencia.update({
             where: {
-                id: data?.id
+                id
             },
             data: {
                 nome: data?.nome

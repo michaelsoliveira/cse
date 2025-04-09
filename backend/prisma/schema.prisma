@@ -98,7 +98,7 @@ model UnidadeEscolar {
   responsavel_registro ResponsavelRegistro[]
   diretor              Diretor?              @relation(fields: [diretor_id], references: [id])
   pessoa               Pessoa?               @relation(fields: [pessoa_id], references: [id], onDelete: Cascade)
-
+  avaliacoes           AvaliacaoMensal[]
   @@map("unidade_escolar")
 }
 
@@ -156,6 +156,46 @@ model Ocorrencia {
   user            User                    @relation(fields: [user_id], references: [id])
 
   @@map("ocorrencia")
+}
+
+enum Mes {
+  jan
+  fev
+  mar
+  abr
+  mai
+  jun
+  jul
+  ago
+  set
+  out
+  nov
+  dez
+
+  @@map("meses")
+}
+
+enum StatusAvaliacao {
+  muito_bom
+  bom
+  ruim
+  sem_acesso
+
+  @@map("status_avaliacao")
+}
+
+model AvaliacaoMensal {
+  id           String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  mes          Mes
+  ano          Int
+  status       StatusAvaliacao
+  obs          String?
+  unidade_id  String  @db.Uuid
+  unidade   UnidadeEscolar   @relation(fields: [unidade_id], references: [id])
+
+  @@unique([unidade_id, mes, ano])
+
+  @@map("avaliacao_mensal")
 }
 
 model Parametro {

@@ -112,4 +112,74 @@ export class UnidadeController {
             return response.json(error.message)
         }
     }
+
+    async getAvaliacoes(request: Request, response: Response) {
+        const { unidade_id } = request.params
+        try {
+            const avaliacoes = await unidadeService.getAvaliacoes(unidade_id)
+
+            return response.json({
+                error: false,
+                avaliacoes
+            })
+        } catch(error: any) {
+            return response.json({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+
+    async addAvaliacao(request: Request, response: Response) {
+        const { unidade_id } = request.params
+        try {
+            const avaliacao = await unidadeService.addAvaliacao(unidade_id, request.body)
+
+            return response.json({ 
+                error: false,
+                message: 'Avaliação cadastrada com sucesso',
+                avaliacao 
+            })
+        } catch(error: any) {
+            return response.json({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+
+    async updateAvaliacao(request: Request, response: Response) {
+        const { avaliacao_id } = request.params
+        try {
+            const avaliacao = await unidadeService.updateAvaliacao(avaliacao_id, request.body)
+
+            return response.json({ 
+                error: false,
+                message: 'Avaliação atualizada com sucesso!',
+                avaliacao 
+            })
+        } catch(error: any) {
+            return response.json({
+                error: true,
+                message: error.message
+            })
+        }
+    }
+
+    async deleteAvaliacao(request: Request, response: Response) {
+        const { avaliacao_id } = request.params
+        try {
+            const avaliacao = await unidadeService.deleteAvalicao(avaliacao_id)
+
+            return response.json({ 
+                error: false,
+                message: 'Avaliação deletada com sucesso!'
+            })
+        } catch(error: any) {
+            return response.json({
+                error: true,
+                message: error.message})
+        }
+    }
+    
 }
