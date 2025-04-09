@@ -1,25 +1,22 @@
 import AvaliacaoForm from '@/features/unidade-escolar/components/avaliacao-form';
 import { fetchAPI } from '@/lib/utils';
-import { notFound } from 'next/navigation'
+import { notFound } from 'next/navigation';
 
-type Params = {
-  params: {
-    unidadeId: string
-    avaliacaoId: string
-  }
-}
+type PageProps = { params: Promise<{ unidadeId: string, avaliacaoId: string }> };
 
-export default async function AvaliacaoPage({ params }: Params) {
-  const { unidadeId, avaliacaoId } = params
+export default async function AvaliacaoPage(props: PageProps) {
+  const params = await props.params;
+  const { unidadeId, avaliacaoId } = params;
+  const isNew = avaliacaoId === 'new';
 
-  // Exemplo: busca avaliação por ID caso não seja "new"
-  const isNew = avaliacaoId === 'new'
-  let avaliacaoData = null
+  let avaliacaoData = null;
 
   if (!isNew) {
-    const data = await fetchAPI(`/unidade/${unidadeId}/avaliacao/${avaliacaoId}`, { cache: 'no-store' })
-    if (!data) return notFound()
-    avaliacaoData = data
+    const data = await fetchAPI(`/unidade/${unidadeId}/avaliacao/${avaliacaoId}`, {
+      cache: 'no-store',
+    });
+    if (!data) return notFound();
+    avaliacaoData = data;
   }
 
   return (
@@ -29,5 +26,5 @@ export default async function AvaliacaoPage({ params }: Params) {
       </h1>
       <AvaliacaoForm unidadeId={unidadeId} defaultData={avaliacaoData} />
     </div>
-  )
+  );
 }

@@ -92,9 +92,9 @@ const chartConfig = {
       <CardContent>
             <ChartContainer
               config={chartConfig}
-              className='aspect-auto h-[310px] w-full'
+              // className='aspect-auto h-[310px] w-full'
             >
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height={375}>
               <AreaChart 
                 data={dadosProcessados} 
                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}

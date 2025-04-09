@@ -1,6 +1,6 @@
 import { Ocorrencia, TipoOcorrencia } from "@prisma/client";
 import { prismaClient } from "../database/prismaClient";
-import { s3 } from "../utils/s3";
+import { s3 } from "../utils";
 import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
