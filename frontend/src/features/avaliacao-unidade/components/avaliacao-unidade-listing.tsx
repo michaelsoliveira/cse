@@ -67,7 +67,7 @@ export default function AvaliacaoUnidadeListingPage() {
   type StringOptionType = Pick<OptionType, 'label'> & { value: string };
   
   // Atualiza URL e localStorage ao mudar filtro
-  const handleParamChange = (key: string, rawValue: string | OptionType & { value: string }, setter: (v: string) => void) => {
+  const handleParamChange = (key: string, rawValue: string | StringOptionType, setter: (v: string) => void) => {
     let value: string;
   
     if (isOptionType(rawValue)) {
@@ -101,7 +101,7 @@ export default function AvaliacaoUnidadeListingPage() {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  if (!error){
+
     return (
     <div className="p-4 space-y-4">
       <div className="flex flex-col md:grid md:grid-cols-4 gap-4 items-center">
@@ -194,4 +194,3 @@ export default function AvaliacaoUnidadeListingPage() {
         // />
       );
     }
-}

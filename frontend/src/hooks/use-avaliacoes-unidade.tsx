@@ -38,10 +38,9 @@ export function useAvaliacoesUnidade(params: Params) {
       });
       
       const { avaliacoes, error } = data
-      console.log(data)
 
       return avaliacoes;
     },
-    enabled: !!params.unidade_id,
+    // enabled: !!params.unidade_id,
   });
 }

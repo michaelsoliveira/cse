@@ -7,7 +7,7 @@ import Link from "next/link";
 const Navbar = async () => {
 	const session = await auth();
 	return (
-		<nav className="flex-col gap-6 text-lg font-medium md:flex md:flex-row md:min-w-full md:items-center md:justify-between md:gap-5 md:text-sm lg:gap-6">
+		<nav className="gap-6 text-lg font-medium flex flex-row min-w-full items-center justify-between md:gap-5 md:text-sm lg:gap-6">
 			<div className="flex flex-row w-full gap-4">
 				<Link href="#" className="flex items-center gap-2 text-lg font-semibold md:text-base">
 					<Fingerprint className="h-6 w-6 text-green-500" />

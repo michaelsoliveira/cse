@@ -36,8 +36,7 @@ export function AreaGraphOcorrencia() {
       return ocorrencias
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 60,
-    staleTime: 60
+    staleTime: 6000 * 10
   });
 
   if (isLoading) return <p>Carregando...</p>;

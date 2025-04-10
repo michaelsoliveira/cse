@@ -206,16 +206,6 @@ export default function UserAuthForm() {
               Lembre-me
             </label>
           </div>
-
-          <div className="text-sm">
-            <a
-              onClick={() => setRegister(!register)}
-              href="#"
-              className="font-medium text-custom-green hover:opacity-75"
-            >
-              { register ? "Já tem uma conta?" : "Não tem uma conta?" }
-            </a>
-          </div>
         </div>
       <div className='relative'>
         <div className='absolute inset-0 flex items-center'>
