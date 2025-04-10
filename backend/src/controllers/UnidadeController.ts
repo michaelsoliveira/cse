@@ -95,9 +95,9 @@ export class UnidadeController {
     }
 
     async search(request: Request, response: Response) {
-        const { nome } = request.query
+        const { search } = request.query
         
-        const unidades = nome ? await unidadeService.search(nome) : await unidadeService.getAll()
+        const unidades = await unidadeService.search(search) ?? []
 
         return response.json(unidades)
     }

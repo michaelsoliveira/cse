@@ -25,8 +25,22 @@ export function useAvaliacoesUnidade(params: Params) {
   return useQuery({
     queryKey: ["avaliacoes", params],
     queryFn: async () => {
-      const res = await client.get("/avaliacao-unidade/avaliacoes", { params });
-      return res.data;
+      const { unidade_id, ...rest } = params;
+
+      // Evita erro por unidade_id vazio
+      if (!unidade_id) return [];
+
+      const { data } = await client.get('/avaliacao-unidade', {
+        params: {
+          unidade_id,
+          ...rest,
+        },
+      });
+      
+      const { avaliacoes, error } = data
+      console.log(data)
+
+      return avaliacoes;
     },
     enabled: !!params.unidade_id,
   });

@@ -42,12 +42,10 @@ export default function AvaliacaoUnidadeListingPage() {
         setAno(localStorage.getItem("ano") || "");
         setStatus(localStorage.getItem("status") || "");
       }
-
       loadUnidades()
     }, [loadUnidades])
 
   const { data, isLoading, error } = useAvaliacoesUnidade({ unidade_id: unidadeId, ano, status });
-
   const optionsUnidades : OptionType[] = unidades?.map((unidade: any) => {
     return {
         label: unidade?.pessoa.pessoaJuridica.nome_fantasia,
@@ -55,14 +53,35 @@ export default function AvaliacaoUnidadeListingPage() {
     }
   })
 
+  function isOptionType(obj: unknown): obj is OptionType {
+    return (
+      typeof obj === 'object' &&
+      obj !== null &&
+      'label' in obj &&
+      'value' in obj &&
+      typeof (obj as any).label === 'string' &&
+      typeof (obj as any).value === 'string'
+    );
+  }
+
+  type StringOptionType = Pick<OptionType, 'label'> & { value: string };
+  
   // Atualiza URL e localStorage ao mudar filtro
-  const handleParamChange = (key: string, value: string, setter: (v: string) => void) => {
+  const handleParamChange = (key: string, rawValue: string | OptionType & { value: string }, setter: (v: string) => void) => {
+    let value: string;
+  
+    if (isOptionType(rawValue)) {
+      value = rawValue.value;
+    } else {
+      value = rawValue;
+    }
+
     setter(value);
-    localStorage.setItem(key, value);
+    localStorage.setItem(key, String(value));
 
     const params = new URLSearchParams(searchParams.toString());
     if (value) {
-      params.set(key, value);
+      params.set(key, String(value));
     } else {
       params.delete(key);
     }
@@ -106,9 +125,13 @@ export default function AvaliacaoUnidadeListingPage() {
                 <SelectValue placeholder="Ano" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2023">2023</SelectItem>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2025">2025</SelectItem>
+                { [
+                    { label: "2024", value: "2024" },
+                    { label: "2025", value: "2025" }
+                  ].map((option, idx) => (
+                    <SelectItem key={idx} value={option.value}>{option.label}</SelectItem>  
+                  )) 
+                }
               </SelectContent>
             </Select>
           </div>
@@ -123,8 +146,9 @@ export default function AvaliacaoUnidadeListingPage() {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pendente">Pendente</SelectItem>
-                <SelectItem value="concluido">Concluído</SelectItem>
+                <SelectItem value="muito_bom">MUITO BOM</SelectItem>
+                <SelectItem value="bom">BOM</SelectItem>
+                <SelectItem value="ruim">RUIM</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -317,6 +317,14 @@ class UnidadeService {
                      }
                 }
             },
+            take: 20,
+            orderBy: {
+                pessoa: {
+                    pessoaJuridica: {
+                        nome_fantasia: 'asc'
+                    }
+                }
+            }
         })
 
         return unidades

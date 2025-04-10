@@ -64,7 +64,7 @@ export class AvaliacaoUnidadeController {
             
             return response.json({
                 error: false,
-                avaliacaoes: data,
+                avaliacoes: data,
                 perPage,
                 page,
                 skip,
