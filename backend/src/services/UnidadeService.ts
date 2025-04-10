@@ -212,50 +212,6 @@ class UnidadeService {
         })
     }
 
-    async getAvaliacoes(unidade_id: string) {
-        const avaliacoes = await prismaClient.avaliacaoMensal.findMany({
-            where: {
-                unidade_id
-            }
-        })
-
-        return avaliacoes
-    }
-
-    async addAvaliacao(unidade_id: string, data: any): Promise<any> {
-        const avaliacao = await prismaClient.avaliacaoMensal.create({
-            data: {
-                unidade_id: unidade_id,
-                ano: Number(data?.ano),
-                mes: data?.mes,
-                status: data?.status,
-                obs: data?.obs
-            }
-        })
-
-        return avaliacao
-    }
-
-    async updateAvaliacao(id: string, data: any): Promise<any> {
-        const avaliacao = await prismaClient.avaliacaoMensal.update({
-            where: {
-                id
-            },
-            data: {
-                ano: Number(data?.ano),
-                mes: data?.mes,
-                status: data?.status,
-                obs: data?.obs
-            }
-        })
-
-        return avaliacao
-    }
-
-    async deleteAvalicao(id: string) {
-        await prismaClient.avaliacaoMensal.delete({ where: { id } })
-    }
-
     async getAll(query?: any): Promise<any> {
         const { limit, page, search, orderBy, order, zonas: zonasQuery, municipio } = query
         const zonas = zonasQuery?.split('.')

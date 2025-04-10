@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
-import unidadeService from "../services/UnidadeService";
+import avaliacaoUnidadeService from "../services/AvaliacaoUnidadeService";
 
-export class UnidadeController {
+export class AvaliacaoUnidadeController {
     async store(request : Request, response: Response) : Promise<Response> {
         try {    
-            const unidade = await unidadeService.create(request.body)
+            const avaliacao = await avaliacaoUnidadeService.create(request.body)
             return response.json({
                 error: false,
-                unidade,
-                message: `Unidade cadastrada com SUCESSO!!!`
+                avaliacao,
+                message: `Avaliação de unidade cadastrada com SUCESSO!!!`
             })
 
         } catch (error: any) {
             return response.json({
                 error: true,
-                unidade: null,
+                avaliacao: null,
                 message: error.message
             })
         }
@@ -23,17 +23,17 @@ export class UnidadeController {
      async update(request : Request, response: Response) : Promise<Response> {
         const { id } = request.params
          try {    
-            const unidade = await unidadeService.update(id, request.body)
+            const avaliacao = await avaliacaoUnidadeService.update(id, request.body)
             return response.json({
                 error: false,
-                unidade,
-                message: `Unidade atualizada com SUCESSO!!!`
+                avaliacao,
+                message: `Avaliacao de unidade atualizada com SUCESSO!!!`
             })
 
         } catch (error: any) {
             return response.json({
                 error: true,
-                unidade: null,
+                avaliacao: null,
                 message: error.message
             })
         }
@@ -43,16 +43,16 @@ export class UnidadeController {
         const { id } = request.params
 
         try {
-            await unidadeService.delete(id)
+            await avaliacaoUnidadeService.delete(id)
 
             return response.status(200).json({
                 error: false,
-                message: 'Unidade deletada com Sucesso!!!'
+                message: 'Avaliação de unidade deletada com Sucesso!'
             })
         } catch (error: any) {
             return response.json({
                 error: true,
-                unidade: null,
+                avaliacao: null,
                 message: error.message
             })
         }
@@ -60,12 +60,12 @@ export class UnidadeController {
 
     async findAll(request: Request, response: Response) {
         try {
-            const { data, limit, page, orderBy, order, skip, count } = await unidadeService.getAll(request.query)
+            const { data, perPage, page, orderBy, order, skip, count } = await avaliacaoUnidadeService.getAll(request.query)
             
             return response.json({
                 error: false,
-                unidades: data,
-                limit,
+                avaliacaoes: data,
+                perPage,
                 page,
                 skip,
                 orderBy,
@@ -76,38 +76,30 @@ export class UnidadeController {
         } catch(error: any) {
             return response.json({
                 error: false,
-                unidades: [],
+                avaliacaoes: [],
                 message: error.message
             })
         }
     }
 
-    async deleteUnidades(request: Request, response: Response) {
+    async deleteAvaliacoes(request: Request, response: Response) {
         const { ids } = request.body
         
-        await unidadeService.deleteUnidades(ids)
+        await avaliacaoUnidadeService.deleteAvaliacoes(ids)
 
         return response.json({
             ids,
-            message: 'Unidades deletadas com sucesso',
+            message: 'Avaliacaoes de unidades deletadas com sucesso',
             error: false
         })   
-    }
-
-    async search(request: Request, response: Response) {
-        const { nome } = request.query
-        
-        const unidades = nome ? await unidadeService.search(nome) : await unidadeService.getAll()
-
-        return response.json(unidades)
     }
 
     async findOne(request: Request, response: Response) {
         const { id } = request.params
         try {
-            const unidade = await unidadeService.findById(id)
+            const avaliacao = await avaliacaoUnidadeService.findById(id)
 
-            return response.json(unidade)
+            return response.json(avaliacao)
         } catch(error: any) {
             return response.json(error.message)
         }

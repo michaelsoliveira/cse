@@ -14,7 +14,8 @@ import {
     usersRoutes,
     rootRoute,
     tipoOcorrenciaRoutes,
-    parametroRoutes
+    parametroRoutes,
+    avaliacaoUnidadeRoutes
   } from "./routes"
 import cors from 'cors'
 import { Server } from 'socket.io'
@@ -74,6 +75,7 @@ app.use('/permission', permissionRoutes)
 app.use('/role', roleRoutes)
 app.use('/unidade', unidadeRoutes)
 app.use('/tipo-ocorrencia', tipoOcorrenciaRoutes)
+app.use('/avaliacao-unidade', avaliacaoUnidadeRoutes)
 app.use('/users', usersRoutes)
 app.use(errorMiddleware)
 

@@ -14,6 +14,7 @@ import roleRoutes from "./role.routes";
 import tipoOcorrenciaRoutes from "./tipoOcorrencia.routes";
 import unidadeRoutes from "./unidade.routes";
 import usersRoutes from "./users.routes";
+import avaliacaoUnidadeRoutes from "./avaliacao.unidade.routes"
 
 import * as express from 'express';
 const routes = express.Router()
@@ -38,5 +39,6 @@ export {
     unidadeRoutes,
     tipoOcorrenciaRoutes,
     usersRoutes,
+    avaliacaoUnidadeRoutes,
     rootRoute
 };

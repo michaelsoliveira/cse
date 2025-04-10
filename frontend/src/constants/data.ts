@@ -21,12 +21,6 @@ export const navItems: NavItem[] = [
     shortcut: ['d', 'd'],
     items: [] // Empty array as there are no child items for Dashboard
   },
-  // {
-  //   title: 'Profile',
-  //   url: '/dashboard/profile',
-  //   icon: 'userPen',
-  //   shortcut: ['m', 'm']
-  // },
   {
     title: 'Cadastro',
     url: '#', // Placeholder as there is no direct link for the parent
@@ -39,6 +33,11 @@ export const navItems: NavItem[] = [
         title: 'Unidade Escolar',
         url: '/dashboard/unidade-escolar',
         icon: 'userPen',
+      },
+      {
+        title: 'Avaliação de Unidade',
+        url: '/dashboard/avaliacao-unidade',
+        icon: 'laptop'
       },
       {
         title: 'Diretor',
