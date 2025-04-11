@@ -73,58 +73,9 @@ export default function AvaliacaoUnidadeListingPage() {
 
   const { data, isLoading, error } = useAvaliacoesUnidade({ unidade_id: unidadeId, ano, status });
 
-  const { data: unidades } = useUnidades()
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUnidadeId(localStorage.getItem("unidade_id") || "");
-      setAno(localStorage.getItem("ano") || "");
-      setStatus(localStorage.getItem("status") || "");
-    }
-    // loadUnidades()
-  }, [])
-
-  
-  const optionsUnidades : OptionType[] = unidades?.map((unidade: any) => {
-    return {
-        label: unidade?.pessoa.pessoaJuridica.nome_fantasia,
-        value: unidade?.id
-    }
-  })
-
-    return (
+  return (
     <div className="p-4 space-y-4">
-      <div className="flex flex-col md:grid md:grid-cols-4 gap-4 items-center">
-        <div className="col-span-2">
-          <Label>Unidade escolar</Label>
-            <SelectSearchable 
-              callback={(v) => handleParamChange("unidade_id", v, setUnidadeId)} 
-              options={optionsUnidades} 
-              field={optionsUnidades?.find((option: any) => option.value === unidadeId)} 
-              placeholder="Selecione uma Unidade"
-            />
-          </div>
-          <div>
-            <Label>Ano</Label>
-            <YearSelect value={ano} onChange={(v) => handleParamChange("ano", v, setAno)} />
-          </div>
-
-          <div>
-            <Label>Status</Label>
-            <Select onValueChange={(v) => handleParamChange("status", v, setStatus)} value={status}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o status" />
-                </SelectTrigger>
-              <SelectContent>
-                {statusOptions.map(({ label, value }) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+      
         
         { data && (
           <AvaliacaoUnidadeTable

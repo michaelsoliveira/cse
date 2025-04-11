@@ -9,9 +9,8 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
-import ComunicanteListingPage from '@/features/comunicante/components/comunicante-listing';
-import ComunicanteTableAction from '@/features/comunicante/components/comunicante-tables/comunicante-table-action';
 import AvaliacaoUnidadeListingPage from '@/features/avaliacao-unidade/components/avaliacao-unidade-listing';
+import AvaliacaoUnidadeTableAction from '@/features/avaliacao-unidade/components/avaliacao-unidade-table/avaliacao-unidade-table-action';
 
 export const metadata = {
   title: 'Dashboard: Comunicantes'
@@ -45,7 +44,7 @@ export default async function Page(props: pageProps) {
           </Link>
         </div>
         <Separator />
-        {/* <ComunicanteTableAction /> */}
+        <AvaliacaoUnidadeTableAction />
         <Suspense
           key={key}
           fallback={<DataTableSkeleton columnCount={5} rowCount={10} />}

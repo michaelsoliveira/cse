@@ -16,7 +16,11 @@ export const searchParams = {
   dataInicio: parseAsString,
   dataFim: parseAsString,
   classificacao_ocorrencia: parseAsString,
-  tipo_ocorrencia: parseAsString
+  tipo_ocorrencia: parseAsString,
+  unidade_id: parseAsString,
+  ano: parseAsString,
+  mes: parseAsString,
+  status: parseAsString
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParams);
