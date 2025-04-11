@@ -94,7 +94,7 @@ export function DashboardTiposOcorrencias() {
               <BarChart 
                 // layout="vertical"
                 data={chartData} 
-                margin={{bottom: 40, top: 10}}
+                margin={{bottom: 45, top: 10}}
               >
               <XAxis 
                   dataKey="name" 

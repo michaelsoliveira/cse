@@ -18,41 +18,22 @@ import { OptionType, SelectSearchable } from '@/components/select-searchable';
 import { useSession } from 'next-auth/react';
 import { useAuthContext } from '@/context/AuthContext';
 import { Label } from '@/components/ui/label';
+import { useSyncSearchParamsWithLocalStorage } from '@/hooks/use-sync-search-params';
+import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
+import { useUnidades } from '@/hooks/use-unidades';
+import { YearSelect } from '@/components/year-select';
+import { statusOptions } from '../utils';
 
 export default function AvaliacaoUnidadeListingPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [unidades, setUnidades] = useState([]);
+  // const [unidades, setUnidades] = useState([]);
   const { data: session } = useSession()
   const { client } = useAuthContext()
   const [unidadeId, setUnidadeId] = useState<string>("")
   const [ano, setAno] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-
-  const loadUnidades = useCallback(async () => {
-      if (typeof session !== typeof undefined) {
-        const { data: { unidades } } = await client.get('/unidade?orderBy=pessoa.pessoaJuridica.nome_fantasia&order=asc')
-        setUnidades(unidades);
-      }
-    }, [session, client])
   
-    useEffect(() => {
-      if (typeof window !== "undefined") {
-        setUnidadeId(localStorage.getItem("unidade_id") || "");
-        setAno(localStorage.getItem("ano") || "");
-        setStatus(localStorage.getItem("status") || "");
-      }
-      loadUnidades()
-    }, [loadUnidades])
-
-  const { data, isLoading, error } = useAvaliacoesUnidade({ unidade_id: unidadeId, ano, status });
-  const optionsUnidades : OptionType[] = unidades?.map((unidade: any) => {
-    return {
-        label: unidade?.pessoa.pessoaJuridica.nome_fantasia,
-        value: unidade?.id
-    }
-  })
-
   function isOptionType(obj: unknown): obj is OptionType {
     return (
       typeof obj === 'object' &&
@@ -63,7 +44,7 @@ export default function AvaliacaoUnidadeListingPage() {
       typeof (obj as any).value === 'string'
     );
   }
-
+  
   type StringOptionType = Pick<OptionType, 'label'> & { value: string };
   
   // Atualiza URL e localStorage ao mudar filtro
@@ -86,21 +67,30 @@ export default function AvaliacaoUnidadeListingPage() {
       params.delete(key);
     }
     router.push(`?${params.toString()}`);
-  };
+  }
 
-  const columns = useMemo<ColumnDef<any>[]>(() => [
-    { header: "Ano", accessorKey: "ano" },
-    { header: "Mês", accessorKey: "mes" },
-    { header: "Status", accessorKey: "status" },
-    { header: "Observação", accessorKey: "obs" },
-  ], []);
+  useSyncSearchParamsWithLocalStorage(['unidade_id', 'ano', 'status']);
 
-  const table = useReactTable({
-    data: data ?? [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  const { data, isLoading, error } = useAvaliacoesUnidade({ unidade_id: unidadeId, ano, status });
 
+  const { data: unidades } = useUnidades()
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUnidadeId(localStorage.getItem("unidade_id") || "");
+      setAno(localStorage.getItem("ano") || "");
+      setStatus(localStorage.getItem("status") || "");
+    }
+    // loadUnidades()
+  }, [])
+
+  
+  const optionsUnidades : OptionType[] = unidades?.map((unidade: any) => {
+    return {
+        label: unidade?.pessoa.pessoaJuridica.nome_fantasia,
+        value: unidade?.id
+    }
+  })
 
     return (
     <div className="p-4 space-y-4">
@@ -108,89 +98,41 @@ export default function AvaliacaoUnidadeListingPage() {
         <div className="col-span-2">
           <Label>Unidade escolar</Label>
             <SelectSearchable 
-                callback={(v) => handleParamChange("unidade_id", v, setUnidadeId)} 
-                options={optionsUnidades} 
-                field={optionsUnidades.find((option: any) => option.value === unidadeId)} 
-                placeholder="Selecione uma Unidade"
-              />
+              callback={(v) => handleParamChange("unidade_id", v, setUnidadeId)} 
+              options={optionsUnidades} 
+              field={optionsUnidades?.find((option: any) => option.value === unidadeId)} 
+              placeholder="Selecione uma Unidade"
+            />
           </div>
-
           <div>
             <Label>Ano</Label>
-            <Select
-              value={ano}
-              onValueChange={(v) => handleParamChange("ano", v, setAno)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Ano" />
-              </SelectTrigger>
-              <SelectContent>
-                { [
-                    { label: "2024", value: "2024" },
-                    { label: "2025", value: "2025" }
-                  ].map((option, idx) => (
-                    <SelectItem key={idx} value={option.value}>{option.label}</SelectItem>  
-                  )) 
-                }
-              </SelectContent>
-            </Select>
+            <YearSelect value={ano} onChange={(v) => handleParamChange("ano", v, setAno)} />
           </div>
 
           <div>
             <Label>Status</Label>
-            <Select
-              value={status}
-              onValueChange={(v) => handleParamChange("status", v, setStatus)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
+            <Select onValueChange={(v) => handleParamChange("status", v, setStatus)} value={status}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o status" />
+                </SelectTrigger>
               <SelectContent>
-                <SelectItem value="muito_bom">MUITO BOM</SelectItem>
-                <SelectItem value="bom">BOM</SelectItem>
-                <SelectItem value="ruim">RUIM</SelectItem>
+                {statusOptions.map(({ label, value }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </div>
-
-      {isLoading ? (
-        <p>Carregando avaliações...</p>
-      ) : (
-        <table className="min-w-full border mt-4 text-sm">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup: any) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header: any) => (
-                  <th
-                    key={header.id}
-                    className="border p-2 bg-gray-100 text-left"
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row: any) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell: any) => (
-                  <td key={cell.id} className="border p-2">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+        
+        { data && (
+          <AvaliacaoUnidadeTable
+            columns={columns}
+            data={data.avaliacoes}
+            totalItems={data.count}
+          />
+        ) }
     </div>
-
-        // <AvaliacaoUnidadeTable
-        //   columns={columns}
-        //   data={data}
-        //   totalItems={data?.length ?? 0}
-        // />
       );
     }

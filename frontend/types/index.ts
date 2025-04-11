@@ -12,6 +12,16 @@ export interface EnderecoType {
   bairro?: string;
 }
 
+export interface AvaliacaoUnidadeType {
+  id: string;
+  unidade_id: string;
+  ano: string;
+  mes: string;
+  status: string;
+  obs?: string;
+  unidade?: UnidadeEscolarType;
+}
+
 export interface OcorrenciaType {
   id: string;
   descricao?: string;
@@ -48,8 +58,8 @@ export interface MunicipioType {
 }
 
 export interface PessoaType {
-  id: string;
-  tipo: "F" | "J";
+  id?: string;
+  tipo?: "F" | "J";
   telefone?: string;
   email?: string;
   endereco_id?: string;
@@ -59,25 +69,25 @@ export interface PessoaType {
 }
 
 export interface UnidadeEscolarType {
-  id: string
-  inep: number;
-  zona: string;
-  hasDiretorData: boolean;
-  pessoa_id: string;
-  diretor_id: string;
+  id?: string
+  inep?: number;
+  zona?: string;
+  hasDiretorData?: boolean;
+  pessoa_id?: string;
+  diretor_id?: string;
   pessoa?: PessoaType;
   diretor?: DiretorType;
 }
 
 export interface PessoaJuridicaType {
-  id: string;
+  id?: string;
   nome_fantasia: string;
-  razao_social: string;
-  inscricao_estadual: string;
-  inscricao_federal: string;
-  cnpj: string;
+  razao_social?: string;
+  inscricao_estadual?: string;
+  inscricao_federal?: string;
+  cnpj?: string;
   data_constituicao?: string;
-  pessoa_id: string;
+  pessoa_id?: string;
 }
 
 export interface TipoOcorrenciaType {

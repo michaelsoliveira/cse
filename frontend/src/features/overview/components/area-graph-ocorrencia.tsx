@@ -96,7 +96,7 @@ const chartConfig = {
             <ResponsiveContainer>
               <AreaChart 
                 data={dadosProcessados} 
-                margin={{ top: 25, right: 30, left: 0, bottom: 10 }}
+                margin={{ top: 30, right: 30, left: 0, bottom: 10 }}
                 style={{ background: 'transparent' }}
               >
                 <defs>
@@ -110,7 +110,7 @@ const chartConfig = {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="mes" />
-                <YAxis domain={[0, 'dataMax + 8']} />
+                <YAxis domain={[0, 'dataMax + 5']} />
                 <Tooltip />
                 <Legend />
                 <CartesianGrid strokeDasharray="3 3" />

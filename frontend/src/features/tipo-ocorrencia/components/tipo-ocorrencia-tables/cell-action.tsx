@@ -13,10 +13,10 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { DiretorType } from 'types';
+import { TipoOcorrenciaType } from 'types';
 
 interface CellActionProps {
-  data: DiretorType;
+  data: TipoOcorrenciaType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {

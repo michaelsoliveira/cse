@@ -13,10 +13,10 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { DiretorType } from 'types';
+import { AvaliacaoUnidadeType } from 'types';
 
 interface CellActionProps {
-  data: DiretorType;
+  data: AvaliacaoUnidadeType;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -64,7 +64,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/tipo-ocorrencia/${data.id}`)}
+            onClick={() => router.push(`/dashboard/avaliacao-unidade/${data.id}`)}
           >
             <Edit className='mr-2 h-4 w-4' /> Editar
           </DropdownMenuItem>

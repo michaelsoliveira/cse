@@ -1,27 +1,29 @@
+import { auth } from '@/lib/auth';
 import { notFound } from 'next/navigation';
-import TipoOcorrenciaForm from './avaliacao-unidade-form';
+import { AvaliacaoUnidadeType } from 'types';
 import { fetchAPI } from '@/lib/utils';
-import { TipoOcorrenciaType } from 'types';
+import AvaliacaoUnidadeForm from './avaliacao-unidade-form';
 
-type TTipoOcorrenciaViewPage = {
-  tipoOcorrenciaId: string;
+type TOcorrenciaViewPageProps = {
+  avaliacaoId: string;
 };
 
-export default async function TipoOcorrenciaPageView({
-  tipoOcorrenciaId
-}: TTipoOcorrenciaViewPage) {
-  let tipoOcorrencia = null;
-  let pageTitle = 'Cadastrar Tipo de Ocorrência';
+export default async function OcorrenciaViewPage({
+  avaliacaoId
+}: TOcorrenciaViewPageProps) {
+  let avaliacaoUnidade = null;
+  let pageTitle = 'Cadastro de Avaliação de Unidade';
+  const session = await auth();
 
-  if (tipoOcorrenciaId !== 'new') {
-    const data = await fetchAPI(`/tipo-ocorrencia/${tipoOcorrenciaId}`)
-    tipoOcorrencia = data as TipoOcorrenciaType;
+  if (session && avaliacaoId !== 'new') {
+    const data = await fetchAPI(`/avaliacao-unidade/${avaliacaoId}`)
+    avaliacaoUnidade = data as AvaliacaoUnidadeType;
     
-    if (!tipoOcorrencia) {
+    if (!avaliacaoUnidade) {
       notFound();
     }
-    pageTitle = `Editar Tipo de Ocorrência`;
+    pageTitle = `Editar Avaliação de Unidade`;
   }
 
-  return <TipoOcorrenciaForm initialData={tipoOcorrencia} pageTitle={pageTitle} />;
+  return <AvaliacaoUnidadeForm initialData={avaliacaoUnidade} pageTitle={pageTitle} />;
 }

@@ -89,6 +89,27 @@ class AvaliacaoUnidadeService {
         
         const [avaliacoes, total] = await prismaClient.$transaction([
             prismaClient.avaliacaoMensal.findMany({
+                select: {
+                    id: true,
+                    ano: true,
+                    mes: true,
+                    status: true,
+                    obs: true,
+                    unidade_id: true,
+                    unidade: {
+                        select: {
+                            pessoa: {
+                                select: {
+                                    pessoaJuridica: {
+                                        select: {
+                                            nome_fantasia: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 where,
                 take: perPage ? parseInt(perPage) : 50,
                 skip: skip ? skip : 0,
