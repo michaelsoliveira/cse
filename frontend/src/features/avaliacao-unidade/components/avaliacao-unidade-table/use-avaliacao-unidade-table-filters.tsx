@@ -47,10 +47,10 @@ export function useAvaliacaoUnidadeTableFilters() {
   }, [unidadeId, ano, status]);
 
   // Limpar filtros e localStorage
-  const resetParams = useCallback(() => {
-    setUnidadeId('');
-    setAno('');
-    setStatus('');
+  const resetFilters = useCallback(() => {
+    setUnidadeId(null);
+    setAno(null);
+    setStatus(null);
     setPage(1);
 
     if (typeof window !== 'undefined') {
@@ -71,7 +71,7 @@ export function useAvaliacaoUnidadeTableFilters() {
     setStatus,
     page,
     setPage,
-    resetParams,
+    resetFilters,
     isAnyFilterActive
   };
 }

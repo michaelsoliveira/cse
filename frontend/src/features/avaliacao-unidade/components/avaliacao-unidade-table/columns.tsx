@@ -10,9 +10,9 @@ export const columns: ColumnDef<AvaliacaoUnidadeType>[] = [
     header: 'Unidade escolar'
   },
   {
-    // accessorKey: 'ano',
+    accessorKey: 'ano',
     header: 'Ano',
-    cell: ({ row }) => row.original.ano.toString()
+  //   cell: ({ row }) => row.original.ano.toString()
   },
   {
     accessorKey: 'mes',

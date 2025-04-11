@@ -78,24 +78,24 @@ export const AvaliacaoDataTableSearch = ({
     })
     
     return (
-        <div className="flex flex-col md:grid md:grid-cols-4 gap-4 items-center">
-        <div className="col-span-2">
-          <Label>Unidade escolar</Label>
-            <SelectSearchable 
-              callback={(e) => handleUnidadeId(e.target.value)} 
-              options={optionsUnidades} 
-              field={optionsUnidades?.find((option: any) => option.value === unidadeId)} 
-              placeholder="Selecione uma Unidade"
+        <div className="flex flex-col md:grid md:grid-cols-5 gap-4">
+          <div className="col-span-3">
+            <Label>Unidade escolar</Label>
+              <SelectSearchable 
+                callback={(option: OptionType) => handleUnidadeId(String(option.value))} 
+                options={optionsUnidades} 
+                field={optionsUnidades?.find((option: any) => option.value === unidadeId)} 
+                placeholder="Selecione uma Unidade"
             />
           </div>
           <div>
             <Label>Ano</Label>
-            <YearSelect value={ano} onChange={(e: any) => handleAno(e.target.value)} />
+            <YearSelect value={ano} onChange={(v) => handleAno(v)} />
           </div>
 
           <div>
             <Label>Status</Label>
-            <Select onValueChange={(e: any) => handleStatus(e.target.value)} value={status}>
+            <Select onValueChange={(v) => handleStatus(v)} value={status}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o status" />
                 </SelectTrigger>

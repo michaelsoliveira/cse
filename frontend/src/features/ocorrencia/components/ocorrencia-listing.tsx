@@ -1,19 +1,7 @@
 import { searchParamsCache } from '@/lib/searchparams';
 import { DataTable as OcorrenciaTable } from '@/components/ui/table/data-table';
 import { columns } from './ocorrencia-tables/columns';
-import { auth } from '@/lib/auth';
 import { fetchAPI } from '@/lib/utils';
-
-type Ocorrencia = {
-  id: string
-  data: string
-  hora: string
-  classificacao: string
-  descricao: string
-  tipo_ocorrencia: { nome: string }
-  unidade_escolar: { nome: string }
-  user: { nome: string }
-}
 
 export default async function OcorrenciaListingPage() {
   const page = searchParamsCache.get('page') || 1;

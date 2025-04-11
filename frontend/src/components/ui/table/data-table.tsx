@@ -30,6 +30,7 @@ import {
 } from '@tanstack/react-table';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { parseAsInteger, useQueryState } from 'nuqs';
+import { useEffect, useMemo } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -74,7 +75,7 @@ export function DataTable<TData, TValue>({
 
     setCurrentPage(pagination.pageIndex + 1); // converting zero-based index to one-based
     setPageSize(pagination.pageSize);
-  };
+  }
 
   const table = useReactTable({
     data,
@@ -92,8 +93,8 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className='flex flex-1 flex-col space-y-4'>
-      <div className='relative flex flex-1'>
-        <div className='absolute bottom-0 left-0 right-0 top-0 flex overflow-scroll rounded-md border md:overflow-auto'>
+      <div className='relative flex flex-1 min-h-[calc(100vh-356px)]'>
+        <div className='absolute inset-0 h-full flex overflow-scroll rounded-md border md:overflow-auto'>
           <ScrollArea className='flex-1'>
             <Table className='relative'>
               <TableHeader>
@@ -160,7 +161,7 @@ export function DataTable<TData, TValue>({
                 de {totalItems} total
               </>
             ) : (
-              'No entries found'
+              'Nenhum registro encontrado'
             )}
           </div>
           <div className='flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>

@@ -28,7 +28,7 @@ export function useAvaliacoesUnidade(params: Params) {
       const { unidade_id, ...rest } = params;
 
       // Evita erro por unidade_id vazio
-      if (!unidade_id) return { count: 0, avaliacoes: [] };
+      // if (!unidade_id) return { count: 0, avaliacoes: [] };
 
       const { data } = await client.get('/avaliacao-unidade', {
         params: {
@@ -39,6 +39,6 @@ export function useAvaliacoesUnidade(params: Params) {
 
       return data;
     },
-    // enabled: !!params.unidade_id,
+    enabled: !!params.unidade_id,
   });
 }

@@ -91,12 +91,12 @@ const chartConfig = {
       <CardContent>
             <ChartContainer
               config={chartConfig}
-              className='aspect-auto h-[310px] w-full'
+              className='aspect-auto min-h-[310px] w-full'
             >
             <ResponsiveContainer>
               <AreaChart 
                 data={dadosProcessados} 
-                margin={{ top: 30, right: 30, left: 0, bottom: 10 }}
+                margin={{ top: 20, right: 20, left: 0, bottom: 10 }}
                 style={{ background: 'transparent' }}
               >
                 <defs>
@@ -110,7 +110,7 @@ const chartConfig = {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="mes" />
-                <YAxis domain={[0, 'dataMax + 5']} />
+                <YAxis domain={[0, 'dataMax + 7']} />
                 <Tooltip />
                 <Legend />
                 <CartesianGrid strokeDasharray="3 3" />
