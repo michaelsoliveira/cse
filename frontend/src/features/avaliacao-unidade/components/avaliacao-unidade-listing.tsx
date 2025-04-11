@@ -23,6 +23,7 @@ import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
 import { useUnidades } from '@/hooks/use-unidades';
 import { YearSelect } from '@/components/year-select';
 import { statusOptions } from '../utils';
+import { useAvaliacaoUnidadeTableFilters } from './avaliacao-unidade-table/use-avaliacao-unidade-table-filters';
 
 export default function AvaliacaoUnidadeListingPage() {
   const searchParams = useSearchParams();
@@ -30,9 +31,7 @@ export default function AvaliacaoUnidadeListingPage() {
   // const [unidades, setUnidades] = useState([]);
   const { data: session } = useSession()
   const { client } = useAuthContext()
-  const [unidadeId, setUnidadeId] = useState<string>("")
-  const [ano, setAno] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
+  type ParamKey = 'unidade_id' | 'ano' | 'status';
   
   function isOptionType(obj: unknown): obj is OptionType {
     return (
@@ -69,14 +68,20 @@ export default function AvaliacaoUnidadeListingPage() {
     router.push(`?${params.toString()}`);
   }
 
-  useSyncSearchParamsWithLocalStorage(['unidade_id', 'ano', 'status']);
+  const {
+      unidadeId,
+      ano,
+      status
+    } = useAvaliacaoUnidadeTableFilters();
+
+  // useSyncSearchParamsWithLocalStorage(['unidade_id', 'ano', 'status']);
+
+  // const getParam = (key: ParamKey) => searchParams.get(key) || '';
 
   const { data, isLoading, error } = useAvaliacoesUnidade({ unidade_id: unidadeId, ano, status });
 
   return (
     <div className="p-4 space-y-4">
-      
-        
         { data && (
           <AvaliacaoUnidadeTable
             columns={columns}
