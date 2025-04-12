@@ -18,7 +18,7 @@ export const columns: ColumnDef<OcorrenciaType>[] = [
     cell: ({ row }) => { 
       const hora = new Date(row.original.hora!);
       return new Intl.DateTimeFormat('pt-BR', {
-        timeZone: 'UTC',
+        timeZone: 'America/Sao_Paulo',
         hour: '2-digit',
         minute: '2-digit'
       }).format(hora) }

@@ -44,7 +44,7 @@ export default function AvaliacaoUnidadeForm({
     resolver: zodResolver(avaliacaoSchema),
     defaultValues: {
       unidade_id: initialData?.unidade_id || '',
-      ano: initialData?.ano || new Date().getFullYear().toString(),
+      ano: initialData?.ano.toString() || new Date().getFullYear().toString(),
       mes: initialData?.mes || '',
       status: initialData?.status || '',
       obs: initialData?.obs || ''
@@ -226,11 +226,14 @@ const filterUnidades = async (inputValue: string, callback: (options: OptionType
                       </FormItem>
                     )}
                   />
-                </div>
-                <div className='col-span-2'></div>
-              <Button type="submit" className="w-full md:w-auto">
-                Salvar
-              </Button>
+              </div>
+              <div className='col-span-2'></div>
+              <div className='col-span-5 flex flex-row items-center justify-between'>
+                <Button type="submit" className="w-full md:w-auto">
+                  Salvar
+                </Button>
+                <Button variant='outline' onClick={() => router.back()}>Voltar</Button>
+              </div>
             </div>
           </form>
         </Form>

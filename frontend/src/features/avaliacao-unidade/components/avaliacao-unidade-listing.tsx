@@ -17,7 +17,7 @@ export default function AvaliacaoUnidadeListingPage() {
   // const getParam = (key: ParamKey) => searchParams.get(key) || '';
 
   const { data, isLoading, error } = useAvaliacoesUnidade({ unidade_id: unidadeId, ano, status });
-
+  
   return (<>
       <div className="space-y-4">
           { data && (

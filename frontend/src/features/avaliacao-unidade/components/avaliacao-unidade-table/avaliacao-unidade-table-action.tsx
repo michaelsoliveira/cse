@@ -25,7 +25,7 @@ export default function AvaliacaoUnidadeTableAction() {
   return (
     <Card className="mb-4 w-full">
       <CardContent className="p-4">
-        <div className='flex flex-wrap items-center gap-4'>
+        <div className='flex flex-wrap items-end gap-4'>
           <AvaliacaoDataTableSearch
             unidadeId={unidadeId}
             setUnidadeId={setUnidadeId}
@@ -36,12 +36,10 @@ export default function AvaliacaoUnidadeTableAction() {
             setStatus={setStatus}
             setPage={setPage}
           />
-          <div className='pt-6'>
-            <DataTableResetFilter
-              isFilterActive={isAnyFilterActive}
-              onReset={resetFilters}
-            />
-          </div>
+          <DataTableResetFilter
+            isFilterActive={isAnyFilterActive}
+            onReset={resetFilters}
+          />
         </div>
       </CardContent>
     </Card>

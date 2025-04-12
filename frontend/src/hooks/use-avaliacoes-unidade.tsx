@@ -39,6 +39,6 @@ export function useAvaliacoesUnidade(params: Params) {
 
       return data;
     },
-    enabled: !!params.unidade_id,
+    // enabled: !!params.unidade_id,
   });
 }

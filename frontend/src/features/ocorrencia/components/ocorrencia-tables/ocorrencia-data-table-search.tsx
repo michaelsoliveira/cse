@@ -75,11 +75,11 @@ export function OcorrenciaDataTableSearch({
   };
 
   const optionsTiposOcorrencia : OptionType[] = tiposOcorrencia?.map((tipo: any) => {
-        return {
-            label: tipo?.nome,
-            value: tipo?.id
-        }
-    })
+      return {
+          label: tipo?.nome,
+          value: tipo?.id
+      }
+  })
 
   return (
     <Card className="mb-4 w-full">

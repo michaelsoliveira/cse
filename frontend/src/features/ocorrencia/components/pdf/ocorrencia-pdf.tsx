@@ -25,6 +25,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingTop: 4
   },
+  subTitle2: {
+    fontSize: 12,
+    marginTop: 4
+  },
   generatedAt: {
     fontSize: 10,
     marginTop: 4,
@@ -84,8 +88,9 @@ export function OcorrenciaPdf({ ocorrencias }: Props) {
     <Document>
       <Page orientation='landscape' size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.title}>Coordenadoria de Segurança Escolar</Text>
-          <Text style={styles.subTitle}>Relatório de Ocorrências</Text>
+          <Text style={styles.title}>Secretaria de Estado da Educação</Text>
+          <Text style={styles.subTitle}>Coordenadoria de Segurança Escolar</Text>
+          <Text style={styles.subTitle2}>Relatório de Ocorrências</Text>
           <Text style={styles.generatedAt}>Gerado em: {dataAtual}</Text>
         </View>
 

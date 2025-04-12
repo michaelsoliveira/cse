@@ -100,6 +100,15 @@ class AvaliacaoUnidadeService {
                         select: {
                             pessoa: {
                                 select: {
+                                    endereco: {
+                                        select: {
+                                            municipio: {
+                                                select: {
+                                                    nome: true
+                                                }
+                                            }
+                                        }
+                                    },
                                     pessoaJuridica: {
                                         select: {
                                             nome_fantasia: true

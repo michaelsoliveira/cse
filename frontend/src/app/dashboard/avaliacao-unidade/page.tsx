@@ -11,6 +11,8 @@ import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 import AvaliacaoUnidadeListingPage from '@/features/avaliacao-unidade/components/avaliacao-unidade-listing';
 import AvaliacaoUnidadeTableAction from '@/features/avaliacao-unidade/components/avaliacao-unidade-table/avaliacao-unidade-table-action';
+import ExportAvaliacaoPdfButton from '@/features/avaliacao-unidade/components/export/export-avaliacao-pdf-button';
+import { ExportButtonAvaliacaoCsv } from '@/features/avaliacao-unidade/components/export/export-button-avaliacao-csv';
 
 export const metadata = {
   title: 'Dashboard: Comunicantes'
@@ -27,7 +29,7 @@ export default async function Page(props: pageProps) {
 
   // This key is used for invoke suspense if any of the search params changed (used for filters).
   const key = serialize({ ...searchParams });
-
+  const ano  = searchParams.ano as string
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col space-y-4'>
@@ -36,12 +38,16 @@ export default async function Page(props: pageProps) {
             title='Avaliações de unidades'
             description='Gerencia as avaliações das unidades escolares'
           />
-          <Link
-            href='/dashboard/avaliacao-unidade/new'
-            className={cn(buttonVariants(), 'text-xs md:text-sm')}
-          >
-            <Plus className='mr-2 h-4 w-4' /> Adicionar
-          </Link>
+          <div className='space-x-2'>
+            <ExportButtonAvaliacaoCsv />
+            <ExportAvaliacaoPdfButton />
+            <Link
+              href='/dashboard/avaliacao-unidade/new'
+              className={cn(buttonVariants(), 'text-xs md:text-sm')}
+            >
+              <Plus className='mr-2 h-4 w-4' /> Adicionar
+            </Link>
+          </div>
         </div>
         <Separator />
         <AvaliacaoUnidadeTableAction />

@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className='flex flex-1 flex-col space-y-4'>
-      <div className='relative flex flex-1 min-h-[calc(100vh-356px)]'>
+      <div className='relative flex flex-1 md:min-h-[calc(100vh-356px)]'>
         <div className='absolute inset-0 h-full flex overflow-scroll rounded-md border md:overflow-auto'>
           <ScrollArea className='flex-1'>
             <Table className='relative'>

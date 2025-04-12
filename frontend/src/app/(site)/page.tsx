@@ -1,8 +1,8 @@
 import Navbar from "@/features/site/components/navbar";
 import { HandCoins, Twitch } from "lucide-react";
 import Link from "next/link";
-
 import { Metadata } from 'next';
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: 'Coodenadoria de Segurança Escolar',
@@ -83,9 +83,14 @@ export default function Home() {
 										target="_blank"
 										rel="noreferrer"
 									>
-										<div className="flex items-center space-x-2 text-4xl">
+										<div className="flex items-center space-x-2 text-4xl mt-36">
 											{/* <HandCoins className="w-8 h-8 rounded-md dark:text-white/70" /> */}
-											<span>{"SEED"}</span>
+											<Image 
+												src='/images/logo_seed.png'
+												width={300}
+												height={300}
+												alt="Logo Seed"
+											/>
 										</div>
 									</a>
 								</div>
