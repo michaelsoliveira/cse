@@ -2,10 +2,10 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { AvaliacaoUnidadeType } from 'types';
+import { EstadoConservacaoUnidadeType } from 'types';
 import { getMes, getStatus } from '../../utils';
 
-export const columns: ColumnDef<AvaliacaoUnidadeType>[] = [
+export const columns: ColumnDef<EstadoConservacaoUnidadeType>[] = [
   {
     accessorKey: 'unidade.pessoa.pessoaJuridica.nome_fantasia',
     header: 'Unidade escolar'
