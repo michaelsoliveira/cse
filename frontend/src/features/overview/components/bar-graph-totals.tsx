@@ -23,7 +23,7 @@ const CustomXAxisTick = (props: any) => {
   
     return (
       <g transform={`translate(${x},${y}) rotate(${angle})`}>
-        <text fontSize={12} fontWeight='bold' textAnchor="end" fill="#333">
+        <text fontSize={11} fontWeight='bold' textAnchor="end" fill="#333">
           {lines.map((line, index) => (
             <tspan key={index} x={0} dy={index * 14}>
               {line}
@@ -94,7 +94,7 @@ export function DashboardTiposOcorrencias() {
               <BarChart 
                 // layout="vertical"
                 data={chartData} 
-                margin={{bottom: 45, top: 10}}
+                margin={{bottom: 55, top: 5}}
               >
               <XAxis 
                   dataKey="name" 

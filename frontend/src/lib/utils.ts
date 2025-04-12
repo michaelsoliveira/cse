@@ -187,8 +187,8 @@ export const formatHora = ({ hora }: { hora: any }) => {
 // Função para quebrar os rótulos do eixo Y em duas linhas
 export const formatLabel = (label: string) => {
   const words = label.split(" ");
-  if (words.length > 2) {
-    return [words.slice(0, 2).join(" "), words.slice(2).join(" ")]; // Divide após 2 palavras
+  if (words.length > 3) {
+    return [words.slice(0, 4).join(" "), words.slice(4).join(" ")]; // Divide após 2 palavras
   }
   return [label];
 };

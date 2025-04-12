@@ -1,7 +1,7 @@
 'use client';
 
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { AvaliacaoPdf } from './avaliacao-pdf';
+import { AvaliacaoPdf } from './estado-conservacao-pdf';
 import { buttonVariants } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { cn} from '@/lib/utils';

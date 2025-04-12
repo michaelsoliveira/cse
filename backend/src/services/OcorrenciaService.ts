@@ -161,6 +161,12 @@ class OcorrenciaService {
                         acionamento: true,
                         classificacao: true,
                         anexos: true,
+                        user: {
+                            select: {
+                                username: true,
+                                email: true
+                            }
+                        }
                     },
                     where: filters,
                     ...(typeof limit !== undefined ? { take: limit } : {}),

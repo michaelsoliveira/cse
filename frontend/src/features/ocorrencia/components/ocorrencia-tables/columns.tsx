@@ -5,8 +5,32 @@ import { CellAction } from './cell-action';
 import { OcorrenciaType } from 'types';
 import moment from 'moment'
 import { CellDate } from './cell-date';
+import { Modal } from '@/components/ui/modal';
+import { OcorrenciaDetalhes } from '../ocorrencia-details';
+import { EyeIcon } from 'lucide-react';
+import { useState } from 'react';
 
 export const columns: ColumnDef<OcorrenciaType>[] = [
+  {
+    id: 'visualizar',
+    header: '',
+    cell: ({ row }) => {
+      const ocorrencia = row.original;
+      const [open, setOpen] = useState<boolean>(false);
+      return (
+        <Modal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          trigger={<div onClick={() => setOpen(true)} className='flex items-center justify-center'><EyeIcon className="w-5 h-5 cursor-pointer" /></div>}
+          title="Detalhes da Ocorrência"
+          description='Visualizar os detalhes da ocorrência'
+          className='max-w-[680px]'
+        >
+          <OcorrenciaDetalhes ocorrencia={ocorrencia} onClose={() => setOpen(false)} />
+        </Modal>
+      );
+    }
+  },
   {
     accessorKey: 'data',
     header: 'Data da Ocorrência',

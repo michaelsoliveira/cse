@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import useClient from "./use-client";
 import { useSearchParams } from "next/navigation";
-import { RawAvaliacao } from "@/features/avaliacao-unidade/utils";
+import { RawAvaliacao } from "@/features/estado-conservacao-unidade/utils";
 
 export function useExportAvaliacoesUnidade() {
     const client = useClient()

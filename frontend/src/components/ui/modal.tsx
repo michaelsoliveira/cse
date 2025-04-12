@@ -4,22 +4,27 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  DialogTrigger
 } from '@/components/ui/dialog';
 
 interface ModalProps {
   title: string;
-  description: string;
-  isOpen: boolean;
+  description?: string;
+  className?: string;
+  isOpen?: boolean;
   onClose: () => void;
+  trigger?: React.ReactNode;
   children?: React.ReactNode;
 }
 
 export const Modal: React.FC<ModalProps> = ({
   title,
   description,
+  className,
   isOpen,
   onClose,
+  trigger,
   children
 }) => {
   const onChange = (open: boolean) => {
@@ -30,7 +35,8 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
-      <DialogContent>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent className={className}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

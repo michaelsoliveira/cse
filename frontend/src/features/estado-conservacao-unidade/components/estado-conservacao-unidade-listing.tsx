@@ -1,9 +1,9 @@
 'use client'
 
 import { DataTable as AvaliacaoUnidadeTable } from '@/components/ui/table/data-table';
-import { columns } from './avaliacao-unidade-table/columns';
+import { columns } from './estado-conservacao-unidade-table/columns';
 import { useAvaliacoesUnidade } from '@/hooks/use-avaliacoes-unidade';
-import { useAvaliacaoUnidadeTableFilters } from './avaliacao-unidade-table/use-avaliacao-unidade-table-filters';
+import { useAvaliacaoUnidadeTableFilters } from './estado-conservacao-unidade-table/use-estado-conservacao-unidade-table-filters';
 
 export default function AvaliacaoUnidadeListingPage() {
   const {

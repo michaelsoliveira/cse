@@ -18,7 +18,7 @@ import { YearSelect } from '@/components/year-select'
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { AvaliacaoUnidadeType } from 'types'
+import { EstadoConservacaoUnidadeType } from 'types'
 import { useRouter } from 'next/navigation'
 
 import { meses, statusOptions } from '../utils'
@@ -33,11 +33,11 @@ const avaliacaoSchema = z.object({
 
 type AvaliacaoFormData = z.infer<typeof avaliacaoSchema>
 
-export default function AvaliacaoUnidadeForm({
+export default function EstadoConservacaoUnidadeForm({
   initialData,
   pageTitle
 }: {
-  initialData: AvaliacaoUnidadeType | null;
+  initialData: EstadoConservacaoUnidadeType | null;
   pageTitle: string;
 }) {
   const form = useForm<AvaliacaoFormData>({

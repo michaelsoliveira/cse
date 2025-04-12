@@ -58,22 +58,23 @@ export function AreaGraphOcorrencia() {
     const dadosAnterior = data?.find((d: any) => Number(d.mes) === index + 1 && Number(d.ano) === anoAnterior) || { total: 0 };
     return {
       mes,
-      [`${anoAnterior}`]: dadosAnterior.total,
-      [`${anoAtual}`]: dadosAtual.total,
+      [`${anoAnterior}`]: Number(dadosAnterior.total),
+      [`${anoAtual}`]: Number(dadosAtual.total),
     };
   });
 
 const chartConfig = {
   [`${anoAnterior}`]: {
-    label: anoAtual.toString(),
+    label: anoAnterior.toString(),
     color: 'var(--chart-1)'
   },
   [`${anoAtual}`]: {
-    label: anoAnterior.toString(),
+    label: anoAtual.toString(),
     color: 'var(--chart-2)'
   }
 } satisfies ChartConfig;
 
+console.log("dadosProcessados", dadosProcessados);
 
   return (
     <Card>
@@ -91,13 +92,12 @@ const chartConfig = {
       <CardContent>
             <ChartContainer
               config={chartConfig}
-              className='aspect-auto min-h-[310px] w-full'
+              className='min-h-[310px] w-full'
             >
-            <ResponsiveContainer>
-              <AreaChart 
-                data={dadosProcessados} 
-                margin={{ top: 20, right: 20, left: 0, bottom: 10 }}
-                style={{ background: 'transparent' }}
+            <ResponsiveContainer width="100%" height={400}>
+              <AreaChart
+                data={dadosProcessados}
+                margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
               >
                 <defs>
                   <linearGradient id="colorAnterior" x1="0" y1="0" x2="0" y2="1">
@@ -110,14 +110,14 @@ const chartConfig = {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="mes" />
-                <YAxis domain={[0, 'dataMax + 7']} />
-                <Tooltip />
-                <Legend />
+                <YAxis />
                 <CartesianGrid strokeDasharray="3 3" />
                 <Area type="monotone" dataKey={`${anoAnterior}`} stroke="#8884d8" fill="url(#colorAnterior)" />
                 <Area type="monotone" dataKey={`${anoAtual}`} stroke="#82ca9d" fill="url(#colorAtual)" />
+                <Tooltip />
+                <Legend />
               </AreaChart>
-              </ResponsiveContainer>
+            </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
         </div>

@@ -12,7 +12,7 @@ export interface EnderecoType {
   bairro?: string;
 }
 
-export interface AvaliacaoUnidadeType {
+export interface EstadoConservacaoUnidadeType {
   id: string;
   unidade_id: string;
   ano: string;
@@ -24,9 +24,9 @@ export interface AvaliacaoUnidadeType {
 
 export interface OcorrenciaType {
   id: string;
-  descricao?: string;
-  data?: string;
-  hora?: string;
+  descricao: string;
+  data: string;
+  hora: string;
   classificacao: string;
   acionamento: string;
   comunicante_id?: string;
@@ -35,6 +35,10 @@ export interface OcorrenciaType {
   anexos: any;
   tipo_ocorrencia: TipoOcorrenciaType;
   unidade_escolar: UnidadeEscolarType;
+  user: {
+    username: string;
+    email: string;
+  };
 }
 
 export interface TipoOcorrenciaType {
@@ -70,8 +74,8 @@ export interface PessoaType {
 
 export interface UnidadeEscolarType {
   id?: string
-  inep?: number;
-  zona?: string;
+  inep: number;
+  zona: string;
   hasDiretorData?: boolean;
   pessoa_id?: string;
   diretor_id?: string;

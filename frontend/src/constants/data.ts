@@ -35,8 +35,8 @@ export const navItems: NavItem[] = [
         icon: 'userPen',
       },
       {
-        title: 'Avaliação de Unidade',
-        url: '/dashboard/avaliacao-unidade',
+        title: 'Estado de Conservação',
+        url: '/dashboard/estado-conservacao',
         icon: 'laptop'
       },
       {
