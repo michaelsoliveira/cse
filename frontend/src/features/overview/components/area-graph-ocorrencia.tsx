@@ -92,9 +92,9 @@ console.log("dadosProcessados", dadosProcessados);
       <CardContent>
             <ChartContainer
               config={chartConfig}
-              className='min-h-[310px] w-full'
+              className='min-h-[350px] w-full'
             >
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer width="100%" height={350}>
               <AreaChart
                 data={dadosProcessados}
                 margin={{ top: 10, right: 20, left: 0, bottom: 10 }}

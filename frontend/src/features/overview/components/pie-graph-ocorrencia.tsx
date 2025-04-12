@@ -32,7 +32,7 @@ export function PieGraphOcorrencia() {
   const { data, isLoading, error } = useQuery({
       queryKey: ["ocorrencias-unidades", anoAtivo],
       queryFn: async () => {
-        const { data: { ocorrencias, error }} = await client.get(`/dashboard/ocorrencias-unidades?limit=7`)
+        const { data: { ocorrencias, error }} = await client.get(`/dashboard/ocorrencias-unidades?limit=10`)
         
         return ocorrencias
       },
@@ -134,15 +134,15 @@ const renderCustomLegend = (props: any) => {
   const { payload } = props;
 
   return (
-    <ul style={{ listStyle: 'none', padding: 0, margin: 0, textAlign: 'left' }}>
+    <ul style={{ listStyle: 'none', marginTop: 40, textAlign: 'left' }}>
       {payload.map((entry: any, index: number) => (
         <li
           key={`item-${index}`}
           style={{
             display: 'flex',
             alignItems: 'center',
-            marginBottom: 4,
-            marginLeft: 12,
+            marginBottom: 2,
+            marginLeft: 20,
             fontSize: '10px', // Tamanho da fonte
             fontWeight: 500,
             color: '#333',
@@ -154,6 +154,7 @@ const renderCustomLegend = (props: any) => {
               height: 12,
               backgroundColor: entry.color,
               marginRight: 8,
+              marginBottom: 0,
               borderRadius: '50%',
             }}
           />
@@ -184,8 +185,10 @@ const renderCustomLegend = (props: any) => {
             ) : !hasData ? (
               <div className="text-center p-4 text-muted-foreground">Nenhuma ocorrência registrada.</div>
             ) : (
-              <ResponsiveContainer width="100%" height={360}>
-                <PieChart>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart
+                  margin={{ top: 30, right: 20, left: 0, bottom: 5 }}
+                >
                   <Pie
                     data={chartData}
                     dataKey="value"
