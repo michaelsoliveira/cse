@@ -91,7 +91,7 @@ export class OcorrenciaController {
         try {
             const { 
                 data, 
-                perPage, 
+                limit, 
                 page, 
                 orderBy, 
                 order, 
@@ -102,7 +102,7 @@ export class OcorrenciaController {
             return response.json({
                 error: false,
                 ocorrencias: data,
-                perPage,
+                limit,
                 page,
                 skip,
                 orderBy,

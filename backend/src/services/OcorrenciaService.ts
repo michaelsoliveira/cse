@@ -62,7 +62,7 @@ class OcorrenciaService {
             comunicante_id,
             user_id,
             tipo_ocorrencia,
-            perPage, 
+            limit, 
             page, 
             orderBy, 
             order 
@@ -70,9 +70,7 @@ class OcorrenciaService {
 
         let filters: any = {}
 
-        const skip = (page - 1) * perPage || undefined
-
-        const limit = perPage ? parseInt(perPage) : undefined
+        const skip = (page - 1) * limit || undefined
         
         const orderByElement: Array<string> = orderBy ? orderBy?.split('.') : {}
         const orderByTerm = orderByElement?.length > 0 
@@ -169,7 +167,7 @@ class OcorrenciaService {
                         }
                     },
                     where: filters,
-                    ...(typeof limit !== undefined ? { take: limit } : {}),
+                    take: limit ? parseInt(limit) : undefined,
                     ...(typeof skip !== undefined ? { skip } : {}),
                     orderBy: orderByTerm,
                 }),
@@ -178,7 +176,7 @@ class OcorrenciaService {
 
             return {
                 data: ocorrencias,
-                perPage,
+                limit,
                 page,
                 skip,
                 count: total,
