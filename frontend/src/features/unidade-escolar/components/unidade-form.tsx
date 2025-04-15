@@ -165,7 +165,9 @@ export default function UnidadeForm({
           : await client.post('/unidade', data)
       const { error, message } = response.data
       if (!error) {
-        toast.success(message)
+        toast.success(message, {
+          duration: 2000
+        })
         router.push('/dashboard/unidade-escolar')
         setLoading(false)
       } else {

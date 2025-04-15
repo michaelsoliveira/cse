@@ -80,7 +80,7 @@ export interface UnidadeEscolarType {
   pessoa_id?: string;
   diretor_id?: string;
   pessoa?: PessoaType;
-  diretor?: DiretorType;
+  diretor: DiretorType;
 }
 
 export interface PessoaJuridicaType {

@@ -74,8 +74,6 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
-console.log("dadosProcessados", dadosProcessados);
-
   return (
     <Card>
       <div className='relative inline-block w-full'>

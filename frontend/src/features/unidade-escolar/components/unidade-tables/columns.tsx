@@ -15,8 +15,14 @@ export const columns: ColumnDef<UnidadeEscolarType>[] = [
     header: 'Escola'
   },
   {
-    accessorKey: 'diretor.pessoa.pessoaFisica.nome',
-    header: 'Diretor'
+    // accessorKey: 'diretor.pessoa.pessoaFisica.nome',
+    header: 'Diretor',
+    cell: ({ row }) => {
+      return row.original.diretor &&
+      row.original.diretor.pessoa &&
+      row.original.diretor.pessoa.pessoaFisica &&
+      row.original.diretor.pessoa.pessoaFisica.nome
+    }
   },
   {
     accessorKey: 'pessoa.endereco.municipio.nome',
