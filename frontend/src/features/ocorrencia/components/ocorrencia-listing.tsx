@@ -7,7 +7,7 @@ export default async function OcorrenciaListingPage() {
   const page = searchParamsCache.get('page') || 1;
   const pageLimit = searchParamsCache.get('limit') || 10;
   const orderBy = searchParamsCache.get('orderBy') || 'data'
-  const order = searchParamsCache.get('orderBy') || 'asc'
+  const order = searchParamsCache.get('orderBy') || 'desc'
   const dataInicio = searchParamsCache.get('dataInicio') || ''
   const dataFim = searchParamsCache.get('dataFim') || ''
   const classificacao = searchParamsCache.get('classificacao_ocorrencia') || ''

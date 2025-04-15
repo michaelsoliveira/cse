@@ -108,7 +108,7 @@ export function OcorrenciaDataTableSearch({
 
           {/* Classificação */}
           <div className="flex flex-col space-y-1">
-            <Label htmlFor="classificacao">Classificação</Label>
+            <Label htmlFor="modalidade">Modalidade</Label>
             <Select
               value={classificacao}
               onValueChange={(value) => handleDataClassificacao(value)}

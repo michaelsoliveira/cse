@@ -5,14 +5,14 @@ import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 
 export const ocorrencias_classificacao = [
-  { value: 'seguranca_patrimonial', label: 'Segurança Patrimônial' },
-  { value: 'policiamento_escolar', label: 'Policiamento Escolar' }
+  { value: 'seguranca_patrimonial', label: 'Segurança Patrimonial' },
+  { value: 'policiamento_escolar', label: 'Projeto Escola Segura' }
 ];
 
 export const ocorrencias_acionamento = [
   { value: 'monitoramento', label: 'Monitoramento' },
   { value: 'botao_alerta', label: 'Botão de Alerta' },
-  { value: 'numero_190', label: '190' }
+  { value: 'numero_190', label: 'PMAP/190' }
 ];
 
 export function useOcorrenciaTableFilters() {

@@ -335,7 +335,12 @@ class UnidadeService {
             include: {
                 pessoa: {
                     include: {
-                        endereco: true,
+                        endereco: {
+                            include: {
+                                estado: true,
+                                municipio: true
+                            }
+                        },
                         pessoaJuridica: true
                     }
                 },

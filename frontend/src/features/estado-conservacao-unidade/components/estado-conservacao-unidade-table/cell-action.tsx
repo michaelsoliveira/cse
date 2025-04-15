@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { useAuthContext } from '@/context/AuthContext';
+import { useQueryClient } from '@tanstack/react-query';
 import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -24,6 +25,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { client } = useAuthContext()
+  const queryClient = useQueryClient()
 
   const onConfirm = async () => {
     try {
@@ -31,8 +33,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await client.delete(`/avaliacao-unidade/${data.id}`).then((res: any) => {
         const { error, message } = res.data;
         if (!error) {
+          queryClient.invalidateQueries({ queryKey: ["avaliacoes"] }),
           toast.success(message)
-          router.refresh()
         } else {
           toast.error(message)
         }

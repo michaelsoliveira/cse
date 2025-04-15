@@ -1,9 +1,12 @@
-import React from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Mail, Phone, MapPin, User } from "lucide-react";
-import { DiretorType, EnderecoType, EstadoType, MunicipioType, UnidadeEscolarType } from "types";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { DiretorType, EnderecoType, EstadoType, MunicipioType } from "types";
+import { UnidadeEscolarPdf } from "./pdf/unidade-escolar-pdf";
+import { Button } from "@/components/ui/button";
 
-type UnidadeDetailsTypeProps = {
+export type UnidadeDetailsTypeProps = {
+  data: {
     nome: string;
     inep?: number;
     zona?: string
@@ -13,11 +16,13 @@ type UnidadeDetailsTypeProps = {
     endereco?: {
         estado?: EstadoType | undefined,
         municipio?: MunicipioType | undefined,
-    } & Omit<EnderecoType, 'id' | 'estado_id' | 'municipio_id'>;
+    } & Omit<EnderecoType, 'id' | 'estado_id' | 'municipio_id'>;  
+  }
+  onClose?: () => void
 }
 
-const UnidadeDetails = ({ data }: { data: UnidadeDetailsTypeProps }) => {
-  const {
+const UnidadeDetails = ({ data, onClose }: UnidadeDetailsTypeProps ) => {
+  const {    
     nome,
     inep,
     zona,
@@ -28,73 +33,50 @@ const UnidadeDetails = ({ data }: { data: UnidadeDetailsTypeProps }) => {
   } = data;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {/* Informações da Unidade */}
-      <Card className="rounded-2xl shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-2">
-            {nome}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-          <div><strong>INEP:</strong> {inep}</div>
-          <div><strong>Zona:</strong> {zona}</div>
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            {telefone || <span className="text-muted-foreground italic">Não informado</span>}
-          </div>
-          <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4" />
-            {email || <span className="text-muted-foreground italic">Não informado</span>}
-          </div>
-        </CardContent>
-      </Card>
+    <Card className="max-w-3xl mx-auto p-4 space-y-4">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold">
+          {nome}
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          INEP: {inep} • Zona: {zona}
+        </p>
+      </CardHeader>
 
-      {/* Diretor */}
-      <Card className="rounded-2xl shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-2">
-            <User className="w-5 h-5" />
-            Diretor(a)
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-          <div><strong>Nome:</strong> {diretor?.nome || <span className="text-muted-foreground italic">Não informado</span>}</div>
-          <div><strong>RG:</strong> {diretor?.rg || <span className="text-muted-foreground italic">Não informado</span>}</div>
-          <div><strong>CPF:</strong> {diretor?.cpf || <span className="text-muted-foreground italic">Não informado</span>}</div>
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            {diretor?.telefone || <span className="text-muted-foreground italic">Não informado</span>}
-          </div>
-          <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4" />
-            {diretor?.email || <span className="text-muted-foreground italic">Não informado</span>}
-          </div>
-        </CardContent>
-      </Card>
+      <CardContent className="space-y-4">
+        <section>
+          <h3 className="text-lg font-semibold">Contato</h3>
+          <Separator className="my-2" />
+          <p>
+            Telefone: {telefone}<br />
+            Email: {email}
+          </p>
+        </section>
 
-      {/* Endereço */}
-      <Card className="rounded-2xl shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
-            Endereço
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-          <div><strong>Logradouro:</strong> {endereco?.logradouro}</div>
-          <div><strong>Número:</strong> {endereco?.numero}</div>
-          {endereco?.complemento && (
-            <div><strong>Complemento:</strong> {endereco.complemento}</div>
-          )}
-          <div><strong>Bairro:</strong> {endereco?.bairro}</div>
-          <div><strong>Município:</strong> {endereco?.municipio?.nome}</div>
-          <div><strong>Estado:</strong> {endereco?.estado?.nome}</div>
-          <div><strong>CEP:</strong> {endereco?.cep}</div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+        <section>
+          <h3 className="text-lg font-semibold">Endereço</h3>
+          <Separator className="my-2" />
+          <p>
+            {endereco?.logradouro}, {endereco?.numero}<br />
+            Bairro: {endereco?.bairro}<br />
+            Município: {endereco?.municipio?.nome} - {endereco?.estado?.nome}<br />
+            CEP: {endereco?.cep}
+          </p>
+        </section>
 
-export default UnidadeDetails;
+        <section>
+          <h3 className="text-lg font-semibold">Diretor(a)</h3>
+          <Separator className="my-2" />
+          <p>
+            Nome: {diretor?.nome}<br />
+            RG: {diretor?.rg}<br />
+            CPF: {diretor?.cpf}
+          </p>
+        </section>
+      </CardContent>
+    </Card>
+  )
+}
+
+
+export default UnidadeDetails

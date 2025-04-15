@@ -115,9 +115,6 @@ class ComunicanteService {
                     rg: data?.pessoaFisica?.rg,
                     cpf: data?.pessoaFisica?.cpf,
                     data_nascimento: data?.pessoaFisica?.data_nascimento
-                },
-                where: {
-                    pessoa_id: data?.pessoa_id
                 }
             }
         } : {
@@ -128,9 +125,6 @@ class ComunicanteService {
                     inscricao_estadual: data?.pessoaJuridica?.inscricao_estadual,
                     inscricao_federal: data?.pessoaJuridica?.inscricao_federal,
                     data_constituicao: data?.pessoaJuridica?.data_constituicao
-                },
-                where: {
-                    pessoa_id: data?.pessoa_id
                 }
             },
         }

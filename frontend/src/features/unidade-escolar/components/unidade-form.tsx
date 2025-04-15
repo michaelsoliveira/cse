@@ -706,14 +706,12 @@ export default function UnidadeForm({
                   { ...formData, endereco: { ...formData.endereco, estado: selecEstado, municipio: selecMunicipio } }
                 } />
               ) }
-              {(currentStep === steps.length - 1) && (
-                <div className='flex flex-row justify-center'>
+                <div className='flex flex-row items-end justify-center'>
                   <Button 
                     type='submit'
                     className="mt-4 w-48"
                   >Salvar</Button>
                 </div>
-              )} 
               </motion.div>
               </AnimatePresence>
             </form>

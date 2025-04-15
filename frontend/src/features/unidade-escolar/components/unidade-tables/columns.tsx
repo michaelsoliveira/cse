@@ -3,6 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { UnidadeEscolarType } from 'types';
+import { CellDetail } from './cell-detail';
 
 export const columns: ColumnDef<UnidadeEscolarType>[] = [
   {
@@ -24,6 +25,6 @@ export const columns: ColumnDef<UnidadeEscolarType>[] = [
   {
     header: 'Ações',
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => <div className='flex items-center'><CellDetail row={row} /><CellAction data={row.original} /></div>
   }
 ];

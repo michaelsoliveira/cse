@@ -12,11 +12,11 @@ import { useState } from 'react';
 import { CellDetail } from './cell-detail';
 
 export const columns: ColumnDef<OcorrenciaType>[] = [
-  {
-    id: 'visualizar',
-    header: '',
-    cell: ({ row }) => <CellDetail row={row} />
-  },
+  // {
+  //   id: 'visualizar',
+  //   header: '',
+  //   cell: ({ row }) => <CellDetail row={row} />
+  // },
   {
     accessorKey: 'data',
     header: 'Data da Ocorrência',
@@ -44,6 +44,6 @@ export const columns: ColumnDef<OcorrenciaType>[] = [
   {
     header: 'Ações',
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => <div className='flex items-center'><CellDetail row={row} /><CellAction data={row.original} /></div>
   }
 ];
