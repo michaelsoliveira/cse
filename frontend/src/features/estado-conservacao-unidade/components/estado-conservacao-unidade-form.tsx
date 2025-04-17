@@ -102,9 +102,6 @@ const filterUnidades = async (inputValue: string, callback: (options: OptionType
       if (!error) {
         setLoading(false)
         toast.success(message)
-        await Promise.all([
-          queryClient.invalidateQueries({ queryKey: ["avaliacoes"] })
-        ]);
         router.push('/dashboard/estado-conservacao')
       } else {
         setLoading(false)
