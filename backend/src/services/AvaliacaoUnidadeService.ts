@@ -32,7 +32,7 @@ class AvaliacaoUnidadeService {
             throw new Error('Já existe uma avaliação cadastrada para esta mesma [Unidade, Ano e Mês]')
         }
 
-        const avaliacao = await prismaClient.avaliacaoMensal.create({
+        const avaliacao = await prismaClient.avaliacaoMensal.createWithMesAuto({
             data: {
                 unidade_id: data?.unidade_id,
                 ano: Number(data?.ano),
@@ -46,7 +46,7 @@ class AvaliacaoUnidadeService {
     }
 
     async update(id: string, data: AvaliacaoUnidadeType): Promise<AvaliacaoMensal> {
-        const avaliacaoUnidade = await prismaClient.avaliacaoMensal.update({
+        const avaliacaoUnidade = await prismaClient.avaliacaoMensal.updateWithMesAuto({
             where: {
                 id
             },

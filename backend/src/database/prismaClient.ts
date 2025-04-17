@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { avaliacaoMensalExtension } from "../../prisma/extensions/avaliacao-mensal-extension";
 
-const prismaClient = new PrismaClient();
+const basePrisma = new PrismaClient();
 
-const prisma = prismaClient.$extends(avaliacaoMensalExtension)
+const prismaClient = basePrisma.$extends(avaliacaoMensalExtension)
 
 export { prismaClient }
