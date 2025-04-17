@@ -102,6 +102,9 @@ const filterUnidades = async (inputValue: string, callback: (options: OptionType
       if (!error) {
         setLoading(false)
         toast.success(message)
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["avaliacoes"] })
+        ]);
         router.push('/dashboard/estado-conservacao')
       } else {
         setLoading(false)
@@ -238,7 +241,7 @@ const filterUnidades = async (inputValue: string, callback: (options: OptionType
                 <Button type="submit" className="w-full md:w-auto">
                   Salvar
                 </Button>
-                <Button variant='outline' onClick={(e) => { e.preventDefault(); router.back() }}>Voltar</Button>
+                <Button variant='outline' onClick={() => router.back()}>Voltar</Button>
               </div>
             </div>
           </form>
