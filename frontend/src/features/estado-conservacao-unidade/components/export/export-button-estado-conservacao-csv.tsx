@@ -33,11 +33,15 @@ export function ExportButtonAvaliacaoCsv() {
   };
 
   return (
-    <Button
-        variant='outline'
-      onClick={handleExport}
-    >
-      <Download className='mr-2 h-4 w-4' /> Exportar CSV
-    </Button>
+    <>
+      { data?.length > 0 && (
+        <Button
+          variant='outline'
+        onClick={handleExport}
+      >
+        <Download className='mr-2 h-4 w-4' /> Exportar CSV
+      </Button>
+      ) }
+    </>
   );
 }

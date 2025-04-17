@@ -22,6 +22,7 @@ import { EstadoConservacaoUnidadeType } from 'types'
 import { useRouter } from 'next/navigation'
 
 import { meses, statusOptions } from '../utils'
+import { useAvaliacaoUnidadeTableFilters } from './estado-conservacao-unidade-table/use-estado-conservacao-unidade-table-filters'
 
 const avaliacaoSchema = z.object({
   unidade_id: z.string().min(1),
@@ -56,11 +57,16 @@ export default function EstadoConservacaoUnidadeForm({
   const { data: unidades } = useUnidades()
   const router = useRouter()
   const optionsUnidades = unidades?.map((unidade: any) => {
-    return {
-      label: unidade.pessoa.pessoaJuridica.nome_fantasia,
-      value: unidade.id
-    }
-})
+      return {
+        label: unidade.pessoa.pessoaJuridica.nome_fantasia,
+        value: unidade.id
+      }
+  })
+
+  const {
+    isAnyFilterActive,
+    resetFilters
+  } = useAvaliacaoUnidadeTableFilters();
 
 const filterUnidades = async (inputValue: string, callback: (options: OptionType[]) => void) => {
   const response = await client.get('/unidade', {
@@ -96,9 +102,6 @@ const filterUnidades = async (inputValue: string, callback: (options: OptionType
       if (!error) {
         setLoading(false)
         toast.success(message)
-        await Promise.all([
-          queryClient.invalidateQueries({ queryKey: ["avaliacoes"] })
-        ]);
         router.push('/dashboard/estado-conservacao')
       } else {
         setLoading(false)
@@ -107,6 +110,9 @@ const filterUnidades = async (inputValue: string, callback: (options: OptionType
     } catch(error: any) {
       setLoading(false)
       toast.error(error?.message)
+    } finally {
+      isAnyFilterActive && resetFilters()
+      await queryClient.invalidateQueries({ queryKey: ["avaliacoes"] })
     }
   }
 
@@ -232,7 +238,7 @@ const filterUnidades = async (inputValue: string, callback: (options: OptionType
                 <Button type="submit" className="w-full md:w-auto">
                   Salvar
                 </Button>
-                <Button variant='outline' onClick={() => router.back()}>Voltar</Button>
+                <Button variant='outline' onClick={(e) => { e.preventDefault(); router.back() }}>Voltar</Button>
               </div>
             </div>
           </form>

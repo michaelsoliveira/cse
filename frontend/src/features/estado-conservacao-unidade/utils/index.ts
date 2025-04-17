@@ -65,7 +65,7 @@ export const statusOptions = [
   { label: 'MUITO BOM', value: 'muito_bom' },
   { label: 'BOM', value: 'bom' },
   { label: 'RUIM', value: 'ruim' },
-  { label: 'SEM ACESSO', value: 'sem_acesso' },
+  { label: 'S/ACESSO', value: 'sem_acesso' },
 ] as const
 
 type StatusValue = typeof statusOptions[number]['value'];

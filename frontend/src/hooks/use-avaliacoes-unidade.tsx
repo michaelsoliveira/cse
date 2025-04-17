@@ -17,6 +17,9 @@ type Avaliacao = {
     unidade_id?: string;
     ano?: string;
     status?: string;
+    mes?: string;
+    orderBy?: string;
+    order?: string;
   };
 
 export function useAvaliacoesUnidade(params: Params) { 
@@ -25,17 +28,12 @@ export function useAvaliacoesUnidade(params: Params) {
   return useQuery({
     queryKey: ["avaliacoes", params],
     queryFn: async () => {
-      const { unidade_id, ...rest } = params;
+      // const { unidade_id, ...rest } = params;
 
       // Evita erro por unidade_id vazio
       // if (!unidade_id) return { count: 0, avaliacoes: [] };
 
-      const { data } = await client.get('/avaliacao-unidade', {
-        params: {
-          unidade_id,
-          ...rest,
-        },
-      });
+      const { data } = await client.get('/avaliacao-unidade', { params });
 
       return data;
     },

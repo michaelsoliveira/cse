@@ -26,24 +26,30 @@ export default function ExportAvaliacaoPdfButton() {
   if (isLoading || !documentNode) return null;
 
   return (
-    <PDFDownloadLink
-      onClick={(e) => {
-        if (ano === '') {
-          e.preventDefault();
-          toast.warning('É necessário selecionar o ano'); 
-          return;
-        }
-      }}
-      document={documentNode}
-      fileName="relatorio_conservacao.pdf"
-      className={cn(buttonVariants({ variant: 'outline' }), 'ml-2 text-xs md:text-sm')}
-    >
-      {({ loading }) => (
-        <>
-          <Download className="mr-2 h-4 w-4" />
-          {loading ? 'Gerando PDF...' : 'Exportar PDF'}
-        </>
-      )}
-    </PDFDownloadLink>
+    <>
+      {
+        data.length > 0 && (
+          <PDFDownloadLink
+            onClick={(e) => {
+              if (ano === '') {
+                e.preventDefault();
+                toast.warning('É necessário selecionar o ano'); 
+                return;
+              }
+            }}
+            document={documentNode}
+            fileName="relatorio_conservacao.pdf"
+            className={cn(buttonVariants({ variant: 'outline' }), 'ml-2 text-xs md:text-sm')}
+          >
+            {({ loading }) => (
+              <>
+                <Download className="mr-2 h-4 w-4" />
+                {loading ? 'Gerando PDF...' : 'Exportar PDF'}
+              </>
+            )}
+          </PDFDownloadLink>
+        )
+      }
+    </>
   );
 }

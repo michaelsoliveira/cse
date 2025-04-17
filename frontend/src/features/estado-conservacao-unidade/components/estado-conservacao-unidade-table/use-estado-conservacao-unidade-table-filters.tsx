@@ -4,7 +4,7 @@ import { searchParams } from '@/lib/searchparams';
 import { useQueryState } from 'nuqs';
 import { useCallback, useEffect, useMemo } from 'react';
 
-const PARAM_KEYS = ['unidade_id', 'ano', 'status', 'page'] as const;
+const PARAM_KEYS = ['unidade_id', 'ano', 'status', 'page', 'mes'] as const;
 
 type ParamKey = (typeof PARAM_KEYS)[number];
 

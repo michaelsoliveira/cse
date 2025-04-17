@@ -187,6 +187,7 @@ enum StatusAvaliacao {
 model AvaliacaoMensal {
   id           String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   mes          Mes
+  mes_numero   Int?
   ano          Int
   status       StatusAvaliacao
   obs          String?

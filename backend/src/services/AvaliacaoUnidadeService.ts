@@ -1,5 +1,6 @@
 import { AvaliacaoMensal, Estado, Mes, Municipio, Prisma, StatusAvaliacao } from "@prisma/client";
 import { prismaClient } from "../database/prismaClient";
+import { buildOrderBy } from "../utils";
 
 export interface AvaliacaoUnidadeType {
     unidade_id: string;
@@ -82,10 +83,7 @@ class AvaliacaoUnidadeService {
             where.status = status
         }
         
-        const orderByElement: Array<string> = orderBy ? orderBy?.split('.') : {}
-        const orderByTerm = orderByElement?.length > 0 
-            ? orderByElement?.reverse().reduce((acc, key) => ({ [key]: acc }), order) 
-            : {}
+        const orderByTerms = buildOrderBy(orderBy, order)
         
         const [avaliacoes, total] = await prismaClient.$transaction([
             prismaClient.avaliacaoMensal.findMany({
@@ -120,11 +118,9 @@ class AvaliacaoUnidadeService {
                     }
                 },
                 where,
-                take: perPage ? parseInt(perPage) : 50,
+                take: perPage ? parseInt(perPage) : undefined,
                 skip: skip ? skip : 0,
-                orderBy: {
-                    ...orderByTerm
-                },
+                orderBy: orderByTerms.length > 0 ? orderByTerms : undefined,
             }),
             prismaClient.avaliacaoMensal.count({where})
         ])

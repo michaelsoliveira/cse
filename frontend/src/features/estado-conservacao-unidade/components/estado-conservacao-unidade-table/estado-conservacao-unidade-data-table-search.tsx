@@ -6,8 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { YearSelect } from "@/components/year-select";
 import { useTransition } from "react";
 import { UnidadeEscolarType } from "types";
-import { statusOptions } from "../../utils";
-import { useUnidades } from "@/hooks/use-unidades";
+import { meses, statusOptions } from "../../utils";
 
 interface DataTableSearchProps {
   unidadeId: string;
@@ -79,7 +78,7 @@ export const AvaliacaoDataTableSearch = ({
     
     return (
         <div className="flex flex-col md:grid md:grid-cols-5 gap-4">
-          <div className="col-span-3">
+          <div className="col-span-2">
             <Label>Unidade escolar</Label>
               <SelectSearchable 
                 callback={(option: OptionType) => handleUnidadeId(String(option.value))} 
@@ -92,7 +91,21 @@ export const AvaliacaoDataTableSearch = ({
             <Label>Ano</Label>
             <YearSelect value={ano} onChange={(v) => handleAno(v)} />
           </div>
-
+          <div>
+            <Label>Mês</Label>
+            <Select onValueChange={(v) => handleMes(v)} value={mes}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o Mês" />
+                </SelectTrigger>
+              <SelectContent>
+                {meses.map(({ label, value }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div>
             <Label>Status</Label>
             <Select onValueChange={(v) => handleStatus(v)} value={status}>

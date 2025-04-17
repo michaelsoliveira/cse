@@ -9,14 +9,20 @@ export default function AvaliacaoUnidadeListingPage() {
   const {
       unidadeId,
       ano,
-      status
+      status,
+      mes
     } = useAvaliacaoUnidadeTableFilters();
 
   // useSyncSearchParamsWithLocalStorage(['unidade_id', 'ano', 'status']);
 
-  // const getParam = (key: ParamKey) => searchParams.get(key) || '';
-
-  const { data, isLoading, error } = useAvaliacoesUnidade({ unidade_id: unidadeId, ano, status });
+  const { data, isLoading, error } = useAvaliacoesUnidade({ 
+    unidade_id: unidadeId, 
+    ano, 
+    status, 
+    mes,
+    orderBy: 'unidade.pessoa.pessoaJuridica.nome_fantasia,mes_numero',
+    order: 'asc,asc'
+  });
   
   return (<>
       <div className="space-y-4">

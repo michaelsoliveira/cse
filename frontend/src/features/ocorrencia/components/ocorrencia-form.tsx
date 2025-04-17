@@ -234,7 +234,7 @@ export default function OcorrenciaForm({
               name='classificacao'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Classificação</FormLabel>
+                  <FormLabel>Modalidade</FormLabel>
                   <Select
                     disabled={loading}
                     onValueChange={(value) => field.onChange(value) }
@@ -244,7 +244,7 @@ export default function OcorrenciaForm({
                   <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          placeholder='Selecione a Classificação'
+                          placeholder='Selecione a Modalidade'
                         />
                       </SelectTrigger>
                     </FormControl>

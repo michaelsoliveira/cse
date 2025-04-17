@@ -13,6 +13,8 @@ export default function AvaliacaoUnidadeTableAction() {
   const {
     unidadeId,
     setUnidadeId,
+    mes,
+    setMes,
     ano,
     setAno,
     status,
@@ -30,6 +32,8 @@ export default function AvaliacaoUnidadeTableAction() {
             unidadeId={unidadeId}
             setUnidadeId={setUnidadeId}
             ano={ano}
+            mes={mes}
+            setMes={setMes}
             unidades={unidades}
             setAno={setAno}
             status={status}
